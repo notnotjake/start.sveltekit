@@ -1,5 +1,5 @@
 <script>
-	import Site from '$lib/global/site.json'
+	import Site from '$lib/_global/site.json'
 	import { page } from '$app/stores'
 </script>
 

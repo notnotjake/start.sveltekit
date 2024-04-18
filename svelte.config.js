@@ -10,8 +10,8 @@ const config = {
 		sveltePreprocess({
 			scss: {
 				prependData: `
-				@use 'src/lib/global/_variables' as v;
-				@use 'src/lib/global/_mixins' as m;
+				@use 'src/lib/_global/_variables' as v;
+				@use 'src/lib/_global/_mixins' as m;
 				`
 			}
 		})
