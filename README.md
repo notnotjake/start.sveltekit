@@ -4,7 +4,7 @@ An opinionated starting point for SvelteKit projects
 
 **Getting Going:**
 - Duplicate `degit notnotjake/start.sveltekit` into directory
-- Initialize project: `git init` then `gh repo creat` then `npm install`
+- Initialize project: `git init` then `gh repo create` then `npm install`
 - Open `src/lib/_global/site.json` and populate data
 - Start building and run `npm run dev` (or `npm run dev-host` to expose to the local network)
 
