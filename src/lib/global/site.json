@@ -1,0 +1,12 @@
+{
+	"baseURL": "https://www.foo.com",
+	"name": "FooCorp",
+	"description": "foo",
+	"author": false,
+	"twitter": "",
+	"favicon": "https://assets.foo.com/images/favicon.png",
+	"image": "https://assets.foo.com/images/og-image.jpg",
+	"analytics": {
+		"id": ""
+	}
+}

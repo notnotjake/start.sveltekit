@@ -1,0 +1,48 @@
+@use './variables' as *;
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Typography
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+@mixin gradient-text {
+	background-clip: text !important;
+	-webkit-background-clip: text !important;
+	text-fill-color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+@mixin selection($background, $text-color) {
+	&::selection {
+		background: $background;
+		color: $text-color;
+		text-fill-color: $text-color;
+		-webkit-text-fill-color: $text-color;
+	}
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Breakpoints and Layout
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+@mixin screen-sm {
+	@media (max-width: #{$screen-small-min}) {
+		@content
+	}
+}
+@mixin screen-md {
+	@media (max-width: #{$screen-medium-min}) {
+		@content
+	}
+}
+@mixin screen-x($size) {
+	@media (max-width: $size) {
+		@content
+	}
+}
+
+// break out of parent width to take full page width. parent must be centered.
+@mixin breakout-full-width {
+	position: relative;
+	width: 100vw;
+	left: 50%;
+	right: 50%;
+	margin-left: -50vw;
+	margin-right: -50vw;
+}
