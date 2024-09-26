@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-2 items-center justify-center py-4">
+<div class="flex flex-col items-center justify-center gap-2 py-4">
 	<h1
-		class="font-medium tracking-tight px-4 py-1 rounded-lg transition-all duration-300 hover:text-emerald-500 hover:bg-slate-200 selection:text-emerald-200 selection:bg-indigo-700"
+		class="rounded-lg px-4 py-1 font-medium tracking-tight transition-all duration-300 selection:bg-indigo-700 selection:text-emerald-200 hover:bg-slate-200 hover:text-emerald-500"
 	>
 		Start with SvelteKit
 	</h1>
