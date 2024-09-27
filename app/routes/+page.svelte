@@ -9,4 +9,6 @@
 		This project is setup with Svelte 5, TypeScript, Prettier, ESLint, Tailwind CSS, Vitetest,
 		Playwright Testing, and More
 	</p>
+
+	<a href="/about">About</a>
 </div>
