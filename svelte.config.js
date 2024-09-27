@@ -6,18 +6,22 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		files: {
-			routes: 'app/routes',
-			lib: 'app/lib',
-			assets: 'app/assets',
 			appTemplate: 'app/app.html',
+			errorTemplate: 'app/error.html',
+			lib: 'app/lib',
+			assets: 'static',
+			routes: 'app/routes',
+			params: 'app/params',
 			hooks: {
 				server: 'app/hooks/hooks.server',
-				client: 'app/hooks/hooks.client'
-			}
+				client: 'app/hooks/hooks.client',
+				universal: 'app/hooks/hooks'
+			},
+			serviceWorker: 'app/service-worker'
 		},
 		alias: {
 			$lib: 'app/lib',
-			$components: 'app/components'
+			$ui: 'app/components'
 		}
 	},
 	preprocess: vitePreprocess()
