@@ -1,9 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/stores'
+
+	import Counter from '$ui/counter.svelte'
+
 	let count: Number = $state(0)
 
 	function addOne(): Void {
 		count += 1
 	}
+
 	function subtractOne(): Void {
 		count -= 1
 	}
@@ -20,6 +25,10 @@
 
 	<p>{double}</p>
 </div>
+
+<Counter />
+
+<p>PageData = {$page?.data?.title}</p>
 
 {#snippet button(text, callback)}
 	<button
