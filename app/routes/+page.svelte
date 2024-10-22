@@ -10,5 +10,5 @@
 		Playwright Testing, and More
 	</p>
 
-	<a href="/about">About</a>
+	<a href="/test">Test Stuff</a>
 </div>
