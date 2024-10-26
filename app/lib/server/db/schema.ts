@@ -1,24 +1,25 @@
-import { blob, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-export const user = sqliteTable('user', {
-	id: text('id').primaryKey(),
+export const userTable = sqliteTable('user', {
+	id: integer('id').primaryKey(),
 	name: text('name').notNull(),
 	identifier: text('identifier').notNull()
 })
 
-export const session = sqliteTable('user_session', {
+export const sessionTable = sqliteTable('user_session', {
 	id: text('id').primaryKey(),
-	userId: text('user_id')
+	userId: integer('user_id')
 		.notNull()
-		.references(() => user.id),
-	expiresActive: blob('expires_active', { mode: 'bigint' }).notNull(),
-	expiresIdle: blob('expires_idle', { mode: 'bigint' }).notNull()
+		.references(() => userTable.id),
+	expiresAt: integer('expires_at', {
+		mode: 'timestamp'
+	}).notNull()
 })
 
-export const key = sqliteTable('user_key', {
+export const keyTable = sqliteTable('user_key', {
 	id: text('id').primaryKey(),
-	userId: text('user_id')
+	userId: integer('user_id')
 		.notNull()
-		.references(() => user.id),
+		.references(() => userTable.id),
 	secure_key: text('secure_key')
 })
