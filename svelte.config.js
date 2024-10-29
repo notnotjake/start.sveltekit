@@ -22,7 +22,8 @@ const config = {
 		alias: {
 			$lib: 'app/lib',
 			$ui: 'app/lib/components',
-			$utils: 'app/lib/utils'
+			$utils: 'app/lib/utils',
+			$tailwind: 'app/lib/theme/app.css'
 		}
 	},
 	preprocess: vitePreprocess()
