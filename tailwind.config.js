@@ -1,24 +1,21 @@
 /** @type {import('tailwindcss').Config} */
+import appearance from './app/lib/theme/appearance'
+import effects from './app/lib/theme/effects'
+import layout from './app/lib/theme/layout'
+import typography from './app/lib/theme/typography'
+
 export default {
 	content: ['./app/**/*.{html,js,svelte,ts}'],
 	theme: {
-		fontFamily: {
-			sans: [
-				'Inter V',
-				'Inter',
-				'ui-sans-serif',
-				'system-ui',
-				'sans-serif',
-				'Apple Color Emoji',
-				'Segoe UI Emoji',
-				'Segoe UI Symbol',
-				'Noto Color Emoji'
-			]
-		},
+		...typography,
+		...appearance,
+		...effects,
+		...layout,
 		extend: {
-			fontFamily: {
-				rounded: ['Rounded']
-			}
+			...typography.extend,
+			...appearance.extend,
+			...effects.extend,
+			...layout.extend
 		}
 	},
 	plugins: []
