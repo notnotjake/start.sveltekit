@@ -1,10 +1,13 @@
 import { defineConfig } from 'drizzle-kit'
 
+if (!process.env.DB_URL) throw new Error('DB_URL is not set')
+
 export default defineConfig({
-	dialect: 'sqlite',
 	schema: './app/lib/server/db/schema.ts',
-	out: './db',
+	out: './db/migrations',
+	dialect: 'sqlite',
 	dbCredentials: {
-		url: 'file:./db/dev.db'
-	}
+		url: `file:${process.env.DB_URL || './db/dev.db'}`
+	},
+	casing: 'snake_case'
 })
