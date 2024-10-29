@@ -1,14 +1,18 @@
 import { createSession, generateSessionToken } from '$lib/server/auth/sessions'
 
-import type { PageLoad } from './$types'
+import { fail, redirect } from '@sveltejs/kit'
+import type { PageServerLoad } from './$types'
 
-export const load: PageLoad = async () => {
+export const load: PageServerLoad = async (event) => {
 	const token = generateSessionToken()
 	const session = createSession(token, 1)
 	// setSessionTokenCookie(token)
 
+	const isAuthenticated = event.locals.user === null ? 'no' : 'yes'
+
 	return {
 		token,
-		session
+		session,
+		isAuthenticated
 	}
 }
