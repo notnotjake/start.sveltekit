@@ -1,9 +1,11 @@
 <script>
-	import '$lib/app.css'
+	import '$tailwind'
 
-	// import Fonts from '$lib/global/Fonts.html'
-	// import { FontFace, FontFamily } from '$lib/global/fonts.ts'
+	import { createFonts, LoadFonts, local, url } from '$utils/Fonts'
+
 	import Head from '$lib/global/Head.svelte'
+
+	const Fonts = createFonts()
 
 	// Maybe we should also define the global site data here instead of a site.json?
 	// in which case it would be easier i think to change that on the page and layouts
@@ -13,5 +15,7 @@
 <svelte:head>
 	<Head />
 </svelte:head>
+
+<LoadFonts {Fonts} debug={false} />
 
 <slot />
