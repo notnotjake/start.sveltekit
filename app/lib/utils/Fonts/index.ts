@@ -1,4 +1,5 @@
 import type { FontOptions, SourceFormat, SourceTech } from './properties'
+
 import * as handlers from './properties'
 
 export { default as LoadFonts } from './mount.svelte'
@@ -67,7 +68,7 @@ class TestClass {
 			<!-- Font Imports -->
 			<style>${css}</style>
 			
-${preload}
+			${preload}
 			<!-- [END] Font Imports -->
 		`
 	}

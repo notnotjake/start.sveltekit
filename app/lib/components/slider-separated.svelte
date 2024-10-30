@@ -106,7 +106,7 @@
 	class="flex gap-1"
 >
 	<div
-		class="hover:shadow-inner-xs group my-3 flex h-8 w-28 cursor-ew-resize select-none items-center justify-between rounded-[0.6rem] bg-neutral-200 px-2"
+		class="group my-3 flex h-8 w-28 cursor-ew-resize select-none items-center justify-between rounded-[0.6rem] bg-neutral-200 px-2 hover:shadow-inner-xs"
 	>
 		<p class="text-sm text-neutral-600 group-hover:text-neutral-900">{valueLabel}</p>
 		<p

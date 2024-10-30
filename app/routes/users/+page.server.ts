@@ -1,9 +1,9 @@
+import type { Actions, ServerLoad } from '@sveltejs/kit'
+
 import { db } from '$lib/server/db'
 import { userTable } from '$lib/server/db/schema'
 
-import type { Actions, PageLoad } from '@sveltejs/kit'
-
-export const load: PageLoad = async () => {
+export const load: ServerLoad = async () => {
 	const users = await db
 		.select({
 			field1: userTable.name,

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { PageData } from './$types'
+
 	import OAuth from '$ui/auth/OAuthOptions.svelte'
 	import Footer from '$ui/Footer.svelte'
 	import SkeletonLoader from '$ui/skeleton-loader.svelte'
 	import Spinner from '$ui/spinner.svelte'
 	import TextShimmer from '$ui/text-shimmer.svelte'
-	import type { PageData } from './$types'
 
 	// export const data: PageData
 
@@ -14,7 +15,7 @@
 </script>
 
 <a
-	class="tracking-tight-md mx-auto block pt-2 text-center text-base font-medium text-black/55 no-underline transition-all duration-300 hover:text-black/85"
+	class="mx-auto block pt-2 text-center text-base font-medium tracking-tight-md text-black/55 no-underline transition-all duration-300 hover:text-black/85"
 	href="/">Art Fellowship</a
 >
 
@@ -23,8 +24,8 @@
 		class="flex min-h-40 w-[23rem] flex-shrink-0 flex-col rounded-[1.3rem] bg-gradient-to-b from-[hsl(214,100%,96%)] to-[hsl(282,100%,98%)] p-[0.5rem]"
 	>
 		<div class="mb-2 px-7 py-5">
-			<h2 class="tracking-tight-md text-[1.3rem] font-[550] leading-loose">Start Practicing</h2>
-			<p class="tracking-tight-lg text-[0.96rem] font-[380] leading-5">
+			<h2 class="text-[1.3rem] font-[550] leading-loose tracking-tight-md">Start Practicing</h2>
+			<p class="text-[0.96rem] font-[380] leading-5 tracking-tight-lg">
 				Connect with others and schedule Art Fellowship practice with the community
 			</p>
 		</div>
@@ -40,7 +41,7 @@
 					bind:value={identifier}
 					onfocus={editIdentity}
 					aria-label="Enter your email or phone"
-					class="focus:shadow-input-pop absolute left-0 top-0 h-[2.8rem] w-full rounded-[0.9rem] border-none bg-neutral-200/40 pl-4 pr-11 text-center font-[450] text-zinc-900 outline-none transition-all selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500"
+					class="absolute left-0 top-0 h-[2.8rem] w-full rounded-[0.9rem] border-none bg-neutral-200/40 pl-4 pr-11 text-center font-[450] text-zinc-900 outline-none transition-all selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500 focus:shadow-input-pop"
 				/>
 				<button
 					disabled="true"
@@ -65,8 +66,8 @@
 			<!-- -->
 			<!-- <TextShimmer class="text-lg font-medium">Logging you in...</TextShimmer> -->
 			<div class="w-full pt-5">
-				<p class="tracking-tight-md w-full text-center">A login link has been sent to your email</p>
-				<p class="tracking-tight-sm pt-2 text-center text-[0.93rem] font-[350] text-neutral-800">
+				<p class="w-full text-center tracking-tight-md">A login link has been sent to your email</p>
+				<p class="pt-2 text-center text-[0.93rem] font-[350] tracking-tight-sm text-neutral-800">
 					Haven't received it? Try Resending
 				</p>
 			</div>

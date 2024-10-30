@@ -1,7 +1,7 @@
 //@ts-check
 
 /** @type {import("prettier").Config} */
-export default {
+const config = {
 	useTabs: true,
 	singleQuote: true,
 	trailingComma: 'none',
@@ -16,13 +16,9 @@ export default {
 	importOrder: [
 		// Types first
 		'<TYPES>',
-		'^@types/(.*)$',
-		'^type\\s(.*)$',
-		'',
 		// Generic Stuff
 		'<BUILTIN_MODULES>',
 		'<THIRD_PARTY_MODULES>',
-		'',
 		// Svelte core imports
 		'^svelte$',
 		'^svelte/(.*)$',
@@ -38,3 +34,5 @@ export default {
 	],
 	importParserPlugins: ['typescript', 'jsx', 'decorators-legacy']
 }
+
+export default config
