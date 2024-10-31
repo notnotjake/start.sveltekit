@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types'
-
-	import OAuth from '$ui/auth/OAuthOptions.svelte'
 	import Footer from '$ui/Footer.svelte'
-	import SkeletonLoader from '$ui/skeleton-loader.svelte'
-	import Spinner from '$ui/spinner.svelte'
+	import OAuth from '$ui/auth/OAuthOptions.svelte'
+
 	import TextShimmer from '$ui/text-shimmer.svelte'
+	import Spinner from '$ui/spinner.svelte'
+
+	import type { PageData } from './$types'
+	import SkeletonLoader from '$ui/skeleton-loader.svelte'
 
 	// export const data: PageData
 

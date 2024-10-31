@@ -18,7 +18,6 @@
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
-		"@ianvs/prettier-plugin-sort-imports": "^4.3.1",
 		"@playwright/test": "^1.48.2",
 		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/kit": "^2.7.3",
