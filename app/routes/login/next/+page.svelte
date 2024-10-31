@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Footer from '$ui/Footer.svelte'
 	import OAuth from '$ui/auth/OAuthOptions.svelte'
 
 	import TextShimmer from '$ui/text-shimmer.svelte'

@@ -1,21 +1,19 @@
 <script>
 	import '$tailwind'
 
+	import { page } from '$app/stores'
 	import { createFonts, LoadFonts, local, url } from '$utils/Fonts'
 
-	import Head from '$lib/global/Head.svelte'
+	// import { LoadMeta } from '$utils/Meta'
 
 	const Fonts = createFonts()
-
-	// Maybe we should also define the global site data here instead of a site.json?
-	// in which case it would be easier i think to change that on the page and layouts
-	// more like 11ty data cascade. but would require the import again i think
 </script>
 
-<svelte:head>
-	<Head />
-</svelte:head>
-
+<!-- <LoadMeta debug={false} /> -->
 <LoadFonts {Fonts} debug={false} />
+
+<h1>{$page.data.test}</h1>
+<h1>{$page.data.title}</h1>
+<h1>{$page.data.description}</h1>
 
 <slot />

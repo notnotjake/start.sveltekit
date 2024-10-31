@@ -1,7 +1,6 @@
 <script>
-	import { page } from '$app/stores'
-
 	import Site from '$lib/global/site.json'
+	import { page } from '$app/stores'
 </script>
 
 <link rel="icon" type="image/png" sizes="128x128" href={Site.favicon} />
