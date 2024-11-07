@@ -5,8 +5,8 @@ import { env } from '$env/dynamic/private'
 
 import * as schema from './schema'
 
-if (!env.DB_URL) throw new Error('DB_URL is not set')
-const sqlite = new Database(env.DB_URL || './db/dev.db')
+if (!env.PRIVATE_DB_URL) throw new Error('DB_URL is not set')
+const sqlite = new Database(env.PRIVATE_DB_URL || './db/dev.db')
 
 sqlite.exec('PRAGMA journal_mode = WAL;') // Better performance
 sqlite.exec('PRAGMA foreign_keys = ON;') // Enable foreign key constraints

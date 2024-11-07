@@ -5,6 +5,10 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 const config = {
 	kit: {
 		adapter: adapter(),
+		paths: {
+			base: process.env.PUBLIC_URL_BASE || '',
+			assets: process.env.PUBLIC_URL_ASSETS || ''
+		},
 		files: {
 			appTemplate: 'app/app.html',
 			errorTemplate: 'app/error.html',
