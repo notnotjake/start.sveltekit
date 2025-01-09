@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import { createClass, preserveClass } from '$utils/create-class'
 
 	type Props = {
 		children: Snippet
@@ -7,7 +8,7 @@
 		duration: number
 		spread: number
 	}
-	let { children, class: className, duration = 2, spread = 6 }: Props = $props()
+	let { children, class: classProp, duration = 2, spread = 6 }: Props = $props()
 
 	let element: HTMLElement
 
@@ -23,7 +24,11 @@
 	bind:this={element}
 	style:--duration={`calc(${textLength} * 0.2s)`}
 	style:--spread={`calc(${spread} * 0.5ch)`}
-	class="text-shimmer relative inline-block whitespace-nowrap text-transparent {className}"
+	class={createClass(
+		'relative inline-block whitespace-nowrap text-transparent',
+		preserveClass('text-shimmer'),
+		classProp
+	)}
 >
 	{@render children()}
 </p>
