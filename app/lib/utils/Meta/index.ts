@@ -1,3 +1,8 @@
+/**
+ * Metadata management system for SvelteKit applications.
+ * Handles HTML head tags and structured metadata with parent data inheritance.
+ */
+
 export { default as LoadMeta } from './mount.svelte'
 import type { Metadata } from './properties'
 import type { App } from '@sveltejs/kit'
@@ -14,16 +19,28 @@ type HeadTagArbitrary = {
 	[key: string]: string | boolean
 }
 
+/**
+ * Union type representing different kinds of head tags (meta, link, script).
+ */
 type HeadTag =
 	| ({ tagType: 'meta' } & HeadTagMeta)
 	| ({ tagType: 'link' | 'script' } & HeadTagArbitrary)
 
+/**
+ * Core class for managing metadata and head tags.
+ * Provides methods for adding tags and setting structured metadata.
+ */
 class MetaClass {
-	// An array of the head tags (meta, link, script) to add to the <head>
+	/**
+	 * Collection of head tags (meta, link, script) to be added to the <head>.
+	 */
 	private outputTags: Array<HeadTag>
 
 	private outputData: Metadata
 
+	/**
+	 * Optional parent metadata inherited in load function
+	 */
 	private parentData?: App.parentData
 
 	constructor(outputTags: Array<HeadTag>, outputData: Metadata, parentData?: App.parentData) {
