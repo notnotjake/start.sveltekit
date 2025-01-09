@@ -5,7 +5,7 @@ export const load: LayoutLoad = async () => {
 	const Meta = await createMeta()
 	Meta.set({
 		sitename: 'SvelteKit Starter',
-		icon: 'https://assets.foo.com/images/og-image.jpg',
+		icon: 'https://large-assets.notnotjake.com/images/site/favicon.png',
 		title: 'SvelteKit Starter',
 		titleTemplate: 'SvelteKit Starter - {page}',
 		description: 'A great example SvelteKit site to start new projects from',

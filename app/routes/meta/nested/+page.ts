@@ -7,7 +7,7 @@ export const load: PageLoad = async ({ parent }) => {
 	Meta.set({
 		icon: '/favicon.png',
 		sitename: 'SvelteKit Starter',
-		title: 'Nested Page Meta Test',
+		title: 'Test Nested',
 		description: 'This is a test page for metadata',
 		image: 'https://large-assets.notnotjake.com/images/onething.png'
 	})

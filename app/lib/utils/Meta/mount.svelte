@@ -12,23 +12,82 @@
 		}
 		return String(value)
 	}
+
+	let meta = $page.data.meta
 </script>
 
 <svelte:head>
-	<!-- Basic Tags -->
-	{#if $page.data.meta.canonical}
-		<meta name="description" content={$page.data.meta.description} />
-		<meta property="og:url" content={$page.data.meta.canonical} />
+	<!-- 
+		Basic Tags
+	-->
+
+	<!-- Cannonical URL -->
+	{#if meta.canonical}
+		<meta name="description" content={meta.description} />
+		<meta property="og:url" content={meta.canonical} />
 	{/if}
 
-	{#if $page.data.meta.description}
-		<meta name="description" content={$page.data.meta.description} />
-		<meta property="og:description" content={$page.data.meta.description} />
-		<meta name="twitter:description" content={$page.data.meta.description} />
+	<!-- Icon -->
+	{#if meta.icon}
+		{#if typeof meta.icon === 'string'}
+			<link rel="icon" href={meta.icon} />
+			<link rel="apple-touch-icon" href={meta.icon} />
+		{:else}
+			<link
+				rel="icon"
+				href={meta.icon.url}
+				sizes={`${meta.icon.size}x${meta.icon.size}`}
+				type={`image/${meta.icon.type || 'png'}`}
+			/>
+		{/if}
 	{/if}
 
-	<!-- Arbitrary meta, link, script tags -->
-	{#each $page.data.meta.additionalTags as tag}
+	<!-- Safari Pinned Tab Icon -->
+	{#if meta.maskIcon}
+		<link rel="mask-icon" href={meta.maskIcon.url} color={meta.maskIcon.color} />
+	{/if}
+
+	<!-- Theme Color -->
+	{#if meta.theme}
+		<meta name="theme-color" content={meta.theme} />
+	{/if}
+
+	<!-- Color Scheme -->
+	{#if meta.colorScheme}
+		<meta name="color-scheme" content={meta.colorScheme} />
+	{/if}
+
+	<!-- Title -->
+	{#if meta.title}
+		<title>{meta.title}</title>
+		<meta property="og:title" content={meta.title} />
+		<meta name="twitter:title" content={meta.title} />
+	{/if}
+
+	<!-- Description -->
+	{#if meta.description}
+		<meta name="description" content={meta.description} />
+		<meta property="og:description" content={meta.description} />
+		<meta name="twitter:description" content={meta.description} />
+	{/if}
+
+	<!-- Author -->
+	{#if meta.author}
+		{#if Array.isArray(meta.author)}
+			{#each meta.author as author}
+				<meta name="author" content={author} />
+				<meta property="article:author" content={author} />
+			{/each}
+		{:else}
+			<meta name="author" content={meta.author} />
+			<meta property="article:author" content={meta.author} />
+		{/if}
+	{/if}
+
+	<!-- 
+		Arbitrary meta, link, script tags 
+	-->
+	{#each meta.additionalTags as tag}
 		{@const { tagType, ...attributes } = tag}
 		{#if tagType === 'meta'}
 			<meta {...attributes} />

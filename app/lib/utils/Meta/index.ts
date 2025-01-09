@@ -7,14 +7,23 @@ export { default as LoadMeta } from './mount.svelte'
 import type { Metadata } from './properties'
 import type { App } from '@sveltejs/kit'
 
+/**
+ * Represents a meta tag configuration with name/property and content.
+ */
 type HeadTagMeta = {
 	name?: string
 	property?: string
 	content: string
 }
 
+/**
+ * Simplified meta tag configuration as a tuple of [name, content].
+ */
 type HeadTagMetaSimple = [name: string, content: string]
 
+/**
+ * Arbitrary key-value pairs for link and script tags.
+ */
 type HeadTagArbitrary = {
 	[key: string]: string | boolean
 }
@@ -36,13 +45,22 @@ class MetaClass {
 	 */
 	private outputTags: Array<HeadTag>
 
+	/**
+	 * Structured metadata storage for the application.
+	 */
 	private outputData: Metadata
 
 	/**
-	 * Optional parent metadata inherited in load function
+	 * Optional parent-level metadata inherited from SvelteKit.
 	 */
 	private parentData?: App.parentData
 
+	/**
+	 * Creates a new MetaClass instance.
+	 * @param outputTags Initial array of head tags
+	 * @param outputData Initial structured metadata
+	 * @param parentData Optional parent-level metadata from SvelteKit
+	 */
 	constructor(outputTags: Array<HeadTag>, outputData: Metadata, parentData?: App.parentData) {
 		this.outputTags = outputTags
 		this.outputData = outputData
@@ -80,6 +98,11 @@ class MetaClass {
 	}
 
 	// Use to add structured data
+	/**
+	 * Sets structured metadata with validation and parent data inheritance.
+	 * Handles title templates, character limits, and mutual exclusivity rules.
+	 * @param data Metadata to set
+	 */
 	set(data: Metadata): void {
 		// Extract data from parent data if it exists
 		const parentDataMeta = this.parentData?.meta as Metadata | undefined
@@ -109,6 +132,11 @@ class MetaClass {
 			data = restData
 		}
 
+		// Handle Title and Title Templates
+		if (parentDataMeta?.titleTemplate && data?.title) {
+			data.title = parentDataMeta.titleTemplate.replace(/\{page\}/g, data.title)
+		}
+
 		// Merge data with parent data
 		this.outputData = {
 			...parentDataMeta,
@@ -117,6 +145,11 @@ class MetaClass {
 	}
 
 	// Generates output when using the instance variable
+	/**
+	 * Retrieves the final metadata structure including both
+	 * structured data and additional head tags.
+	 * @returns Object containing merged metadata and additional tags
+	 */
 	getData() {
 		return {
 			meta: {
@@ -127,6 +160,11 @@ class MetaClass {
 	}
 }
 
+/**
+ * Factory function to create a new MetaClass instance with clean state.
+ * @param parentDataLoad Optional function to load parent data
+ * @returns Promise resolving to new MetaClass instance
+ */
 export async function createMeta(
 	parentDataLoad?: () => Promise<App.parentData>
 ): Promise<MetaClass> {
@@ -136,6 +174,9 @@ export async function createMeta(
 	// This fixes an issue where on server side, sveltekit will re-use the same instance across requests
 	const outputTagsArray: Array<HeadTag> = []
 	const outputDataObj: Metadata = {}
+
+	console.log(parentData)
+
 	// Creates the instance of the class and returns it
 	return new MetaClass(outputTagsArray, outputDataObj, parentData)
 }

@@ -36,7 +36,7 @@ export type Metadata = {
 	title?: string // og:title meta:title
 	/**
 	 * Template for constructing children page titles
-	 * Example: "{layout} - {page}"
+	 * Example: "Reviews - {page}"
 	 */
 	titleTemplate?: string // used to infer og:title meta:title twitter:title
 	/** @maxLength 200 chars for Twitter */
