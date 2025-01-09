@@ -1,12 +1,9 @@
-import type { InferSelectModel } from 'drizzle-orm'
-import Database from 'better-sqlite3'
-import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { env } from '$env/dynamic/private'
-
+import { drizzle } from 'drizzle-orm/better-sqlite3'
+import Database from 'better-sqlite3'
 import * as schema from './schema'
 
-if (!env.PRIVATE_DB_URL) throw new Error('DB_URL is not set')
-const sqlite = new Database(env.PRIVATE_DB_URL || './db/dev.db')
+const sqlite = new Database(env.DB_URL || './db/dev.db')
 
 sqlite.exec('PRAGMA journal_mode = WAL;') // Better performance
 sqlite.exec('PRAGMA foreign_keys = ON;') // Enable foreign key constraints
@@ -18,7 +15,3 @@ export const db = drizzle({
 	schema: schema,
 	logger: true
 })
-
-// Database Types
-export type User = InferSelectModel<typeof schema.userTable>
-export type Session = InferSelectModel<typeof schema.sessionTable>
