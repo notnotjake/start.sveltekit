@@ -2,9 +2,9 @@
 	import type { PageData } from './$types'
 
 	import OAuth from '$ui/auth/OAuthOptions.svelte'
-	import SkeletonLoader from '$ui/skeleton-loader.svelte'
-	import Spinner from '$ui/spinner.svelte'
-	import TextShimmer from '$ui/text-shimmer.svelte'
+	import SkeletonLoader from '$ui/feedback/loading-skeleton.svelte'
+	import Spinner from '$ui/feedback/suspense-spinner.svelte'
+	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
 
 	// export const data: PageData
 

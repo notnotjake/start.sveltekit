@@ -1,11 +1,11 @@
 <script lang="ts">
 	import OAuth from '$ui/auth/OAuthOptions.svelte'
 
-	import TextShimmer from '$ui/text-shimmer.svelte'
-	import Spinner from '$ui/spinner.svelte'
+	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
+	import Spinner from '$ui/feedback/suspense-spinner.svelte'
 
 	import type { PageData } from './$types'
-	import SkeletonLoader from '$ui/skeleton-loader.svelte'
+	import SkeletonLoader from '$ui/feedback/loading-skeleton.svelte'
 
 	// export const data: PageData
 

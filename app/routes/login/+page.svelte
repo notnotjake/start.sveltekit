@@ -2,9 +2,9 @@
 	import type { PageData } from './$types'
 
 	import OAuth from '$ui/auth/OAuthOptions.svelte'
-	import SkeletonLoader from '$ui/skeleton-loader.svelte'
-	import Spinner from '$ui/spinner.svelte'
-	import TextShimmer from '$ui/text-shimmer.svelte'
+	import SkeletonLoader from '$ui/feedback/loading-skeleton.svelte'
+	import Spinner from '$ui/feedback/suspense-spinner.svelte'
+	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
 
 	// export const data: PageData
 
@@ -36,7 +36,7 @@
 			<div class="relative flex h-11 w-full flex-col items-center">
 				<input
 					type="text"
-					placeholder="Email or Phone"
+					placeholder="Continue with email"
 					bind:value={identifier}
 					onfocus={editIdentity}
 					aria-label="Enter your email or phone"
