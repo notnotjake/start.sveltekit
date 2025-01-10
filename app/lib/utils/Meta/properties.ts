@@ -2,11 +2,6 @@ import type { TwitterCard } from './twitter-card.types'
 import type { OpenGraph } from './opengraph.types'
 
 export type Metadata = {
-	// URL data
-	/** Base URL for the site, used to construct full URLs */
-	base?: string
-	/** Asset URL prefix, used to construct resource URLs */
-	assets?: string
 	/** Canonical URL for the page */
 	canonical?: string // og:url link:rel:canonical
 
@@ -118,7 +113,6 @@ type ImageConfig =
 	| { image?: never; images?: never }
 
 // Make video/videos mutually exclusive
-type VideoConfig =
-	| { video: string | Media; videos?: never }
-	| { video?: never; videos: Array<Media> }
-	| { video?: never; videos?: never }
+type VideoConfig = {
+	video?: string | Media
+}

@@ -1,7 +1,38 @@
 <script lang="ts">
+	import { page } from '$app/state'
+	import { onMount } from 'svelte'
+
+	let meta = page.data.meta
+
 	let { debug = false } = $props()
-	import { page } from '$app/stores'
-	import { assets } from '$app/paths'
+
+	// Log the actual head meta tags when the component is mounted
+	onMount(() => {
+		console.log('Computed Meta Tags:')
+		document.head.querySelectorAll('meta, title, link[rel="canonical"]').forEach((tag) => {
+			console.log(tag.outerHTML)
+		})
+	})
+
+	let debugMode = $state('computed')
+	let headMetaTags = $state([])
+
+	// Collect the <head> tags
+	function fetchHeadMetaTags() {
+		headMetaTags = Array.from(
+			document.head.querySelectorAll('meta, title, link[rel="canonical"]')
+		).map((tag) => tag.outerHTML)
+	}
+
+	// Toggle between 'computed' and 'head'
+	function toggleDebugMode() {
+		if (debugMode === 'computed') {
+			debugMode = 'head'
+			fetchHeadMetaTags()
+		} else {
+			debugMode = 'computed'
+		}
+	}
 
 	function formatValue(value: any): string {
 		if (Array.isArray(value)) {
@@ -12,22 +43,15 @@
 		}
 		return String(value)
 	}
-
-	let meta = $page.data.meta
 </script>
 
 <svelte:head>
-	<!-- 
-		Basic Tags
-	-->
-
-	<!-- Cannonical URL -->
+	<!-- SEO: Cannonical URL -->
 	{#if meta.canonical}
-		<meta name="description" content={meta.description} />
 		<meta property="og:url" content={meta.canonical} />
 	{/if}
 
-	<!-- Icon -->
+	<!-- APPEARENCE: Icon -->
 	{#if meta.icon}
 		{#if typeof meta.icon === 'string'}
 			<link rel="icon" href={meta.icon} />
@@ -42,40 +66,65 @@
 		{/if}
 	{/if}
 
-	<!-- Safari Pinned Tab Icon -->
+	<!-- APPEARENCE: Safari Pinned Tab Icon -->
 	{#if meta.maskIcon}
 		<link rel="mask-icon" href={meta.maskIcon.url} color={meta.maskIcon.color} />
 	{/if}
 
-	<!-- Theme Color -->
+	<!-- APPEARENCE: Theme Color -->
 	{#if meta.theme}
 		<meta name="theme-color" content={meta.theme} />
 	{/if}
 
-	<!-- Color Scheme -->
+	<!-- APPEARENCE: Color Scheme -->
 	{#if meta.colorScheme}
 		<meta name="color-scheme" content={meta.colorScheme} />
 	{/if}
 
-	<!-- Title -->
+	<!-- SHARING: Site Name -->
+	{#if meta.sitename}
+		<meta property="og:site_name" content={meta.sitename} />
+	{/if}
+
+	<!-- SHARING: Title -->
 	{#if meta.title}
 		<title>{meta.title}</title>
 		<meta property="og:title" content={meta.title} />
 		<meta name="twitter:title" content={meta.title} />
 	{/if}
 
-	<!-- Description -->
+	<!-- SHARING: Description -->
 	{#if meta.description}
 		<meta name="description" content={meta.description} />
 		<meta property="og:description" content={meta.description} />
 		<meta name="twitter:description" content={meta.description} />
 	{/if}
 
-	<!-- Author -->
+	<!-- SHARING: Content Type -->
+	{#if meta.type}
+		{#if typeof meta.type === 'object'}
+			<meta property="og:type" content={meta.type.og} />
+			<meta name="twitter:card" content={meta.type.twitter} />
+		{:else if meta.type === 'article'}
+			<meta property="og:type" content="article" />
+			<meta name="twitter:card" content="summary" />
+		{:else if meta.type === 'largeImage'}
+			<meta property="og:type" content="website" />
+			<meta name="twitter:card" content="summary_large_image" />
+		{:else if meta.type === 'player'}
+			<meta property="og:type" content="website" />
+			<meta name="twitter:card" content="player" />
+		{:else}
+			<meta property="og:type" content="website" />
+			<meta name="twitter:card" content="summary" />
+		{/if}
+	{/if}
+
+	<!-- SHARING: Author -->
 	{#if meta.author}
 		{#if Array.isArray(meta.author)}
+			<meta name="author" content={meta.author.join(', ')} />
 			{#each meta.author as author}
-				<meta name="author" content={author} />
 				<meta property="article:author" content={author} />
 			{/each}
 		{:else}
@@ -84,9 +133,94 @@
 		{/if}
 	{/if}
 
-	<!-- 
-		Arbitrary meta, link, script tags 
-	-->
+	<!-- SHARING: Images -->
+	{#if meta.image}
+		{#if typeof meta.image === 'string'}
+			<meta property="og:image" content={meta.image} />
+			<meta name="twitter:image" content={meta.image} />
+		{:else}
+			<meta property="og:image" content={meta.image.url} />
+			{#if meta.image.secureUrl}<meta
+					property="og:image:secure_url"
+					content={meta.image.secureUrl}
+				/>{/if}
+			<meta name="twitter:image" content={meta.image.url} />
+			{#if meta.image.width}<meta property="og:image:width" content={meta.image.width} />{/if}
+			{#if meta.image.height}<meta property="og:image:height" content={meta.image.height} />{/if}
+			{#if meta.image.type}<meta property="og:image:type" content={meta.image.type} />{/if}
+			{#if meta.image.alt}
+				<meta property="og:image:alt" content={meta.image.alt} />
+				<meta name="twitter:image:alt" content={meta.image.alt} />
+			{/if}
+		{/if}
+	{/if}
+	{#if meta.images}
+		{#each meta.images as image, i}
+			<!-- Set twitter:image only for the first image -->
+			{#if i === 0}
+				<meta name="twitter:image" content={image.url} />
+				{#if image.alt}
+					<meta name="twitter:image:alt" content={image.alt} />
+				{/if}
+			{/if}
+			<meta property="og:image" content={image.url} />
+			{#if meta.image.secureUrl}<meta
+					property="og:image:secure_url"
+					content={meta.image.secureUrl}
+				/>{/if}
+			{#if image.width}<meta property="og:image:width" content={image.width} />{/if}
+			{#if image.height}<meta property="og:image:height" content={image.height} />{/if}
+			{#if image.type}<meta property="og:image:type" content={image.type} />{/if}
+			{#if image.alt}
+				<meta property="og:image:alt" content={image.alt} />
+			{/if}
+		{/each}
+	{/if}
+
+	<!-- SHARING: Video -->
+	{#if meta.video}
+		{#if typeof meta.video === 'string'}
+			<meta property="og:video" content={meta.video} />
+			<meta name="twitter:player" content={meta.video} />
+		{:else}
+			<meta property="og:video" content={meta.video.url} />
+			<meta name="twitter:player" content={meta.video.url} />
+			{#if meta.video.width}
+				<meta property="og:video:width" content={meta.video.width} />
+				<meta name="twitter:player:width" content={meta.video.width} />
+			{/if}
+			{#if meta.video.height}
+				<meta property="og:video:height" content={meta.video.height} />
+				<meta name="twitter:player:height" content={meta.video.height} />
+			{/if}
+			{#if meta.video.type}<meta property="og:video:type" content={meta.video.type} />{/if}
+		{/if}
+	{/if}
+	<!-- [END] SHARING: Media (images or video) -->
+
+	<!-- SEO: Date Published -->
+	{#if meta.date}
+		<meta property="article:published_time" content={meta.date} />
+		<meta name="date" content={meta.date} />
+	{/if}
+
+	<!-- SEO: Date Modified -->
+	{#if meta.modified}
+		<meta property="article:modified_time" content={meta.modified} />
+		<meta name="last-modified" content={meta.modified} />
+	{/if}
+
+	<!-- TWITTER: Site/Publisher Account -->
+	{#if meta.twitterSite}
+		<meta name="twitter:site" content={meta.twitterSite} />
+	{/if}
+
+	<!-- TWITTER: Creator Account -->
+	{#if meta.twitterCreator}
+		<meta name="twitter:creator" content={meta.twitterCreator} />
+	{/if}
+
+	<!-- Arbitrary meta, link, script tags -->
 	{#each meta.additionalTags as tag}
 		{@const { tagType, ...attributes } = tag}
 		{#if tagType === 'meta'}
@@ -100,17 +234,58 @@
 </svelte:head>
 
 {#if debug}
+	<!-- Container -->
 	<div
-		class="font-mono fixed right-4 top-4 z-50 max-h-[calc(100vh-2rem)] w-96 overflow-y-auto rounded-lg border-2 border-orange-300 bg-orange-50 text-sm shadow-xl"
+		class="
+			/* Dark Mode */
+			fixed right-4 top-4
+			z-50 max-h-[calc(100vh-2rem)] w-96 overflow-y-auto
+			rounded-lg border-2 border-orange-300
+			
+			bg-orange-50 font-mono text-sm shadow-xl
+			dark:border-gray-600 dark:bg-gray-800
+		"
 	>
+		<!-- Header Bar -->
 		<div
-			class="sticky top-0 flex items-center justify-between border-b-2 border-orange-200 bg-orange-100 p-3"
+			class="
+				/* Dark
+				Mode */ sticky
+				top-0 flex items-center justify-between
+				
+				border-b-2 border-orange-200 bg-orange-100 p-3
+				dark:border-gray-600 dark:bg-gray-900
+			"
 		>
-			<h2 class="font-bold text-orange-800">Meta Debug</h2>
+			<!-- Panel Title & Inline Toggle -->
+			<div class="flex items-center gap-2">
+				<h2 class="font-bold text-orange-800 dark:text-gray-100">Meta Debug</h2>
+				<button
+					onclick={toggleDebugMode}
+					class="
+						/*
+						Dark Mode */ rounded-md bg-orange-200
+						px-2 py-1
+						
+						text-xs font-semibold transition-colors hover:bg-orange-300
+						dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600
+					"
+				>
+					{debugMode === 'computed' ? 'Show Head' : 'Show Data'}
+				</button>
+			</div>
+
+			<!-- Close Debug Panel Button -->
 			<button
 				onclick={() => (debug = false)}
-				class="rounded-md p-1 transition-colors hover:bg-orange-200"
 				aria-label="Close debug panel"
+				class="
+					/* Dark Mode
+					*/ rounded-md
+					
+					bg-orange-200/60 p-1 transition-colors hover:bg-orange-200
+					dark:bg-gray-700/60 dark:text-gray-200 dark:hover:bg-gray-600
+				"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
 					<path
@@ -125,15 +300,67 @@
 			</button>
 		</div>
 
-		<div class="divide-y divide-orange-200">
-			{#each Object.entries($page.data.meta) as [key, value]}
-				<div class="p-3 hover:bg-orange-100/50">
-					<div class="mb-1 font-bold text-orange-900">{key}</div>
-					<div class="whitespace-pre-wrap break-all text-orange-700">
-						{formatValue(value)}
+		<!-- Debug Content -->
+		{#if debugMode === 'computed'}
+			<!-- Show Computed Metadata -->
+			<div
+				class="
+					divide-y divide-orange-200
+					dark:divide-gray-700
+				"
+			>
+				{#each Object.entries(meta) as [key, value]}
+					<div
+						class="
+							p-3 hover:bg-orange-100/50
+							dark:hover:bg-gray-700/50
+						"
+					>
+						<div
+							class="
+								mb-1 font-bold text-orange-900
+								dark:text-gray-100
+							"
+						>
+							{key}
+						</div>
+						<div
+							class="
+								whitespace-pre-wrap break-all text-orange-700
+								dark:text-gray-200
+							"
+						>
+							{formatValue(value)}
+						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		{:else}
+			<!-- Show Final Head Output -->
+			<div
+				class="
+					divide-y divide-orange-200
+					dark:divide-gray-700
+				"
+			>
+				{#each headMetaTags as tag}
+					<div
+						class="
+							p-3 hover:bg-orange-100/50
+							dark:hover:bg-gray-700/50
+						"
+					>
+						<div
+							class="
+								whitespace-pre-wrap break-all text-orange-700
+								dark:text-gray-200
+							"
+						>
+							{tag}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 {/if}

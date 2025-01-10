@@ -9,7 +9,7 @@
 	let { children } = $props()
 </script>
 
-<LoadMeta debug={false} />
+<LoadMeta debug={true} />
 <LoadFonts {Fonts} debug={false} />
 
 {@render children?.()}
