@@ -11,8 +11,8 @@ export const privateSchema = z.object({
 })
 
 export const publicSchema = z.object({
-	PUBLIC_URL: z.string().url(),
-	PUBLIC_URL_ASSETS: z.string().url(),
+	PUBLIC_URL: z.string().url().optional().default(''),
+	PUBLIC_URL_ASSETS: z.union([z.string().url(), z.literal('')]),
 	PUBLIC_ANALYTICS: z.coerce.boolean()
 })
 

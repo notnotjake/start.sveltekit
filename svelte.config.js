@@ -6,8 +6,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		paths: {
-			base: process.env.PUBLIC_URL_BASE || '',
-			assets: process.env.PUBLIC_URL_ASSETS || ''
+			base: process.env.PUBLIC_URL_BASE || ''
 		},
 		files: {
 			appTemplate: 'app/app.html',
