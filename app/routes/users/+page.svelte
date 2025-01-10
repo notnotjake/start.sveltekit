@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores'
+	import { page } from '$app/state'
 	import { enhance } from '$app/forms'
 	import { invalidateAll } from '$app/navigation'
 	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
 
-	const users = $page.data.users
+	const users = page.data.users
 
 	let creating = $state(false)
 
