@@ -46,6 +46,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@fontsource/inter": "^5.1.1",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"better-sqlite3": "^11.7.0",

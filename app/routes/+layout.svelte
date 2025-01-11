@@ -1,15 +1,16 @@
 <script>
 	import '$tailwind'
+	import '@fontsource/inter/index.css'
 
-	import { createFonts, LoadFonts, url } from '$utils/Fonts'
 	import { LoadMeta } from '$utils/Meta'
+	// import { createFonts, LoadFonts, url } from '$utils/Fonts'
 
-	const Fonts = createFonts()
+	// const Fonts = createFonts() // Use this to import any self-hosted or licensed fonts
 
 	let { children } = $props()
 </script>
 
 <LoadMeta debug={false} />
-<LoadFonts {Fonts} debug={false} />
+<!-- <LoadFonts {Fonts} debug={false} />  -->
 
 {@render children?.()}

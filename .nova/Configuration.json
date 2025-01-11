@@ -5,14 +5,14 @@
   ],
   "eablokker.tabsSidebar.config.customKindGroupsOrder" : [
     "markdown",
-    "typescript",
-    "svelte"
+    "typescript"
   ],
   "eablokker.tabsSidebar.config.customTabOrder" : [
     "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/TODO.md",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/properties.ts",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/todo.md",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/mount.svelte"
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/+layout.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/nested\/+page.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/+layout.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/+page.ts"
   ],
   "index.ignored_file_patterns" : [
     ".svelte-kit",
