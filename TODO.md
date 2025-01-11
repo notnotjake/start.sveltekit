@@ -1,4 +1,4 @@
-finish meta tags utility
+--DONE finish meta tags utility
 
 setup database seeding, create seeds for database
 

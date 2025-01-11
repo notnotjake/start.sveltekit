@@ -1,18 +1,9 @@
-import type { TwitterCard } from './twitter-card.types'
-import type { OpenGraph } from './opengraph.types'
-
 export type Metadata = {
 	/** Canonical URL for the page */
 	canonical?: string // og:url link:rel:canonical
 
-	// Browser Appearance
-	icon?:
-		| string
-		| {
-				url: string
-				size: number
-				type?: string
-		  }
+	icon?: string | IconOpinionated
+
 	/** Used for Safari Pinned Tabs */
 	maskIcon?: {
 		/** Should provide an svg file */
@@ -20,70 +11,77 @@ export type Metadata = {
 		/** Should provide a color in a hex value */
 		color?: string
 	}
-	/** Theme color for browser UI elements */
-	theme?: string // meta:theme-color
+
+	/**
+	 * Theme color for the browser UI elements
+	 * You can provide a single string (hex, rgb, etc.)
+	 * or an object with { light, dark } variants.
+	 */
+	theme?:
+		| string
+		| {
+				light: string
+				dark: string
+		  }
+
 	/** Color scheme preference for the page */
 	colorScheme?: string // meta:color-scheme
 
 	// Basic Data
 	sitename?: string // og:sitename
+
 	/** @maxLength 70 chars for Twitter */
 	title?: string // og:title meta:title
+
 	/**
 	 * Template for constructing children page titles
 	 * Example: "Reviews - {page}"
 	 */
 	titleTemplate?: string // used to infer og:title meta:title twitter:title
+
 	/** @maxLength 200 chars for Twitter */
 	description?: string // og:description twitter:description meta:description
 
 	/** Content Author(s) */
 	author?: string | Array<string> // meta:author og:author
+
 	/** The X Account for the publishing site */
 	twitterSite?: string // twitter:site
+
 	/** The X Account for the author/creator of this page */
 	twitterCreator?: string // twitter:creator
+
 	/**
 	 * Publication Date
 	 * @format ISO 8601 */
 	date?: string // og meta
+
 	/** Last Modified Date */
 	modified?: string // og:modified-time meta:modified meta:last-modified
 
-	// Media
 	/**
 	 * Content type configuration
 	 * Used to determine appropriate meta tags and social card formats
 	 */
 	type?: ContentType
 } & ImageConfig &
-	VideoConfig & {
-		// Full Twitter, OpenGraph spec available
-		/**
-		 * Full Twitter Card configuration
-		 * Overrides individual properties if specified
-		 */
-		twitter?: TwitterCard
-		/**
-		 * Full OpenGraph configuration
-		 * Overrides individual properties if specified
-		 */
-		opengraph?: OpenGraph
-	}
+	VideoConfig
 
-type IconAdvanced = {
-	/** URL to the icon file */
-	url: string
-	/** The size in pixels of one of the dimensions. "32" will result in "32x32" */
-	size?: number
-	/** Optionally declare the image type. Example: "image/x-icon" */
-	type?: string
+type IconOpinionated = {
+	svg?: string
+	small?: {
+		url: string
+		size: number
+		type?: string
+	}
+	large?: {
+		url: string
+		size: number
+		type?: string
+	}
 }
 
 type ContentType = 'basic' | 'article' | 'largeImage' | 'player' | ContentTypeAdvanced
-/**
- * Advanced content type configuration allowing separate Twitter and OpenGraph types
- */
 type ContentTypeAdvanced = {
 	twitter: 'summary' | 'largeImage' | 'player'
 	og: 'website' | 'article'
@@ -111,7 +109,6 @@ type ImageConfig =
 	| { image: string | Media; images?: never }
 	| { image?: never; images: Array<Media> }
 	| { image?: never; images?: never }
-
 // Make video/videos mutually exclusive
 type VideoConfig = {
 	video?: string | Media

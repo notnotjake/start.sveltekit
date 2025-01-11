@@ -57,12 +57,20 @@
 			<link rel="icon" href={meta.icon} />
 			<link rel="apple-touch-icon" href={meta.icon} />
 		{:else}
-			<link
-				rel="icon"
-				href={meta.icon.url}
-				sizes={`${meta.icon.size}x${meta.icon.size}`}
-				type={`image/${meta.icon.type || 'png'}`}
-			/>
+			{#if meta.icon.svg}
+				<link rel="icon" type="image/svg+xml" href={meta.icon.svg} />
+			{/if}
+			{#if meta.icon.small}
+				<link rel="icon" type={meta.icon.small.type || 'image/png'} href={meta.icon.small.url} />
+			{/if}
+			{#if meta.icon.large}
+				<link rel="icon" type={meta.icon.small.type || 'image/png'} href={meta.icon.small.url} />
+				<link
+					rel="apple-touch-icon"
+					type={meta.icon.small.type || 'image/png'}
+					href={meta.icon.small.url}
+				/>
+			{/if}
 		{/if}
 	{/if}
 
@@ -73,7 +81,12 @@
 
 	<!-- APPEARENCE: Theme Color -->
 	{#if meta.theme}
-		<meta name="theme-color" content={meta.theme} />
+		{#if typeof meta.theme === 'object'}
+			<meta name="theme-color" content={meta.theme.light} media="(prefers-color-scheme: light)" />
+			<meta name="theme-color" content={meta.theme.dark} media="(prefers-color-scheme: dark)" />
+		{:else}
+			<meta name="theme-color" content={meta.theme} />
+		{/if}
 	{/if}
 
 	<!-- APPEARENCE: Color Scheme -->

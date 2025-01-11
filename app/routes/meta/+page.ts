@@ -17,9 +17,9 @@ export const load: PageLoad = async ({ parent }) => {
 		},
 		theme: '#020202',
 		colorScheme: 'light dark',
-		sitename: 'SvelteKit Starter',
-		title: 'Meta Utility',
-		titleTemplate: '{layout}: {page}',
+		sitename: 'SvelteKit Meta',
+		title: 'Meta Testing',
+		titleTemplate: 'Test {page}',
 		description:
 			'The meta utility allows us to set metadata in a sveltekit native way with data-cascade',
 		author: ['Jake Go', 'Another'],
@@ -27,7 +27,7 @@ export const load: PageLoad = async ({ parent }) => {
 		twitterCreator: '@notnotjake',
 		date: '2024-11-13',
 		modified: '2024-11-13',
-		type: 'basic',
+		type: 'player',
 		image: {
 			url: 'imageurl.png',
 			alt: 'A photo of a happy puppy'
