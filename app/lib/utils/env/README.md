@@ -2,9 +2,9 @@
 
 This tool provides environment variable validation using [Zod](https://zod.dev/) and makes validated environment variables accessible across:
 
-- **SvelteKit server-side** (`$lib/env/server`)
-- **SvelteKit client-side** (`$lib/env/client`) (though client-side usage is generally unnecessary)
-- **External processes** (such as `drizzle.config.ts` or other Node.js scripts) via `import { env } from './src/lib/env'`
+- **SvelteKit server-side** (`$utils/env/server`)
+- **SvelteKit client-side** (`$utils/env/client`) (though client-side usage is generally unnecessary)
+- **External processes** (such as `drizzle.config.ts` or other Node.js scripts) via `import { env } from './src/lib/utils/env'`
 	- When running this way it supports **layered environment variables**, ensuring values from `.env.development` or `.env.production` merge with `.env`.
 
 ### Features
@@ -49,7 +49,7 @@ export const envSchema = z.object({
 For server-side usage, import the validated environment
 
 ```
-import { env } from '$lib/env/server';
+import { env } from '$utils/env/server';
 
 console.log(env.DB_URL);
 ```
@@ -71,7 +71,7 @@ Validating environment variables every time they are accessed adds minor overhea
 When running a script outside of SvelteKit (e.g., usage in drizzle.config.ts)
 
 ```
-import { env } from './src/lib/env';
+import { env } from './src/lib/utils/env';
 
 console.log(env.DB_URL);
 ```
@@ -85,7 +85,7 @@ console.log(env.DB_URL);
 Client-side usage is possible **but typically unnecessary**
 
 ```
-import { env } from '$lib/env/client';
+import { env } from '$utils/env/client';
 
 console.log(env.PUBLIC_API_KEY);
 ```

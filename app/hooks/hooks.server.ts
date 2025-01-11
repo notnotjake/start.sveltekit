@@ -1,5 +1,5 @@
 import type { Handle } from '@sveltejs/kit'
-import { env } from '$lib/env/server'
+import { env } from '$utils/env/server'
 import { building } from '$app/environment'
 // import { validate } from 'envv'
 

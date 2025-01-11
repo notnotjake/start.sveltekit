@@ -1,4 +1,4 @@
-import { envSchema } from '../../../env.schema'
+import { envSchema } from '../../../../env.schema'
 import { getEnvs } from './get-envs'
 import { filterEnv } from './filter'
 import { validateEnv } from './validate'

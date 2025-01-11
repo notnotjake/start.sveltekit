@@ -1,4 +1,4 @@
-import { envSchema } from '../../../env.schema'
+import { envSchema } from '../../../../env.schema'
 import * as private_env from '$env/static/private'
 import * as public_env from '$env/static/public'
 import { filterEnv } from './filter'
