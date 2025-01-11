@@ -16,11 +16,10 @@ export const publicSchema = z.object({
 	PUBLIC_ANALYTICS: z.coerce.boolean()
 })
 
-export const combinedSchema = z.object({
+export const envSchema = z.object({
 	...privateSchema.shape,
 	...publicSchema.shape
 })
 
 export type PrivateEnv = z.infer<typeof privateSchema>
 export type PublicEnv = z.infer<typeof publicSchema>
-export type CombinedEnv = z.infer<typeof combinedSchema>

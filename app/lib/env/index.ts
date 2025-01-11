@@ -1,23 +1,10 @@
-import { combinedSchema, type CombinedEnv } from './env.schema'
+import { envSchema } from '../../../env.schema'
+import { getEnvs } from './get-envs'
+import { filterEnv } from './filter'
 import { validateEnv } from './validate'
 
-const process_env = process.env
+const process_env = getEnvs()
 
-function getEnvs(): Record<string, string> {
-	const envVars: Record<string, string> = {}
+const envs = filterEnv(process_env, envSchema) // Filters out non-application envs
 
-	// Filters environment variables to just those defined in our schema
-	// Removes all the other variables that are in runtime's shell execution
-	const APP_ENV_KEYS = Object.keys(combinedSchema.shape)
-	for (const key of APP_ENV_KEYS) {
-		if (key in process_env) {
-			envVars[key] = (process_env as Record<string, string>)[key]
-		}
-	}
-
-	return envVars
-}
-
-const envs = getEnvs()
-
-export const env = validateEnv(envs, combinedSchema)
+export const env = validateEnv(envs, envSchema) // Validates envs with zod based on supplied schema

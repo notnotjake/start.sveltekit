@@ -1,7 +1,7 @@
-// import { env } from '../../env'
 import type { Handle } from '@sveltejs/kit'
-import { env } from '$lib/env/private'
+import { env } from '$lib/env/server'
 import { building } from '$app/environment'
+// import { validate } from 'envv'
 
 if (!building) {
 	try {
