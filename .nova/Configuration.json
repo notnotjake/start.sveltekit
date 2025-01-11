@@ -1,5 +1,19 @@
 {
   "com.gingerbeardman.Bookmark.bookmarks" : "[\"\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/+layout.svelte\",\"\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/playground\/+page.svelte\"]",
+  "eablokker.tabsSidebar.config.collapsedFolders" : [
+
+  ],
+  "eablokker.tabsSidebar.config.customKindGroupsOrder" : [
+    "markdown",
+    "typescript",
+    "svelte"
+  ],
+  "eablokker.tabsSidebar.config.customTabOrder" : [
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/TODO.md",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/properties.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/todo.md",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/utils\/Meta\/mount.svelte"
+  ],
   "index.ignored_file_patterns" : [
     ".svelte-kit",
     ".git",
