@@ -1,31 +1,29 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 
-export const userTable = sqliteTable('user', {
+export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	identifier: text('identifier').notNull()
 })
-export type User = InferSelectModel<typeof userTable>
-export type NewUser = InferInsertModel<typeof userTable>
+export type User = InferSelectModel<typeof user>
+export type NewUser = InferInsertModel<typeof user>
 
-export const sessionTable = sqliteTable('user_session', {
+export const session = sqliteTable('user_session', {
 	id: text('id').primaryKey(),
-	userId: integer('user_id')
+	userId: text('user_id')
 		.notNull()
-		.references(() => userTable.id),
-	expiresAt: integer('expires_at', {
-		mode: 'timestamp'
-	}).notNull()
+		.references(() => user.id),
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+	invalidatedAt: integer('invalidated_at', { mode: 'timestamp' })
 })
-export type Session = InferSelectModel<typeof sessionTable>
-export type NewSession = InferInsertModel<typeof sessionTable>
+export type Session = InferSelectModel<typeof session>
+export type NewSession = InferInsertModel<typeof session>
 
-export const keyTable = sqliteTable('user_key', {
+export const key = sqliteTable('user_key', {
 	id: text('id').primaryKey(),
 	userId: integer('user_id')
 		.notNull()
-		.references(() => userTable.id),
+		.references(() => user.id),
 	secure_key: text('secure_key')
 })

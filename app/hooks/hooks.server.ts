@@ -1,7 +1,7 @@
 import type { Handle } from '@sveltejs/kit'
-import { env } from '$utils/env/server'
 import { building } from '$app/environment'
-// import { validate } from 'envv'
+import { env } from '$utils/env/server'
+import { applySecurityHeaders } from '$utils/security-headers'
 
 if (!building) {
 	try {
@@ -15,5 +15,11 @@ if (!building) {
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
-	return await resolve(event)
+	const response = await resolve(event)
+
+	if (event.url.pathname.startsWith('/admin')) {
+		applySecurityHeaders(response)
+	}
+
+	return response
 }
