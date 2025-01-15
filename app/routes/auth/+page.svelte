@@ -7,7 +7,7 @@
 <div class="p-4">
 	<h1 class="mb-4 text-2xl font-bold">Auth Testing Page</h1>
 
-	<form method="POST" action="?/createTestSession">
+	<form method="POST" action="?/sendMagicLinkEmail">
 		<button class="rounded bg-blue-500 px-4 py-2 text-white"> Create Test Session </button>
 	</form>
 
@@ -16,9 +16,10 @@
 			<h2 class="mb-2 text-xl font-semibold">Result:</h2>
 			{#if form.success}
 				<div class="space-y-2">
+					<p>Success</p>
 					<!-- <p><strong>User ID:</strong> {form.data.userId}</p> -->
-					<p><strong>Session Token:</strong> {form.data.token}</p>
-					<p><strong>Session ID (hashed):</strong> {form.data.sessionId}</p>
+					<!-- <p><strong>Session Token:</strong> {form.data.token}</p>
+					<p><strong>Session ID (hashed):</strong> {form.data.sessionId}</p> -->
 					<!-- <p><strong>Expires At:</strong> {form.data.session.expiresAt}</p> -->
 				</div>
 			{:else}

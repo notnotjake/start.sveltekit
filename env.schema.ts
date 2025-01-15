@@ -6,6 +6,7 @@ export const privateSchema = z.object({
 	// Database
 	DB_URL: z.string(),
 
+	RESEND_API: z.string(),
 	JWT_SECRET: z.string().min(32),
 	CACHE_TTL: z.coerce.number().int().positive().default(3600)
 })

@@ -70,6 +70,8 @@
 	</div>
 </div>
 
+<div class="rounded-full"><p>Or Login Using Another Device</p></div>
+
 <div class="mx-auto mb-6 flex w-fit flex-row gap-8 rounded-full bg-[hsla(0,0%,97%,1)] px-6 py-3">
 	<a
 		href="/help"

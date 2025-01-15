@@ -4,15 +4,26 @@
 
   ],
   "eablokker.tabsSidebar.config.customKindGroupsOrder" : [
-    "markdown",
-    "typescript"
+    "typescript",
+    "svelte",
+    "json"
   ],
   "eablokker.tabsSidebar.config.customTabOrder" : [
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/TODO.md",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/+layout.ts",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/nested\/+page.ts",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/+layout.ts",
-    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/meta\/+page.ts"
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/db\/schema\/auth.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/hooks\/hooks.server.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/auth\/+page.server.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/magic-link.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/index.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/utils.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/session.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/cookie.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/server\/auth\/email.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/components\/auth\/OAuthOptions.svelte",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/login\/+page.svelte",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/db\/reset.ts",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/routes\/playground\/invoice\/+page.svelte",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/app\/lib\/components\/invoicing\/invoice\/line-item.svelte",
+    "file:\/\/\/Users\/jake\/Development\/utils\/sveltekit-start\/package.json"
   ],
   "index.ignored_file_patterns" : [
     ".svelte-kit",

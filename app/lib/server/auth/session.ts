@@ -2,19 +2,10 @@ import { db } from '$lib/server/db'
 import { eq, and, isNull } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { Session, User } from '$lib/server/db/schema/auth'
-import { sha256 } from '@oslojs/crypto/sha2'
-import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding'
+
+import { generateToken, hashToken } from './utils'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
-
-export function generateToken(byteLength: number = 32): string {
-	const bytes = crypto.getRandomValues(new Uint8Array(byteLength))
-	return encodeBase64url(bytes)
-}
-
-export function hashToken(token: string): string {
-	return encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
-}
 
 export function generateSessionToken(): string {
 	return generateToken()
@@ -36,11 +27,15 @@ export function createSession(token: string, userId: string): Session {
 	return session
 }
 
-export async function validateSession(token: string): Promise<SessionValidationResult> {
+export async function validateSessionToken(token: string) {
 	const sessionId = hashToken(token)
 	const [result] = await db
 		.select({
-			user: table.user,
+			user: {
+				id: table.user.id,
+				name: table.user.name,
+				identifier: table.user.identifier
+			},
 			session: table.session
 		})
 		.from(table.session)
@@ -78,9 +73,7 @@ export async function validateSession(token: string): Promise<SessionValidationR
 	return { session, user }
 }
 
-export async function invalidateSession(
-	sessionId: string
-): Promise<{ success: boolean; error?: string }> {
+export async function invalidateSession(sessionId: string): Promise<Result> {
 	try {
 		// Perform invalidation
 		const [affectedSession] = await db
@@ -105,9 +98,7 @@ export async function invalidateSession(
 	}
 }
 
-export async function invalidateAllUserSessions(
-	userId: string
-): Promise<{ success: boolean; error?: string }> {
+export async function invalidateAllUserSessions(userId: string): Promise<Result> {
 	try {
 		// Perform invalidation
 		await db
@@ -136,6 +127,6 @@ export async function invalidateAllUserSessions(
 	}
 }
 
-export type SessionValidationResult =
-	| { session: Session; user: User }
-	| { session: null; user: null }
+export type Result = { success: boolean; error?: string }
+
+export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>
