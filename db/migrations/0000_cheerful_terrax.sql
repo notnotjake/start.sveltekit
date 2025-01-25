@@ -1,13 +1,32 @@
+CREATE TABLE `auth_attempt` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`type` text NOT NULL,
+	`credential` text,
+	`session_id` text,
+	`ip_address` text,
+	`user_agent` text,
+	`expires_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`session_id`) REFERENCES `user_session`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `user_key` (
 	`id` text PRIMARY KEY NOT NULL,
-	`user_id` integer NOT NULL,
-	`secure_key` text,
+	`user_id` text NOT NULL,
+	`type` text NOT NULL,
+	`credential` text,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `user_session` (
 	`id` text PRIMARY KEY NOT NULL,
-	`user_id` text NOT NULL,
+	`user_id` text,
+	`ip_address` text,
+	`user_agent` text,
+	`created_at` text NOT NULL,
 	`expires_at` integer NOT NULL,
 	`invalidated_at` integer,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
@@ -16,7 +35,9 @@ CREATE TABLE `user_session` (
 CREATE TABLE `user` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
-	`identifier` text NOT NULL
+	`identifier` text NOT NULL,
+	`created_at` integer NOT NULL,
+	`last_seen_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `contact` (
