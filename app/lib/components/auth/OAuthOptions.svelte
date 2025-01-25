@@ -10,7 +10,7 @@
 			<div class="shrink-1 relative flex w-full grow basis-1 flex-col items-center">
 				<button
 					type="button"
-					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-200/50 px-4 font-[450] text-zinc-900 outline-none"
+					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-100 px-4 font-[450] text-zinc-900 outline-none"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +30,7 @@
 			<div class="shrink-1 relative flex w-full grow basis-1 flex-col items-center">
 				<button
 					type="button"
-					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-200/50 px-4 font-[450] text-zinc-900 outline-none"
+					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-100 px-4 font-[450] text-zinc-900 outline-none"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@
 			<div class="shrink-1 relative flex w-full grow basis-1 flex-col items-center">
 				<button
 					type="button"
-					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-200/50 px-4 font-[450] text-zinc-900 outline-none"
+					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-100 px-4 font-[450] text-zinc-900 outline-none"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -77,9 +77,23 @@
 			<div class="shrink-1 relative flex w-full grow basis-1 flex-col items-center">
 				<button
 					type="button"
-					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border border-2 px-4 font-[450] text-zinc-900 outline-none"
+					class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-1 rounded-[0.9rem] border-none bg-neutral-100 px-4 text-[0.95rem] font-[450] text-zinc-900 outline-none"
 				>
-					Another Device
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.05em"
+						height="1.05em"
+						viewBox="0 0 256 256"
+						><g fill="currentColor"
+							><path
+								d="M200 64v16h-24a16 16 0 0 0-16 16v80H40a16 16 0 0 1-16-16V64a16 16 0 0 1 16-16h144a16 16 0 0 1 16 16"
+								opacity="0.2"
+							/><path
+								d="M224 72h-16v-8a24 24 0 0 0-24-24H40a24 24 0 0 0-24 24v96a24 24 0 0 0 24 24h112v8a24 24 0 0 0 24 24h48a24 24 0 0 0 24-24V96a24 24 0 0 0-24-24M40 168a8 8 0 0 1-8-8V64a8 8 0 0 1 8-8h144a8 8 0 0 1 8 8v8h-16a24 24 0 0 0-24 24v72Zm192 24a8 8 0 0 1-8 8h-48a8 8 0 0 1-8-8V96a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Zm-96 16a8 8 0 0 1-8 8H88a8 8 0 0 1 0-16h40a8 8 0 0 1 8 8m80-96a8 8 0 0 1-8 8h-16a8 8 0 0 1 0-16h16a8 8 0 0 1 8 8"
+							/></g
+						></svg
+					>
+					Scan QR
 				</button>
 			</div>
 		</div>
