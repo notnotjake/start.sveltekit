@@ -8,8 +8,8 @@
 	--font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
 		'Segoe UI Symbol', 'Noto Color Emoji';
 	--font-inter: 'Inter V', 'Inter Var', 'Inter', var(--font-sans);
-	--font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"',
-		'"Courier New"', 'monospace';
+	--font-mono: '--default-mono-font-family', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco',
+		'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace';
 	--font-headline: 'Unbounded Var';
 
 	--tracking-tight-sm: -0.011em;
