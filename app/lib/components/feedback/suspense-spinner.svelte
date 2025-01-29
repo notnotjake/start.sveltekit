@@ -1,14 +1,8 @@
-<!-- <script lang="ts">
+<script lang="ts">
+	let { size = '22px' } = $props()
 </script>
 
-<div
-	class="relative flex h-6 min-w-14 items-center justify-center overflow-hidden rounded-full bg-gray-200 px-3 py-1 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.9s_ease-out_infinite] before:bg-gradient-to-r before:from-transparent before:via-slate-100/70 before:to-transparent"
-></div> -->
-<script>
-	export let size = '22px'
-</script>
-
-<div class="spinner" style="width: {size}; height: {size};">
+<div class="inline-block" style="width: {size}; height: {size};">
 	<svg viewBox="0 0 40 40">
 		<defs>
 			<linearGradient
@@ -39,9 +33,3 @@
 		</path>
 	</svg>
 </div>
-
-<style>
-	.spinner {
-		display: inline-block;
-	}
-</style>

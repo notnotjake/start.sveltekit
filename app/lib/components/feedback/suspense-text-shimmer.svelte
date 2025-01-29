@@ -5,8 +5,8 @@
 	type Props = {
 		children: Snippet
 		class: string
-		duration: number
-		spread: number
+		duration?: number
+		spread?: number
 	}
 	let { children, class: classProp, duration = 2, spread = 6 }: Props = $props()
 
@@ -20,18 +20,20 @@
 	let totalSpread = $derived(spread * textLength)
 </script>
 
-<p
-	bind:this={element}
-	style:--duration={`calc(${textLength} * 0.2s)`}
-	style:--spread={`calc(${spread} * 0.5ch)`}
-	class={createClass(
-		'relative inline-block whitespace-nowrap text-transparent',
-		preserveClass('text-shimmer'),
-		classProp
-	)}
->
-	{@render children()}
-</p>
+<div class="animate-fade-in-scale">
+	<p
+		bind:this={element}
+		style:--duration={`calc(${textLength} * 0.15s)`}
+		style:--spread={`calc(${spread} * 0.5ch)`}
+		class={createClass(
+			'relative inline-block whitespace-nowrap text-transparent',
+			preserveClass('text-shimmer'),
+			classProp
+		)}
+	>
+		{@render children()}
+	</p>
+</div>
 
 <style>
 	.text-shimmer {
@@ -51,14 +53,14 @@
 		background-clip: text;
 		color: transparent;
 
-		animation: shimmer var(--duration) infinite both linear;
+		animation: shimmer var(--duration) infinite both ease-out;
 	}
 	@keyframes shimmer {
 		0% {
 			background-position: 100% center;
 		}
 		100% {
-			background-position: 0% center;
+			background-position: -30% center;
 		}
 	}
 </style>
