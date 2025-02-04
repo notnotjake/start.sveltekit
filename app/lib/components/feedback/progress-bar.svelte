@@ -1,10 +1,27 @@
 <script lang="ts">
-	let { percent = 20 } = $props()
+	import { createClass } from '$utils/create-class'
+
+	type Props = {
+		class?: string
+		percent: number
+		background?: string
+		tint?: string
+	}
+	let {
+		class: classProp,
+		percent = 42,
+		background = 'var(--color-sky-100)',
+		tint = 'var(--color-sky-500)'
+	} = $props()
 </script>
 
-<div class="relative h-2 w-20 overflow-hidden rounded-full bg-sky-100">
+<div
+	style:background
+	class={createClass('relative h-2 w-20 overflow-hidden rounded-full', classProp)}
+>
 	<div
 		style:width={`${percent}%`}
-		class="absolute top-0 left-0 h-full bg-sky-500 transition-[border-radius] duration-200"
+		style:background={tint}
+		class="absolute inset-0 h-full transition-all duration-150"
 	></div>
 </div>

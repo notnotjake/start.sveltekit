@@ -1,6 +1,6 @@
 <script>
 	export let value = ''
-	export let pattern = { count: 2, token: '/', repeat: 2 }
+	export let pattern = { count: 4, token: '-', repeat: 4 }
 	export let placeholder = ''
 	export let nextRef = null
 
@@ -9,7 +9,8 @@
 	$: maxLength = pattern.count * pattern.repeat
 
 	function handleInput(e) {
-		const newValue = e.target.value.replace(/\D/g, '')
+		// Remove all non-digits and any separators
+		const newValue = e.target.value.replace(/[^\d]/g, '')
 
 		if (newValue.length <= maxLength) {
 			value = newValue
@@ -21,7 +22,7 @@
 				e.target.selectionStart === e.target.value.length
 			) {
 				// Insert the token right away
-				e.target.value = e.target.value + pattern.token
+				e.target.value = formatValue(newValue) + pattern.token
 			}
 
 			if (newValue.length === maxLength && nextRef) {
@@ -30,26 +31,24 @@
 		}
 	}
 
-	$: {
+	function formatValue(val) {
 		let result = ''
-		let pos = 0
 
-		for (let i = 0; i < pattern.repeat && pos < value.length; i++) {
-			result += value.slice(pos, pos + pattern.count)
+		// Split the string into chunks of size pattern.count
+		for (let i = 0; i < val.length; i += pattern.count) {
+			const chunk = val.slice(i, i + pattern.count)
+			result += chunk
 
-			if (
-				result.length === pattern.count * (i + 1) &&
-				i < pattern.repeat - 1 &&
-				value.length > pos + pattern.count
-			) {
+			// Add separator if this isn't the last chunk and we have more numbers
+			if (i + pattern.count < val.length) {
 				result += pattern.token
 			}
-
-			pos += pattern.count
 		}
 
-		formatted = result
+		return result
 	}
+
+	$: formatted = formatValue(value)
 </script>
 
 <input {placeholder} value={formatted} on:input={handleInput} />

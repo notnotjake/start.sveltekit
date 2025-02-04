@@ -4,11 +4,11 @@
 
 	type Props = {
 		children: Snippet
-		class: string
-		duration?: number
+		class?: string
+		speed?: number
 		spread?: number
 	}
-	let { children, class: classProp, duration = 2, spread = 6 }: Props = $props()
+	let { children, class: classProp, speed = 0.15, spread = 6 }: Props = $props()
 
 	let element: HTMLElement
 
@@ -16,14 +16,13 @@
 	$effect(() => {
 		textLength = element.innerText.length
 	})
-
 	let totalSpread = $derived(spread * textLength)
 </script>
 
 <div class="animate-fade-in-scale">
 	<p
 		bind:this={element}
-		style:--duration={`calc(${textLength} * 0.15s)`}
+		style:--duration={`calc(${textLength} * ${speed}s)`}
 		style:--spread={`calc(${spread} * 0.5ch)`}
 		class={createClass(
 			'relative inline-block whitespace-nowrap text-transparent',
@@ -39,7 +38,6 @@
 	.text-shimmer {
 		--base-color: #828282;
 		--base-gradient-color: #000;
-
 		background:
 			linear-gradient(
 					100deg,
@@ -49,10 +47,8 @@
 				)
 				0 0 / 250% 100% no-repeat border-box,
 			linear-gradient(var(--base-color), var(--base-color)) padding-box;
-
-		background-clip: text;
 		color: transparent;
-
+		background-clip: text;
 		animation: shimmer var(--duration) infinite both ease-out;
 	}
 	@keyframes shimmer {

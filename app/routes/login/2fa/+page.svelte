@@ -1,13 +1,8 @@
 <script lang="ts">
+	import type { PageData } from './$types'
+
 	import { createClass } from '$utils/create-class'
 	import { fade } from 'svelte/transition'
-
-	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
-	import Spinner from '$ui/feedback/suspense-spinner.svelte'
-	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
-
-	import type { PageData } from './$types'
-	import SkeletonLoader from '$ui/feedback/suspense-skeleton.svelte'
 
 	import PinCell from '$ui/auth/pin.svelte'
 

@@ -1,19 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types'
-
+	import { fade } from 'svelte/transition'
 	import { createClass } from '$utils/create-class'
-
+	import { Suspense, Progress } from '$ui/feedback'
 	import PasswordInput from '$ui/auth/password-input.svelte'
 	import PasskeyButton from '$ui/auth/passkey-button.svelte'
 	import OAuth from '$ui/auth/oauth.svelte'
 	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
+	import Arrow from '$lib/theme/icons/arrow-circle-fill.svelte'
 
 	import Divider from '$ui/divider.svelte'
-	import SkeletonLoader from '$ui/feedback/suspense-skeleton.svelte'
-	import Spinner from '$ui/feedback/suspense-spinner.svelte'
-	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
-
-	// export const data: PageData
 
 	let identifier = $state('')
 	let editIdentity = $state(false)
@@ -34,6 +30,8 @@
 		error = !error
 		buttonElementWidth = buttonElement?.offsetWidth || 0
 	}
+
+	let showBackButton = $state(false)
 </script>
 
 <div
@@ -47,11 +45,28 @@
 		placeholder="Continue with email"
 		bind:value={identifier}
 		aria-label="Enter your email or phone"
+		onfocusin={() => {
+			next = false
+		}}
 		class={createClass(
 			'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-			next ? 'bg-none pr-4 text-center' : 'pr-1'
+			next ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 		)}
 	/>
+
+	{#if next}
+		<div
+			in:fade={{ duration: 150, delay: 500 }}
+			class="pointer-events-none absolute flex h-full w-full cursor-pointer items-center justify-center bg-neutral-200 opacity-0 transition-all duration-300 group-hover:opacity-100"
+		>
+			<div
+				class="flex items-center justify-center rounded-full bg-neutral-50 px-1 py-1 inset-ring-[1px] shadow-xs inset-ring-neutral-300/80"
+			>
+				<Arrow class="mr-1 h-5 w-5 rotate-180 p-[0.1rem] text-neutral-400" />
+				<p class="pr-2 text-sm font-medium">Go Back to Options</p>
+			</div>
+		</div>
+	{/if}
 
 	<button
 		onclick={handleNext}
@@ -70,18 +85,9 @@
 				Email Invalid
 			</p>
 		{:else}
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				fill="currentColor"
+			<Arrow
 				class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
-				viewBox="0 0 16 16"
-			>
-				<path
-					d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
-				/>
-			</svg>
+			/>
 		{/if}
 	</button>
 </div>

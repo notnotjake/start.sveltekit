@@ -1,11 +1,29 @@
 <script lang="ts">
 	import { createClass, preserveClass } from '$utils/create-class'
+
+	type Props = {
+		class?: string
+		spread?: number
+		background?: string
+		tint?: string
+	}
+	let {
+		class: classProp,
+		spread = 80,
+		background = 'var(--color-sky-100)',
+		tint = 'var(--color-sky-500)'
+	} = $props()
 </script>
 
-<div class="relative h-2 w-20 overflow-hidden rounded-full bg-sky-100">
+<div
+	style:background
+	class={createClass('relative h-2 w-20 overflow-hidden rounded-full', classProp)}
+>
 	<div class="suspense-bar h-full w-full">
 		<div
-			class="absolute top-0 -left-full h-full w-[80%] bg-gradient-to-r from-sky-500/0 via-sky-500 to-sky-500/0"
+			style:--tint={tint}
+			style:width={`${spread}%`}
+			class="absolute top-0 -left-full h-full bg-gradient-to-r from-(--tint)/0 via-(--tint) to-(--tint)/0"
 		></div>
 	</div>
 </div>

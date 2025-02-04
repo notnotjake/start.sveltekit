@@ -2,7 +2,9 @@
 	let { children } = $props()
 </script>
 
-<div class="flex h-full w-full flex-shrink-0 flex-col items-center justify-center overflow-scroll">
+<div
+	class="flex h-full w-full flex-shrink-0 flex-col items-center justify-center overflow-scroll bg-white"
+>
 	{@render title()}
 
 	<div data-desc="container" class="mt-20 mb-12 flex h-full flex-col items-center">
@@ -14,7 +16,7 @@
 
 			<div
 				data-desc="platter inner"
-				class="flex h-full w-full flex-col items-center gap-3 rounded-[calc(1.3rem-0.5rem)] bg-white px-3.5 pt-7 pb-3 shadow-xs"
+				class="flex h-full w-full flex-col items-center gap-3 rounded-[calc(1.3rem-0.5rem)] bg-white bg-white px-3.5 pt-7 pb-3 shadow-xs"
 			>
 				{@render children?.()}
 			</div>
