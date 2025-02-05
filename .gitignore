@@ -9,6 +9,7 @@ node_modules
 # Database
 /db/*
 !/db/migrations/
+!/db/*.ts
 
 
 # OS
@@ -29,3 +30,4 @@ vite.config.ts.timestamp-*
 .flaskenv*
 !.env.project
 !.env.vault
+/.nova/Configuration.json

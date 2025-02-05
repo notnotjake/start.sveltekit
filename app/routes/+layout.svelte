@@ -1,6 +1,6 @@
 <script>
 	import '$tailwind'
-	import '@fontsource/inter/index.css'
+	import '@fontsource-variable/inter/index.css'
 
 	import { LoadMeta } from '$utils/Meta'
 	// import { createFonts, LoadFonts, url } from '$utils/Fonts'
