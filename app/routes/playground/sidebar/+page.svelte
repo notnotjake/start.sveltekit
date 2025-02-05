@@ -5,28 +5,33 @@
 
 	const sidebarMin = 150
 	const sidebarMax = 500
-	let sidebarContentSize = $state(300) // declarative width of the sidebar's inner content and its expanded width
+	let sidebarContentSize = $state(300)
 
 	let isResizing = $state(false)
 	let isSidebarShown = $state(true)
+	let beforeResizingWidth = $state(null)
 
 	let sidebarWidthTweened = new Tween(sidebarContentSize, {
-		duration: 250,
+		duration: 350,
 		easing: cubicOut
 	})
 
 	function startResize(event) {
 		isResizing = true
 		event.preventDefault()
+		beforeResizingWidth = sidebarContentSize
 	}
 	function stopResize() {
 		isResizing = false
+		beforeResizingWidth = null
 	}
 	function resize(event) {
 		if (!isResizing) return
 		if (event.pageX < 25) {
 			isSidebarShown = !isSidebarShown
+			sidebarContentSize = beforeResizingWidth
 			stopResize()
+			return
 		}
 		const newWidth = Math.max(sidebarMin, Math.min(sidebarMax, event.pageX))
 		sidebarContentSize = newWidth

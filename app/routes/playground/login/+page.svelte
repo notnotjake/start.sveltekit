@@ -2,8 +2,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { z } from 'zod'
-	import Spinner from '$ui/feedback/suspense-spinner.svelte'
-	import TextShimmer from '$ui/feedback/suspense-text-shimmer.svelte'
+	import { Suspense } from '$ui/feedback/'
 
 	const email = z.object({
 		email: z.string().email('Email not accepted')
@@ -61,15 +60,15 @@
 
 		<div>
 			<button
-				class="mb-3 mt-4 w-full rounded-[1.1rem] bg-blue-600 px-2 py-3 text-blue-100 disabled:cursor-not-allowed disabled:bg-blue-200 disabled:text-blue-400"
+				class="mt-4 mb-3 w-full rounded-[1.1rem] bg-blue-600 px-2 py-3 text-blue-100 disabled:cursor-not-allowed disabled:bg-blue-200 disabled:text-blue-400"
 				disabled={$allErrors.length > 0 || $form.email.length < 1}>Submit</button
 			>
 		</div>
 
 		{#if $timeout}
-			<TextShimmer>Still Working</TextShimmer>
+			<Suspense.Text>Still Working</Suspense.Text>
 		{:else if $delayed}
-			<Spinner />
+			<Suspense.Spinner />
 		{/if}
 	</form>
 </div>
