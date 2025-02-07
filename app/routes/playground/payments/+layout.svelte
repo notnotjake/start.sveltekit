@@ -14,7 +14,7 @@
 		<div
 			class="flex min-h-40 w-[23rem] flex-shrink-0 flex-col rounded-[1.3rem] bg-white p-[0.5rem]"
 		>
-			{@render children?.()}
+			{@render children()}
 		</div>
 	</div>
 </div>

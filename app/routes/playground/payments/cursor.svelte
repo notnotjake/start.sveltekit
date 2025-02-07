@@ -3,6 +3,55 @@
 
 	let value = $state('')
 	let pattern = '(###) ### ####'
+	let formatted = $state('')
+
+	function isNumber(char: string): boolean {
+		return /^\d$/.test(char)
+	}
+	function isLetter(char: string): boolean {
+		return /^[a-zA-Z]$/.test(char)
+	}
+
+	$effect(() => {
+		// check value against pattern and update formatted
+		let result = ''
+		let valueIndex = 0
+
+		for (let patternIndex = 0; patternIndex < pattern.length; patternIndex++) {
+			const patternChar = pattern[patternIndex]
+			const valueChar = value[valueIndex]
+
+			if (patternChar === '#') {
+				if (isNumber(valueChar)) {
+					result += valueChar
+					valueIndex++
+				} else {
+					// Remove non-matching character by just advancing the value index
+					valueIndex++
+					patternIndex-- // Stay at the same pattern position
+				}
+			} else if (patternChar === '%') {
+				if (isLetter(valueChar)) {
+					result += valueChar
+					valueIndex++
+				} else {
+					// Remove non-matching character
+					valueIndex++
+					patternIndex--
+				}
+			} else if (patternChar === '*') {
+				result += valueChar
+				valueIndex++
+			} else {
+				result += patternChar
+				// Only advance value index if it matches the pattern character
+				if (valueChar === patternChar) {
+					valueIndex++
+				}
+			}
+		}
+		console.log(result)
+	})
 
 	let length = $derived(value.length)
 
@@ -26,10 +75,11 @@
 	}
 </script>
 
-<svelte:document onselectionchange={updateCursor} />
+<!-- <svelte:document onselectionchange={updateCursor} /> -->
 
 <p>{cursor}</p>
 <p>{end}</p>
+<p>{formatted}</p>
 
 <div class="relative h-fit w-fit">
 	<input
