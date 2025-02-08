@@ -32,12 +32,6 @@
 		}
 	})
 
-	function beforeInput(event) {
-		console.log(event.data, value)
-		const newVal = value + event.data
-		console.log(format(newVal))
-	}
-
 	function cursorTest() {
 		inputElement.selectionStart = 3
 		inputElement.selectionEnd = 3
@@ -119,7 +113,6 @@
 		type="text"
 		bind:this={inputElement}
 		bind:value
-		onbeforeinput={beforeInput}
 		placeholder="Card •••• ••••"
 		maxlength="16"
 		class="min-w-0 pl-4 outline-none focus:placeholder:text-neutral-900"
