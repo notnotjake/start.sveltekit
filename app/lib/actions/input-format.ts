@@ -111,11 +111,13 @@ export function formatInput(element: HTMLInputElement, pattern: string) {
 			isFormatting = false // unlock formatting
 		}
 	}
+	let skipNextInput = false
 	async function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Backspace' && element.selectionStart === element.selectionEnd) {
-			const cursor = element.selectionStart ?? 0
+		if (event.key === 'Backspace') {
+			const cursor = element.selectionEnd ?? 0
 			// Only intervene if the caret is at the end.
 			if (cursor === element.value.length && element.value.length > 0) {
+				skipNextInput = true
 				handleInput(true)
 			}
 		}
@@ -123,7 +125,13 @@ export function formatInput(element: HTMLInputElement, pattern: string) {
 
 	element.maxLength = pattern.length
 
-	element.addEventListener('input', () => handleInput(false))
+	element.addEventListener('input', () => {
+		if (skipNextInput) {
+			skipNextInput = false
+			return
+		}
+		handleInput(false)
+	})
 	element.addEventListener('keydown', handleKeydown)
 
 	return {
