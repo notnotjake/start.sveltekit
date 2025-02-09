@@ -17,6 +17,7 @@ type MaskOnBlurOptions = {
  */
 export function maskOnBlur(element: HTMLInputElement, params: MaskOnBlurOptions) {
 	let options = {
+		maskAtLength: 1,
 		maskCharacter: '&bull;',
 		stripCharacters: '',
 		visibleAtStart: 0,
@@ -32,6 +33,7 @@ export function maskOnBlur(element: HTMLInputElement, params: MaskOnBlurOptions)
 	const mask = document.createElement('div')
 	// Set styles of the hidden wrapper container
 	wrapper.style.position = 'relative'
+	wrapper.style.width = '100%'
 	// Set styles for our mask overlay
 	mask.style.position = 'absolute'
 	mask.style.left = '0'
@@ -69,19 +71,24 @@ export function maskOnBlur(element: HTMLInputElement, params: MaskOnBlurOptions)
 		const startIndex = Math.max(options.truncateFromStart, options.visibleAtStart)
 		const endIndex = Math.max(options.truncateFromEnd, options.visibleAtEnd)
 
+		// Get middle portion and replace with mask characters
 		let middlePortion = processedVal.slice(startIndex, endIndex > 0 ? -endIndex : undefined)
-
-		const visibleStart = processedVal.slice(0, options.visibleAtStart)
-		const visibleEnd = processedVal.slice(-options.visibleAtEnd)
-
-		// Replace middle portion with mask characters
 		const maskedMiddle = middlePortion.replace(/./g, options.maskCharacter)
 
-		const fill = options.truncatedFill
-		let startTruncation = options.truncateFromStart > options.visibleAtStart ? fill : ''
-		let endTruncation = options.truncateFromEnd > options.visibleAtEnd ? fill : ''
+		// Preserve start/end based on visible option
+		const visibleStart = processedVal.slice(0, options.visibleAtStart)
+		processedVal = processedVal.slice(options.visibleAtStart)
+		const visibleEnd = options.visibleAtEnd > 0 ? processedVal.slice(-options.visibleAtEnd) : ''
 
-		return `${visibleStart}${startTruncation}${maskedMiddle}${endTruncation}${visibleEnd}`
+		const fill = options.truncatedFill
+		let startTruncated = ''
+		let endTruncated = ''
+		if (val.length > options.visibleAtStart + options.visibleAtEnd) {
+			startTruncated = options.truncateFromStart > options.visibleAtStart ? fill : ''
+			endTruncated = options.truncateFromEnd > options.visibleAtEnd ? fill : ''
+		}
+
+		return `${visibleStart}${startTruncated}${maskedMiddle}${endTruncated}${visibleEnd}`
 	}
 
 	function handleBlur() {
