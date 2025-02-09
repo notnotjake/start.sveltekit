@@ -1,122 +1,83 @@
 <script lang="ts">
-	import { tick } from 'svelte'
+	import { formatInput, maskOnBlur } from '$lib/actions'
 
-	let value = $state('')
-	let inputElement = $state()
-	let pattern = '#### #### #### ####'
-	let formatted = $state('')
+	let date = $state()
 
-	function isNumber(char: string): boolean {
-		return /^\d$/.test(char)
-	}
-	function isLetter(char: string): boolean {
-		return /^[a-zA-Z]$/.test(char)
-	}
+	const pattern = '####-####-####-####'
 
-	let isFormatting = $state(false)
-	$effect(async () => {
-		if (!isFormatting) {
-			let oldCursor = inputElement.selectionStart
-			const newFormatted = format(value)
-			if (newFormatted !== value) {
-				let rawPrefix = value.substring(0, oldCursor)
-				let formattedPrefix = format(rawPrefix, { trailing: false })
-				let newCursor = formattedPrefix.length
+	let card = $state('')
+	let expirationMonth = $state('')
+	let expirationYear = $state('')
+	let security = $state('')
 
-				isFormatting = true
-				value = newFormatted
-				await tick()
-				inputElement.setSelectionRange(newCursor, newCursor)
-				isFormatting = false
-			}
-		}
-	})
+	let cardTest = $state('')
 
-	function cursorTest() {
-		inputElement.selectionStart = 3
-		inputElement.selectionEnd = 3
-	}
+	let cardInput
+	let expirationMonthInput
+	let expirationYearInput
+	let securityInput
 
-	function format(val: string, { trailing = true } = {}): string {
-		if (!val) return ''
-
-		let formattedValue = ''
-		let valIdx = 0 // pointer for the input value
-		let patIdx = 0 // pointer for the pattern
-
-		// Process both strings until we run out of input...
-		while (patIdx < pattern.length && valIdx < val.length) {
-			const patChar = pattern[patIdx]
-			const inputChar = val[valIdx]
-
-			if (patChar === '#') {
-				// Placeholder: digit required
-				if (/\d/.test(inputChar)) {
-					formattedValue += inputChar
-					patIdx++
-					valIdx++
-				} else {
-					// Skip the input character that isn’t a digit.
-					valIdx++
-				}
-			} else if (patChar === '%') {
-				// Placeholder: letter required
-				if (/[a-zA-Z]/.test(inputChar)) {
-					formattedValue += inputChar
-					patIdx++
-					valIdx++
-				} else {
-					// Skip input char if not a letter.
-					valIdx++
-				}
-			} else if (patChar === '*') {
-				// Placeholder: any character allowed
-				formattedValue += inputChar
-				patIdx++
-				valIdx++
-			} else {
-				// Literal character in the pattern.
-				if (inputChar === patChar) {
-					// If the user already typed this literal, just copy it.
-					formattedValue += inputChar
-					patIdx++
-					valIdx++
-				} else {
-					// Otherwise insert the literal from the pattern.
-					formattedValue += patChar
-					patIdx++
-					// Note: we do not advance `valIdx` here so that the same inputChar
-					// is used for the next pattern position.
-				}
-			}
-		}
-
-		// If there are leftover literal characters in the pattern, append them.
-		if (trailing) {
-			while (patIdx < pattern.length) {
-				const patChar = pattern[patIdx]
-				// Only append if it’s a literal; stop at the next placeholder.
-				if (patChar === '#' || patChar === '%' || patChar === '*') {
-					break
-				}
-				formattedValue += patChar
-				patIdx++
-			}
-		}
-
-		return formattedValue
-	}
+	// $effect(() => {
+	// 	if (card.length > 5) {
+	// 		expirationMonthInput.focus()
+	// 		if (expirationMonth.length >= 2) {
+	// 			expirationYearInput.focus()
+	// 			if (expirationYear.length >= 2) {
+	// 				securityInput.focus()
+	// 			}
+	// 		}
+	// 	}
+	// })
 </script>
 
-<div class="relative h-fit w-fit">
-	<input
-		type="text"
-		bind:this={inputElement}
-		bind:value
-		placeholder="Card •••• ••••"
-		maxlength="16"
-		class="min-w-0 pl-4 outline-none focus:placeholder:text-neutral-900"
-	/>
+<div class="mb-2 px-7 py-5">
+	<h2 class="tracking-tight-md text-[1.3rem] leading-loose font-[550]">Payment</h2>
+	<p class="tracking-tight-lg text-[0.96rem] leading-5 font-[380]">You won't be charged yet</p>
 </div>
 
-<button onclick={cursorTest}>Format</button>
+<div
+	class="flex h-full w-full flex-col items-center gap-3 rounded-[calc(1.3rem-0.5rem)] px-3.5 pt-7 pb-3"
+>
+	<div
+		class="focus-within:shadow-input-pop flex h-[2.8rem] w-full max-w-full items-center rounded-[0.9rem] border-none bg-neutral-100 font-[450] text-zinc-900 ring-1 ring-neutral-200 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500"
+	>
+		<input
+			type="text"
+			bind:value={card}
+			use:formatInput={'####-####-####-####'}
+			placeholder="Card •••• ••••"
+			class="min-w-0 pl-4 outline-none focus:placeholder:text-neutral-900"
+		/>
+		<input
+			type="text"
+			bind:value={expirationMonth}
+			use:formatInput={'##/##'}
+			inputmode="numeric"
+			placeholder="MM/YY"
+			class="w-17 px-0 outline-none focus:placeholder:text-neutral-900"
+		/>
+		<input
+			type="text"
+			use:formatInput={'###'}
+			use:maskOnBlur
+			inputmode="numeric"
+			placeholder="CCV"
+			bind:value={security}
+			class="w-19 min-w-0 pr-4 pl-2 text-right outline-none focus:placeholder:text-neutral-900"
+		/>
+	</div>
+
+	<a
+		class="bg-vibrant-blue flex h-[2.8rem] w-full items-center justify-center rounded-[0.9rem] border-none px-3 text-[1.1rem] font-medium text-blue-50"
+		href="/">Click to Login</a
+	>
+	<p
+		class="flex h-[2.8rem] w-full items-center justify-center rounded-[0.9rem] border-none bg-neutral-200 px-3 font-mono text-[0.9rem] text-zinc-600"
+	>
+		951-028
+	</p>
+
+	<div class="h-12"></div>
+
+	<div class="relative flex h-6 w-full flex-col items-center"></div>
+</div>

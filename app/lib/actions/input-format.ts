@@ -8,7 +8,7 @@ import { tick } from 'svelte'
  *   - '*' for any character
  * Everything else in the pattern is treated as a literal.
  *
- * @param {HTMLElement} node - The input element.
+ * @param {HTMLElement} element - The input element.
  * @param {string} pattern - The formatting pattern.
  */
 export function formatInput(element: HTMLInputElement, pattern: string) {
