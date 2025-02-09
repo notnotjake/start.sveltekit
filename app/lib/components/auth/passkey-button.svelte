@@ -14,7 +14,7 @@
 		class="bg-neutral-150 relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none px-4 text-zinc-900 outline-none"
 	>
 		{#if isActivating}
-			<Suspense.Spinner />
+			<Suspense.Spinner size={14} thickness={10} />
 			<Suspense.Text class="text-sm">Waiting for Authenticator...</Suspense.Text>
 		{:else}
 			<PasskeyIcon />
