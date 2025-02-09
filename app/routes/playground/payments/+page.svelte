@@ -45,6 +45,13 @@
 			type="text"
 			bind:value={card}
 			use:formatInput={'####-####-####-####'}
+			use:maskOnBlur={{
+				stripCharacters: '-',
+				maskAtLength: 19,
+				visibleAtEnd: 4,
+				truncateFromStart: 15,
+				truncatedFill: '...'
+			}}
 			placeholder="Card •••• ••••"
 			class="min-w-0 pl-4 outline-none focus:placeholder:text-neutral-900"
 		/>
@@ -63,7 +70,7 @@
 			inputmode="numeric"
 			placeholder="CCV"
 			bind:value={security}
-			class="w-19 min-w-0 pr-4 pl-2 text-right outline-none focus:placeholder:text-neutral-900"
+			class="after:conten w-19 min-w-0 pr-4 pl-2 text-right outline-none focus:placeholder:text-neutral-900"
 		/>
 	</div>
 
