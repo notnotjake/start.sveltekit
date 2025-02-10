@@ -8,6 +8,9 @@
 		type="password"
 		placeholder="Password"
 		aria-label="Enter account password"
+		name="current-password"
+		id="current-password"
+		autocomplete="current-password"
 		class={createClass(
 			'focus:shadow-input-pop h-[2.8rem] w-full rounded-[0.9rem] border-none pr-11 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
 			isInput ? 'bg-neutral-50 ring-1 ring-neutral-200' : 'bg-neutral-150 cursor-pointer'

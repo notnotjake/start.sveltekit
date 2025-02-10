@@ -43,8 +43,11 @@
 	<input
 		type="text"
 		placeholder="Continue with email"
+		autocomplete="email"
+		name="email"
+		id="email"
+		aria-label="Enter your email"
 		bind:value={identifier}
-		aria-label="Enter your email or phone"
 		onfocusin={() => {
 			next = false
 		}}
