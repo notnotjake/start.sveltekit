@@ -3,19 +3,12 @@
 
 	let date = $state()
 
-	const pattern = '####-####-####-####'
-
 	let card = $state('')
 	let expirationMonth = $state('')
 	let expirationYear = $state('')
 	let security = $state('')
 
 	let cardTest = $state('')
-
-	let cardInput
-	let expirationMonthInput
-	let expirationYearInput
-	let securityInput
 </script>
 
 <div class="mb-2 px-7 py-5">
