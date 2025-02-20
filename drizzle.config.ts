@@ -1,8 +1,8 @@
-import { env } from './app/lib/utils/env'
+import { env } from './src/lib/utils/env'
 import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
-	schema: './app/lib/server/db/schema/index.ts',
+	schema: './src/lib/server/db/schema/index.ts',
 	out: './db/migrations',
 	dialect: 'sqlite',
 	dbCredentials: {

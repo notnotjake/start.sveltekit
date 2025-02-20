@@ -9,23 +9,23 @@ const config = {
 			base: process.env.PUBLIC_URL_BASE || ''
 		},
 		files: {
-			appTemplate: 'app/app.html',
-			errorTemplate: 'app/error.html',
-			lib: 'app/lib',
+			appTemplate: 'src/app.html',
+			errorTemplate: 'src/error.html',
+			lib: 'src/lib',
 			assets: 'static',
-			routes: 'app/routes',
-			params: 'app/params',
+			routes: 'src/routes',
+			params: 'src/params',
 			hooks: {
-				server: 'app/hooks/hooks.server',
-				client: 'app/hooks/hooks.client',
-				universal: 'app/hooks/hooks'
+				server: 'src/hooks/hooks.server',
+				client: 'src/hooks/hooks.client',
+				universal: 'src/hooks/hooks'
 			},
-			serviceWorker: 'app/service-worker'
+			serviceWorker: 'src/service-worker'
 		},
 		alias: {
-			$ui: 'app/lib/components',
-			$utils: 'app/lib/utils',
-			$tailwind: 'app/lib/theme/app.css'
+			$ui: 'src/lib/components',
+			$utils: 'src/lib/utils',
+			$tailwind: 'src/lib/theme/app.css'
 		}
 	},
 	preprocess: vitePreprocess()
