@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { AuthAttempt, NewAuthAttempt } from '$lib/server/db/schema/auth'
 
@@ -41,6 +41,8 @@ export async function verifyAuthAttempt(token: string, sessionId: string): Promi
 	console.log('IN', token, sessionId)
 	const credential = hashToken(token)
 	try {
+		cleanupExpiredAttempts()
+
 		const [result] = await db
 			.select()
 			.from(table.authAttempt)
@@ -78,3 +80,10 @@ export async function verifyAuthAttempt(token: string, sessionId: string): Promi
 		throw error
 	}
 }
+
+export async function cleanupExpiredAttempts() {
+	const currentTime = new Date()
+	await db.delete(table.authAttempt).where(lt(table.authAttempt.expiresAt, currentTime))
+}
+
+export type Result = { success: boolean; error?: string; message?: string; data?: any }

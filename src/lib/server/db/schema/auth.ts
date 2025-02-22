@@ -11,6 +11,18 @@ export const user = sqliteTable('user', {
 export type User = InferSelectModel<typeof user>
 export type NewUser = InferInsertModel<typeof user>
 
+export const session = sqliteTable('user_session', {
+	id: text('id').primaryKey(),
+	userId: text('user_id').references(() => user.id),
+	ipAddress: text('ip_address'),
+	userAgent: text('user_agent'),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+	invalidatedAt: integer('invalidated_at', { mode: 'timestamp' })
+})
+export type Session = InferSelectModel<typeof session>
+export type NewSession = InferInsertModel<typeof session>
+
 export const key = sqliteTable('user_key', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
@@ -34,15 +46,3 @@ export const authAttempt = sqliteTable('auth_attempt', {
 })
 export type AuthAttempt = InferSelectModel<typeof authAttempt>
 export type NewAuthAttempt = InferInsertModel<typeof authAttempt>
-
-export const session = sqliteTable('user_session', {
-	id: text('id').primaryKey(),
-	userId: text('user_id').references(() => user.id),
-	ipAddress: text('ip_address'),
-	userAgent: text('user_agent'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-	invalidatedAt: integer('invalidated_at', { mode: 'timestamp' })
-})
-export type Session = InferSelectModel<typeof session>
-export type NewSession = InferInsertModel<typeof session>

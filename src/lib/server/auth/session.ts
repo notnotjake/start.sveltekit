@@ -12,10 +12,6 @@ export function generateSessionToken(): string {
 	return generateToken()
 }
 
-export function generateMagicLinkToken(): string {
-	return generateToken()
-}
-
 export async function createSession(event: RequestEvent, token: string) {
 	const sessionId = hashToken(token)
 	const ipAddress = event.getClientAddress() || 'unknown'
