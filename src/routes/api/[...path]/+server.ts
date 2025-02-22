@@ -8,10 +8,35 @@ import {
 	updateUserIdentifier
 } from '$lib/server/auth/users'
 
+import { setDelay, withDelay } from '$lib/server/auth/utils'
+
 const app = new Hono()
 
 app.get('/api/status', (c) => {
 	return c.json({ data: 'okay' })
+})
+
+app.post('/api/login', async (c) => {
+	const body = await c.req.json()
+
+	const identifier: string = body.email
+
+	// Check identifier (email)
+	if (!identifier || typeof identifier !== 'string') {
+		return c.json({ error: 'Email not valid' }, 400)
+	}
+
+	const userExists = await getUserByIdentifier(identifier)
+
+	if (userExists) {
+		// send a magic link
+		// verify magic link
+		// take user and associate with session
+	} else {
+		// send verification email
+		// verify link
+		// create account for identifier
+	}
 })
 
 app.post('/api/create-user', async (c) => {
@@ -29,6 +54,7 @@ app.post('/api/create-user', async (c) => {
 })
 
 app.post('/api/get-user', async (c) => {
+	const delay = setDelay(1500)
 	const body = await c.req.json()
 
 	const identifier = body.identifier ?? null
@@ -41,9 +67,10 @@ app.post('/api/get-user', async (c) => {
 		} else {
 			return c.text('No user found')
 		}
-		return c.json({ userId: userId })
+
+		return withDelay(delay, c.json({ userId: userId }))
 	}
-	return c.text('Something went wrong')
+	return withDelay(delay, c.text('Something went wrong'))
 })
 
 app.post('/api/update-user-name', async (c) => {
