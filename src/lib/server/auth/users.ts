@@ -49,10 +49,15 @@ export async function getUserByIdentifier(identifier: string) {
 
 export async function deleteUser(userId: string): Promise<Result> {
 	try {
-		await db.delete(table.user).where(eq(table.user.id, userId))
+		console.log('USERID', userId)
+
+		const result = await db.delete(table.user).where(eq(table.user.id, userId)).returning()
+
+		console.log('RESULT', result)
 
 		return { success: true }
 	} catch (error) {
+		console.log(error)
 		return { success: false, error: 'User deletion was unsuccessful' }
 	}
 }

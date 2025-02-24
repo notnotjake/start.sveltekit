@@ -1,13 +1,10 @@
 CREATE TABLE `auth_attempt` (
 	`id` text PRIMARY KEY NOT NULL,
-	`user_id` text NOT NULL,
+	`identifier` text NOT NULL,
+	`session_id` text,
 	`type` text NOT NULL,
 	`credential` text,
-	`session_id` text,
-	`ip_address` text,
-	`user_agent` text,
 	`expires_at` integer NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`session_id`) REFERENCES `user_session`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -17,8 +14,8 @@ CREATE TABLE `user_key` (
 	`type` text NOT NULL,
 	`credential` text,
 	`created_at` integer NOT NULL,
-	`updated_at` integer DEFAULT '"2025-02-12T00:12:16.878Z"' NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `user_session` (
@@ -26,18 +23,19 @@ CREATE TABLE `user_session` (
 	`user_id` text,
 	`ip_address` text,
 	`user_agent` text,
+	`last_seen_at` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`expires_at` integer NOT NULL,
 	`invalidated_at` integer,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `user` (
 	`id` text PRIMARY KEY NOT NULL,
-	`name` text NOT NULL,
+	`name` text,
 	`identifier` text NOT NULL,
-	`created_at` integer NOT NULL,
-	`last_seen_at` integer NOT NULL
+	`last_seen_at` integer NOT NULL,
+	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_identifier_unique` ON `user` (`identifier`);--> statement-breakpoint

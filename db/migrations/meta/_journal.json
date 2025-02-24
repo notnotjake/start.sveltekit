@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1739319136887,
-      "tag": "0000_deep_gambit",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1740027555916,
-      "tag": "0001_dear_stick",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1740027607223,
-      "tag": "0002_stiff_screwball",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1740027816300,
-      "tag": "0003_real_ken_ellis",
+      "when": 1740204396674,
+      "tag": "0000_parched_thunderbolt",
       "breakpoints": true
     }
   ]

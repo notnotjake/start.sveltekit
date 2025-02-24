@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "53a28027-afba-4139-9121-471f02b052a3",
+  "id": "d4bce7c5-9e78-4388-8c53-8e7dc8f89a02",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "auth_attempt": {
@@ -14,11 +14,18 @@
           "notNull": true,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
+        "identifier": {
+          "name": "identifier",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "type": {
@@ -35,27 +42,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "session_id": {
-          "name": "session_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "ip_address": {
-          "name": "ip_address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "user_agent": {
-          "name": "user_agent",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "expires_at": {
           "name": "expires_at",
           "type": "integer",
@@ -66,19 +52,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auth_attempt_user_id_user_id_fk": {
-          "name": "auth_attempt_user_id_user_id_fk",
-          "tableFrom": "auth_attempt",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "auth_attempt_session_id_user_session_id_fk": {
           "name": "auth_attempt_session_id_user_session_id_fk",
           "tableFrom": "auth_attempt",
@@ -140,8 +113,7 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'\"2025-02-12T00:12:16.878Z\"'"
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -156,7 +128,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -195,6 +167,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "last_seen_at": {
+          "name": "last_seen_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -229,7 +208,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -251,7 +230,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "identifier": {
@@ -261,15 +240,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "created_at": {
-          "name": "created_at",
+        "last_seen_at": {
+          "name": "last_seen_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "last_seen_at": {
-          "name": "last_seen_at",
+        "created_at": {
+          "name": "created_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

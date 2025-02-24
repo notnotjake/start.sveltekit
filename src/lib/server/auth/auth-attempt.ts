@@ -76,8 +76,8 @@ export async function verifyAuthAttempt(token: string, sessionId: string): Promi
 		if (user) {
 			return user
 		} else {
-			console.log('need name to create user')
-			const newUser = await createUser(result.identifier, 'Test Name')
+			const tempName = generateAdjectiveAnimalName()
+			const newUser = await createUser(result.identifier, tempName)
 
 			if ('id' in newUser) {
 				return newUser
@@ -96,6 +96,27 @@ export async function verifyAuthAttempt(token: string, sessionId: string): Promi
 export async function cleanupExpiredAttempts() {
 	const currentTime = new Date()
 	await db.delete(table.authAttempt).where(lt(table.authAttempt.expiresAt, currentTime))
+}
+
+export function generateAdjectiveAnimalName(): string {
+	const adjectives = [
+		'Cuddly',
+		'Curious',
+		'Brave',
+		'Sly',
+		'Swift',
+		'Gentle',
+		'Witty',
+		'Fierce',
+		'Jolly',
+		'Quiet'
+	]
+	const animals = ['Koala', 'Cat', 'Fox', 'Bear', 'Wolf', 'Owl', 'Tiger', 'Panda', 'Hawk', 'Deer']
+	const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
+	const animal = animals[Math.floor(Math.random() * animals.length)]
+	const num = Math.floor(Math.random() * 100) // Optional: adds uniqueness
+
+	return `${adj} ${animal}${num}`
 }
 
 export type Result = { success: boolean; error?: string; message?: string; data?: any }

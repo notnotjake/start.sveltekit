@@ -133,10 +133,16 @@ app.post('/api/delete-user', async (c) => {
 	}
 
 	let userId = result[0].id
+	console.log(userId)
 
 	try {
-		await deleteUser(userId)
-		return c.text('User deleted')
+		const result = await deleteUser(userId)
+
+		if (result.success) {
+			return c.text('User deleted')
+		} else {
+			return c.text('User not deleted')
+		}
 	} catch (error) {
 		return c.text('Something went wrong')
 	}

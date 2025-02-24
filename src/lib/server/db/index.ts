@@ -13,5 +13,5 @@ sqlite.exec('PRAGMA busy_timeout = 5000;') // Timeout after 5s
 export const db = drizzle({
 	client: sqlite,
 	schema: schema,
-	logger: false
+	logger: true
 })
