@@ -1,13 +1,3 @@
-# SvelteKit Skeleton Project
+# A Head Start for SvelteKit
 
-An opinionated starting point for SvelteKit projects
-
-**Getting Going:**
-- Duplicate `degit notnotjake/start.sveltekit` into directory
-- Initialize project: `git init` then `gh repo create` then `npm install`
-- Open `src/lib/_global/site.json` and populate data
-- Start building and run `npm run dev` (or `npm run dev-host` to expose to the local network)
-
-**Decisions:**
-- Uses SCSS with global mixins and variables setup. Edit in lib/_global
-- Uses +page.js `load` function for meta (SEO) tags: title, description, image (opengraph/sharing image)
+Svelte 5 starting point with drizzle+sqlite, tailwind, prettier/eslint, fonts tooling, meta/seo tool, and some basic components

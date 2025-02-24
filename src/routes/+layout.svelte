@@ -1,13 +1,16 @@
 <script>
-	import '$lib/_global/_reset.css'
-	import '$lib/_global/_styles.scss'
-	import Fonts from '$lib/_global/Fonts.svelte'
-	import Head from '$lib/_global/Head.svelte'
+	import '$tailwind'
+	import '@fontsource-variable/inter/index.css'
+
+	import { LoadMeta } from '$utils/Meta'
+	// import { createFonts, LoadFonts, url } from '$utils/Fonts'
+
+	// const Fonts = createFonts() // Use this to import any self-hosted or licensed fonts
+
+	let { children } = $props()
 </script>
 
-<svelte:head>
-	<Head />
-	<Fonts />
-</svelte:head>
+<LoadMeta />
+<!-- <LoadFonts {Fonts} />  -->
 
-<slot />
+{@render children?.()}
