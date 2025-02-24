@@ -11,8 +11,6 @@
 	</p>
 	<p>
 		The project also includes code for managing self-hosted fonts, managing seo/meta tags, a 'cn'
-		function (called createClass), env validation and env syncing (with env.vault), as well as
-		authentication code setup. Each with good documenation.
+		function (called createClass), env validation, and more will be added.
 	</p>
-	<p>Drizzle Reset script in <code>/db</code></p>
 </div>

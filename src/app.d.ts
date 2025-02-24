@@ -6,9 +6,6 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: SessionValidationResult['user']
-			session: SessionValidationResult['session']
-			requestId: string
 			meta: {
 				title: string | null
 				description: string | null
