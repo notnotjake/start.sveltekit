@@ -8,14 +8,11 @@ export const privateSchema = z.object({
 
 	RESEND_API: z.string(),
 
-	OAUTH_GOOGLE_SECRET: z.string(),
-
-	JWT_SECRET: z.string().min(32),
-	CACHE_TTL: z.coerce.number().int().positive().default(3600)
+	OAUTH_GOOGLE_SECRET: z.string()
 })
 
 export const publicSchema = z.object({
-	PUBLIC_URL: z.string().url().optional().default(''),
+	PUBLIC_URL_BASE: z.string().url().optional().default(''),
 	PUBLIC_URL_ASSETS: z.union([z.string().url(), z.literal('')]),
 	PUBLIC_ANALYTICS: z.coerce.boolean(),
 	PUBLIC_OAUTH_GOOGLE_CLIENTID: z.string()

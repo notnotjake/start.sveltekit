@@ -19,3 +19,5 @@ https://fixel.macpaw.com
 
 Lexend
 Poppins
+
+https://fontsource.org/fonts/nunito
