@@ -1,4 +1,5 @@
 <script>
+	import AdaptingContainer from '$ui/containers/adapting.svelte'
 	let { children } = $props()
 </script>
 
@@ -14,12 +15,11 @@
 		>
 			{@render cardHeading()}
 
-			<div
-				data-desc="platter inner"
-				class="flex h-full w-full flex-col items-center gap-3 rounded-[calc(1.3rem-0.5rem)] bg-white bg-white px-3.5 pt-7 pb-3 shadow-xs"
-			>
-				{@render children?.()}
-			</div>
+			<AdaptingContainer data-desc="platter inner" class="rounded-[0.8rem] bg-white shadow-xs">
+				<div class="flex w-full flex-col items-center gap-3 px-3.5 pt-7 pb-3">
+					{@render children?.()}
+				</div>
+			</AdaptingContainer>
 		</div>
 	</div>
 
