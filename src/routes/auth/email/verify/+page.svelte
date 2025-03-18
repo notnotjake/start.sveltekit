@@ -29,7 +29,7 @@
 </script>
 
 <h1>Session ID: {data.sessionId}</h1>
-<h1>Identifier: {data.identifier}</h1>
+<h1>Identifier: {data.identifier?.name}</h1>
 
 <form method="POST" use:enhance>
 	<label for="token">Token</label>

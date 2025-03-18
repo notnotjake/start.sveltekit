@@ -2,6 +2,19 @@ import type { Actions } from './$types'
 import { Resend } from 'resend'
 import { RESEND_API } from '$env/static/private'
 
+const siteName = 'Luxo Circle'
+const magicLinkURL = 'http://localhost:5173/login'
+const magicLinkBackupCode = '012-489'
+
+function timeInTenMinutes(): string {
+	const now = new Date()
+	now.setMinutes(now.getMinutes() + 10)
+
+	const timeString = now.toLocaleTimeString('en-US')
+
+	return timeString.replace(/:\d{2}\s/, ' ')
+}
+
 const emailHtml = `
 <!DOCTYPE html>
 <html>
@@ -23,7 +36,7 @@ const emailHtml = `
 			<td align="center">
 				<!-- Header -->
 				<a href="/" style="display: block; padding-top: 8px; margin-bottom: 40px; color: rgba(0,0,0,0.55); text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 500; text-align: center;">
-					Art Fellowship
+					${siteName}
 				</a>
 
 				<!-- Main Container -->
@@ -41,13 +54,13 @@ const emailHtml = `
 					<tr>
 						<td style="padding: 28px 14px 12px 14px;">
 							<!-- Login Button -->
-							<a href="/" style="display: block; width: 100%; height: 44px; line-height: 44px; background-color: #0066FF; color: #ffffff; text-decoration: none; text-align: center; border-radius: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: 500; margin-bottom: 12px;">
+							<a href="${magicLinkURL}" style="display: block; width: 100%; height: 44px; line-height: 44px; background-color: #0066FF; color: #ffffff; text-decoration: none; text-align: center; border-radius: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 17px; font-weight: 500; margin-bottom: 12px;">
 								Click to Login
 							</a>
 
 							<!-- Code Display -->
 							<div style="width: 100%; height: 44px; line-height: 44px; background-color: #e5e5e5; color: #71717a; text-align: center; border-radius: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 14px; margin-bottom: 48px;">
-								951-028
+								${magicLinkBackupCode}
 							</div>
 
 							<!-- Footer Text -->
@@ -56,12 +69,12 @@ const emailHtml = `
 									This login will be available for 10 minutes
 								</p>
 								<p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: rgba(60,60,60,0.9);">
-									Expires at 12:13 PM
+									Expires at ${timeInTenMinutes()}
 								</p>
 							</div>
 
 							<!-- Spacing -->
-							<div style="height: 24px;"></div>
+							<div style="height: 38px;"></div>
 						</td>
 					</tr>
 				</table>
@@ -77,7 +90,7 @@ export const actions: Actions = {
 
 		const { data, error } = await resend.emails.send({
 			from: 'LightDance <accounts@resend.notnotjake.com>',
-			to: ['lightdance.4217@litmusemail.com'],
+			to: ['jake@notnotjake.com'],
 			subject: 'Sign In Link',
 			html: emailHtml
 		})

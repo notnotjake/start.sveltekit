@@ -3,8 +3,12 @@ import { eq, and, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { User, NewUser } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
+import { PromiseSettledResult } from '$utils/promise-settled-result'
 
-export async function createUser(identifier: string, name: string): Promise<User | Result> {
+export async function createUser(
+	identifier: string,
+	name: string
+): Promise<PromiseSettledResult<User>> {
 	const userExists = await db
 		.select({
 			createdAt: table.user.createdAt
@@ -14,7 +18,7 @@ export async function createUser(identifier: string, name: string): Promise<User
 		.limit(1)
 
 	if (userExists.length > 0) {
-		return { success: false, error: 'User already exists' }
+		return PromiseSettledResult.fail('User already exists')
 	} else {
 		const newUser: NewUser = {
 			name: name,
@@ -27,17 +31,17 @@ export async function createUser(identifier: string, name: string): Promise<User
 		const [result] = await db.insert(table.user).values(newUser).returning()
 
 		if (result) {
-			return result
+			return PromiseSettledResult.succeed(result)
 		}
 	}
-	return { success: false, error: `Couldn't create user` }
+	return PromiseSettledResult.fail('Failde to create user')
 }
 
 export async function getUserByIdentifier(identifier: string) {
 	const userExists = await db
 		.select({ id: table.user.id })
 		.from(table.user)
-		.where(eq(table.user.identifier, identifier))
+		.where(eq(table.user.identifier, identifier.toLowerCase()))
 		.limit(1)
 
 	if (userExists.length > 0) {

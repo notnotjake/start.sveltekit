@@ -8,6 +8,8 @@ import {
 	updateUserIdentifier
 } from '$lib/server/auth/users'
 
+import { sendMagiclinkEmail } from '$lib/server/email/magic-link'
+
 import { setDelay, withDelay } from '$lib/server/auth/utils'
 
 const app = new Hono()
@@ -143,6 +145,29 @@ app.post('/api/delete-user', async (c) => {
 		} else {
 			return c.text('User not deleted')
 		}
+	} catch (error) {
+		return c.text('Something went wrong')
+	}
+})
+
+app.post('/api/magic-link', async (c) => {
+	const body = await c.req.json()
+
+	const identifier = body.identifier ?? null
+	if (!identifier) {
+		return c.text('Identifier invalid or not defined')
+	}
+
+	const result = await getUserByIdentifier(identifier)
+	if (!result) {
+		return c.text('No user found')
+	}
+
+	let userId = result[0].id
+	console.log(userId)
+
+	try {
+		await sendMagiclinkEmail(identifier, '')
 	} catch (error) {
 		return c.text('Something went wrong')
 	}

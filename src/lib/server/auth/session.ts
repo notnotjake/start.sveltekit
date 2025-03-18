@@ -60,6 +60,7 @@ export async function createAuthenticatedSession(
 		userId,
 		ipAddress,
 		userAgent,
+		lastSeenAt: new Date(),
 		createdAt: new Date(),
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
 		invalidatedAt: null
