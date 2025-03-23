@@ -24,11 +24,17 @@
 		message: emailMessage,
 		enhance: emailEnhance,
 		validate: emailValidate,
-		validateForm: emailValidateForm
+		validateForm: emailValidateForm,
+		delayed: emailDelayed,
+		timeout: emailTimeout
 	} = superForm(data.emailForm, {
+		id: 'checkEmailForm',
 		resetForm: false,
 		validators: zodClient(emailSchema),
-		validationMethod: 'auto'
+		validationMethod: 'auto',
+		delayMs: 150,
+		timeoutMs: 3000,
+		multipleSubmits: 'prevent'
 	})
 
 	let identifier = $state('')
@@ -67,7 +73,7 @@
 			onfocusin={resetForm}
 			class={createClass(
 				'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-				$emailErrors.email && 'text-red-500',
+				$emailErrors.email && 'text-rose-500',
 				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 			)}
 		/>
@@ -86,6 +92,10 @@
 				>
 					{$emailErrors.email}
 				</p>
+			{:else if $emailDelayed && !$emailTimeout}
+				<div class="flex h-full items-center px-3">
+					<Suspense.Spinner size={18} thickness={7} />
+				</div>
 			{:else}
 				<Arrow
 					class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
@@ -93,15 +103,26 @@
 			{/if}
 		</button>
 	</div>
+	{#if $emailTimeout}
+		<p class="animate-fade-in-scale pt-0.5 pl-4 text-[0.83rem] font-medium text-rose-600">
+			Something went wrong, please try again
+		</p>
+	{/if}
 </form>
 
 <div class="min-h-24">
 	{#if $emailMessage?.emailSentSuccess}
-		<MagicLinkMessage />
+		<MagicLinkMessage
+			formData={data.emailResendForm}
+			schema={emailSchema}
+			email={$emailForm.email}
+		/>
 	{/if}
 </div>
 
-<Divider text={'Or Continue With'} isCollapsed={$emailMessage} />
+{#if !$emailMessage || $emailMessage.passwordAvailable || $emailMessage.passkeyAvailable}
+	<Divider text={'Or Continue With'} isCollapsed={$emailMessage} />
+{/if}
 
 {#if $emailMessage}
 	<div class="flex w-full flex-col flex-nowrap gap-2">

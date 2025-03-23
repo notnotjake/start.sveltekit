@@ -4,13 +4,16 @@ import { zod } from 'sveltekit-superforms/adapters'
 import { message } from 'sveltekit-superforms'
 import { fail } from '@sveltejs/kit'
 
+import { setDelay, withDelay } from '$lib/server/auth/utils'
+
 import { emailSchema, loginWithPasswordSchema } from './schema'
 
 export const load: ServerLoad = async () => {
 	const emailForm = await superValidate(zod(emailSchema))
+	const emailResendForm = await superValidate(zod(emailSchema))
 	const loginWithPasswordForm = await superValidate(zod(loginWithPasswordSchema))
 
-	return { emailForm, loginWithPasswordForm }
+	return { emailForm, emailResendForm, loginWithPasswordForm }
 }
 
 type CheckEmailMessage = {
@@ -24,17 +27,44 @@ type CheckEmailMessage = {
 
 export const actions: Actions = {
 	checkEmail: async ({ request }) => {
-		const emailForm = await superValidate(request, zod(emailSchema))
+		const delayed = setDelay(500)
 
+		const emailForm = await superValidate(request, zod(emailSchema))
 		if (!emailForm.valid) return fail(400, { emailForm })
 
-		return message(emailForm, {
-			existingUser: true,
+		const existing = emailForm.data.email === 'jake@notnotjake.com'
+
+		const response: CheckEmailMessage = {
+			existingUser: existing,
 			emailAvailable: true,
 			emailSentSuccess: true,
 			passwordAvailable: true,
 			passkeyAvailable: false,
 			oauthRequired: false
-		} satisfies CheckEmailMessage)
+		}
+
+		await withDelay(delayed, '')
+
+		return message(emailForm, response)
+	},
+	resendMagicLink: async ({ request }) => {
+		const emailResendForm = await superValidate(request, zod(emailSchema))
+		if (!emailResendForm.valid) return fail(400, { emailResendForm })
+
+		const success = true
+
+		if (success) {
+			return message(emailResendForm, {
+				success: true
+			})
+		} else {
+			return fail(429, {
+				emailResendForm,
+				message: {
+					success: false,
+					error: 'Rate Limited'
+				}
+			})
+		}
 	}
 }
