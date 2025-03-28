@@ -5,10 +5,9 @@ import type { User, NewUser } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
 import { PromiseSettledResult } from '$utils/promise-settled-result'
 
-export async function createUser(
-	identifier: string,
-	name: string
-): Promise<PromiseSettledResult<User>> {
+import { StructuredResponse as Response } from '$utils/structured-response'
+
+export async function createUser(identifier: string, name: string): Promise<Response<User>> {
 	const userExists = await db
 		.select({
 			createdAt: table.user.createdAt
@@ -18,7 +17,7 @@ export async function createUser(
 		.limit(1)
 
 	if (userExists.length > 0) {
-		return PromiseSettledResult.fail('User already exists')
+		return Response.fail('User already exists')
 	} else {
 		const newUser: NewUser = {
 			name: name,
@@ -31,10 +30,11 @@ export async function createUser(
 		const [result] = await db.insert(table.user).values(newUser).returning()
 
 		if (result) {
-			return PromiseSettledResult.succeed(result)
+			return Response.succeed(result)
 		}
+
+		return Response.fail('Failed to create user')
 	}
-	return PromiseSettledResult.fail('Failde to create user')
 }
 
 export async function getUserByIdentifier(identifier: string) {

@@ -5,7 +5,7 @@ import { base } from '$app/paths'
 export async function sendMagiclinkEmail(email: string, token: string) {
 	const resend = new Resend(RESEND_API)
 
-	const magicLink = `${base}/auth/email/verify?token=${token}`
+	const magicLink = `${base}/login?magic=${token}`
 
 	const emailHtml = `
 	<!DOCTYPE html>

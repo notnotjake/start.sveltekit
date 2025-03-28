@@ -79,8 +79,8 @@ export async function verifyAuthAttempt(token: string, sessionId: string): Promi
 			const tempName = generateAdjectiveAnimalName()
 			const newUser = await createUser(result.identifier, tempName)
 
-			if ('id' in newUser) {
-				return newUser
+			if (newUser.success) {
+				return newUser.data
 			} else {
 				return null
 			}

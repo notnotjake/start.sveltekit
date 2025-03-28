@@ -3,7 +3,7 @@ import { sequence } from '@sveltejs/kit/hooks'
 import { building } from '$app/environment'
 import { env } from '$utils/env/server'
 import { applySecurityHeaders } from '$utils/security-headers'
-import * as auth from '$lib/server/auth'
+import Auth from '$lib/server/auth'
 
 if (!building) {
 	try {
@@ -17,21 +17,26 @@ if (!building) {
 }
 
 const handleAuth: Handle = async ({ event, resolve }) => {
-	const sessionToken = event.cookies.get(auth.sessionCookieName) ?? null
+	const sessionToken = event.cookies.get(Auth.sessionCookieName) ?? null // Get session cookie
 
+	// If there is no cookie, set user and session to null value
 	if (!sessionToken) {
 		event.locals.user = null
 		event.locals.session = null
 		return resolve(event)
 	}
 
-	const { session, user } = await auth.validateSessionToken(sessionToken)
+	// Otherwise, validate the session cookie
+	const { session, user } = await Auth.validateSessionToken(sessionToken)
 	if (session) {
-		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt)
+		// And reset the cookie with new expiration
+		Auth.setSessionTokenCookie(event, sessionToken, session.expiresAt)
 	} else {
-		auth.deleteSessionTokenCookie(event)
+		// Otherwise, delete the existing cookie
+		Auth.deleteSessionTokenCookie(event)
 	}
 
+	// Return the user and session if they were verified or null
 	event.locals.user = user
 	event.locals.session = session
 
@@ -40,10 +45,6 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 const handleSecureHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event)
-
-	if (event.url.pathname.startsWith('/admin')) {
-		applySecurityHeaders(response)
-	}
 
 	return response
 }

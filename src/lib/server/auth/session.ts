@@ -26,7 +26,6 @@ export async function createSession(event: RequestEvent, token: string) {
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
 		invalidatedAt: null
 	}
-	console.log('A', session)
 	try {
 		await db.insert(table.session).values(session)
 		return session
@@ -81,11 +80,7 @@ export async function validateSessionToken(token: string) {
 	const [result] = await db
 		.select({
 			session: table.session,
-			user: {
-				id: table.user.id,
-				name: table.user.name,
-				identifier: table.user.identifier
-			}
+			user: table.user
 		})
 		.from(table.session)
 		.leftJoin(table.user, eq(table.session.userId, table.user.id))

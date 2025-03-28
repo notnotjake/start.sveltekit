@@ -7,19 +7,7 @@ export const StructuredResponse = {
 		return { success: true, data: value }
 	},
 
-	fail: <T>(error: T): StructuredResponse<T> => {
-		return { success: false, error: error }
+	fail: (error: string): StructuredResponse<never> => {
+		return { success: false, error }
 	}
-}
-
-function testLoad() {
-	const response = StructuredResponse.succeed({ username: 'john', age: 23 })
-
-	return response
-}
-
-const result = testLoad()
-
-if (result.success) {
-	console.log(result.data.username)
 }
