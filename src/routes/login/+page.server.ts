@@ -70,8 +70,8 @@ export const actions: Actions = {
 		if (!userExists.success) return fail(400, { emailForm })
 
 		// Default maxAgeMins to 5 minutes
-		const maxAgeMins = 5;
-		
+		const maxAgeMins = 5
+
 		if (userExists?.data?.exists) {
 			// returning user
 
@@ -79,12 +79,17 @@ export const actions: Actions = {
 
 			const emailToken = Auth.generateToken()
 			await SendMail.magiclink(
-				emailForm.data.email, 
-				emailToken, 
+				emailForm.data.email,
+				emailToken,
 				emailForm.data.timezone || 'UTC',
 				maxAgeMins
 			)
-			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
+			await Auth.createAuthAttempt(
+				emailForm.data.email,
+				event.locals.session.id,
+				emailToken,
+				maxAgeMins
+			)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -100,12 +105,17 @@ export const actions: Actions = {
 			// new user
 			const emailToken = Auth.generateToken()
 			await SendMail.register(
-				emailForm.data.email, 
+				emailForm.data.email,
 				emailToken,
 				emailForm.data.timezone || 'UTC',
 				maxAgeMins
 			)
-			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
+			await Auth.createAuthAttempt(
+				emailForm.data.email,
+				event.locals.session.id,
+				emailToken,
+				maxAgeMins
+			)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -119,7 +129,7 @@ export const actions: Actions = {
 			return withDelay(delay, message(emailForm, response))
 		}
 	},
-	resendMagicLink: async (event) => {
+	resendLoginEmail: async (event) => {
 		// validate form data
 		const emailResendForm = await superValidate(event.request, zod(emailSchema))
 		if (!emailResendForm.valid) return fail(400, { emailResendForm })
@@ -132,12 +142,12 @@ export const actions: Actions = {
 		if (!userExists.success) return fail(400, { emailResendForm })
 
 		const emailToken = Auth.generateToken()
-		const maxAgeMins = 5;
+		const maxAgeMins = 5
 
 		if (userExists?.data?.exists) {
 			// returning user
 			await SendMail.magiclink(
-				emailResendForm.data.email, 
+				emailResendForm.data.email,
 				emailToken,
 				emailResendForm.data.timezone || 'UTC',
 				maxAgeMins
@@ -145,17 +155,37 @@ export const actions: Actions = {
 		} else {
 			// new user
 			await SendMail.register(
-				emailResendForm.data.email, 
+				emailResendForm.data.email,
 				emailToken,
 				emailResendForm.data.timezone || 'UTC',
 				maxAgeMins
 			)
 		}
 
-		await Auth.createAuthAttempt(emailResendForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
+		await Auth.createAuthAttempt(
+			emailResendForm.data.email,
+			event.locals.session.id,
+			emailToken,
+			maxAgeMins
+		)
 
 		return message(emailResendForm, {
 			success: true
 		})
+	},
+	passwordLogin: async (event) => {
+		// normalize response times
+		const delay = setDelay(500)
+
+		// validate form data
+		const passwordLoginForm = await superValidate(event.request, zod(loginWithPasswordSchema))
+		if (!passwordLoginForm.valid) return fail(400, { passwordLoginForm })
+
+		// ensure there is a valid session
+		if (!event.locals.session) return fail(400, { passwordLoginForm })
+
+		// verify email and password
+
+		return withDelay(delay, message(passwordLoginForm, { success: true }))
 	}
 }
