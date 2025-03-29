@@ -10,7 +10,7 @@
 	let { children } = $props()
 </script>
 
-<LoadMeta debug={false} />
-<!-- <LoadFonts {Fonts} debug={false} />  -->
+<LoadMeta />
+<!-- <LoadFonts {Fonts} />  -->
 
 {@render children?.()}

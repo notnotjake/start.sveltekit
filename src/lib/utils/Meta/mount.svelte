@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state'
 	import { onMount } from 'svelte'
-	import { DebugLogger } from '$utils/debug'
-
-	let { debug = false } = $props()
 
 	let meta = page.data.meta
 </script>
@@ -208,7 +205,3 @@
 		{/if}
 	{/each}
 </svelte:head>
-
-{#if debug}
-	<DebugLogger label="Meta" data={meta} />
-{/if}

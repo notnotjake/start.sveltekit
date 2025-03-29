@@ -19,12 +19,12 @@
 	})
 </script>
 
-<LoadFonts {Fonts} debug={true} />
+<LoadFonts {Fonts} />
 
 <div class="bgg-blue-yellow-plain flex min-h-screen w-full items-center justify-center">
 	<div>
 		<h1
-			class="py-2.75 bg-[linear-gradient(to_bottom,_#0A00A3_6%,_#1977EB_32%,_#D58EFF_92%)] bg-[length:100%_100%] bg-clip-text bg-[position:left_top] bg-no-repeat font-['Source_Serif'] text-[clamp(2.6rem,6vw,4.38rem)] font-light tracking-[-0.015em] text-transparent"
+			class="bg-[linear-gradient(to_bottom,_#0A00A3_6%,_#1977EB_32%,_#D58EFF_92%)] bg-[length:100%_100%] bg-clip-text bg-[position:left_top] bg-no-repeat py-2.75 font-['Source_Serif'] text-[clamp(2.6rem,6vw,4.38rem)] font-light tracking-[-0.015em] text-transparent"
 		>
 			Art Fellowship Practice
 		</h1>

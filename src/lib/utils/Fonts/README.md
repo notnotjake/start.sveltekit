@@ -28,7 +28,7 @@ Inside your `+page.svelte` or `+layout.svelte` file
 	})
 </script>
 
-<LoadFonts {Fonts} debug={false} />
+<LoadFonts {Fonts} />
 ```
 ---
 
@@ -91,7 +91,7 @@ Fonts.Family('Roboto', {
 
 In the svelte component (not in script tag) use the **`LoadFonts`** component
 ```
-<LoadFonts {Fonts} debug={false} />
+<LoadFonts {Fonts} />
 ```
 
 ---
