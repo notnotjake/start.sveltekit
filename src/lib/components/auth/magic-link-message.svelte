@@ -8,7 +8,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 
-	let { formData: resendEmailForm, schema, email } = $props()
+	let { formData: resendEmailForm, schema, email, triggerAttention } = $props()
 
 	function wipeIn(node, { duration = 300, delay = 0, easing = cubicOut }) {
 		const targetWidth = node.offsetWidth
@@ -41,6 +41,12 @@
 			onResult({ result }) {
 				if (result.type === 'success') {
 					timeLastSent = Date.now()
+					triesAttempted += 1
+
+					if (triesAttempted > 2) {
+						triggerAttention()
+					}
+
 					buttonState = 'success'
 					setTimeout(() => {
 						$message = null
@@ -53,7 +59,7 @@
 					buttonState = 'error'
 				}
 			},
-			delayMs: 300,
+			delayMs: 800,
 			timeoutMs: 9000
 		}
 	)
@@ -62,6 +68,8 @@
 	const SUCCESS_MESSAGE_DURATION = 3000 // ms
 
 	let timeLastSent = $state(Date.now())
+
+	let triesAttempted = $state(1)
 
 	type ButtonState = 'enabled' | 'disabled' | 'success' | 'error'
 	let buttonState: ButtonState = $state('enabled')
@@ -111,6 +119,8 @@
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again
 		</p>
+	{:else if triesAttempted > 2}
+		<p class="tracking-tight-md flash-appear w-full text-center">Double check the email entered</p>
 	{:else}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center">
 			Check your email for a login link
@@ -119,11 +129,7 @@
 
 	<form method="POST" action="?/resendMagicLink" use:enhance>
 		<!-- Hidden input to capture user's timezone -->
-		<input 
-			type="hidden" 
-			name="timezone" 
-			value={Intl.DateTimeFormat().resolvedOptions().timeZone} 
-		/>
+		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<div
 			class="flex w-full items-center justify-center"
 			onmouseenter={handleMouseEnter}
@@ -166,3 +172,26 @@
 		</div>
 	</form>
 </div>
+
+<style>
+	.flash-appear {
+		animation: flash-in 0.9s ease-out forwards;
+	}
+
+	@keyframes flash-in {
+		0% {
+			opacity: 0;
+			color: var(--color-blue-500);
+		}
+		25% {
+			opacity: 1;
+			color: var(--color-blue-500);
+		}
+		50% {
+			color: var(--color-blue-500);
+		}
+		100% {
+			color: inherit;
+		}
+	}
+</style>

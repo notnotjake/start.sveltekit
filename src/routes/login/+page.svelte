@@ -45,18 +45,21 @@
 
 	// Set user's timezone on component mount
 	onMount(() => {
-		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	})
-
-	function handleNext() {
-		buttonElementWidth = buttonElement?.offsetWidth || 0
-		next = !next
-	}
 
 	function resetForm() {
 		if ($emailMessage) {
 			$emailMessage = null
 		}
+	}
+
+	let doAttentionAnimation = $state(false)
+	async function emailAttentionAnimate() {
+		doAttentionAnimation = false
+		setTimeout(() => {
+			doAttentionAnimation = true
+		}, 5)
 	}
 </script>
 
@@ -77,19 +80,16 @@
 			bind:value={$emailForm.email}
 			{...$emailConstraints.email}
 			onfocusin={resetForm}
+			class:attention-animation={doAttentionAnimation}
 			class={createClass(
 				'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
 				$emailErrors.email && 'text-rose-500',
 				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 			)}
 		/>
-		
+
 		<!-- Hidden input to capture user's timezone -->
-		<input 
-			type="hidden" 
-			name="timezone" 
-			bind:value={$emailForm.timezone} 
-		/>
+		<input type="hidden" name="timezone" bind:value={$emailForm.timezone} />
 
 		<button
 			disabled={$emailAllErrors.length > 0 || $emailForm.email.length < 5}
@@ -129,6 +129,7 @@
 			formData={data.emailResendForm}
 			schema={emailSchema}
 			email={$emailForm.email}
+			triggerAttention={emailAttentionAnimate}
 		/>
 	{/if}
 </div>
@@ -149,3 +150,41 @@
 {:else}
 	<OAuth />
 {/if}
+
+<style>
+	.attention-animation {
+		animation: bounce 0.7s ease-in-out forwards;
+	}
+
+	@keyframes bounce {
+		0% {
+			transform: translateY(0);
+			color: inherit;
+		}
+		15% {
+			transform: translateY(-4px);
+			color: var(--color-blue-500);
+		}
+		30% {
+			/* Hold at the top for longer */
+			transform: translateY(-4px);
+			color: var(--color-blue-500);
+		}
+		45% {
+			transform: translateY(0);
+			color: var(--color-blue-500);
+		}
+		65% {
+			transform: translateY(-2px);
+			color: var(--color-blue-500);
+		}
+		80% {
+			transform: translateY(-2px);
+			color: var(--color-blue-500);
+		}
+		100% {
+			transform: translateY(0);
+			color: inherit;
+		}
+	}
+</style>
