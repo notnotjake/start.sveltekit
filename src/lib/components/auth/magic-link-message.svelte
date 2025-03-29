@@ -118,6 +118,12 @@
 	{/if}
 
 	<form method="POST" action="?/resendMagicLink" use:enhance>
+		<!-- Hidden input to capture user's timezone -->
+		<input 
+			type="hidden" 
+			name="timezone" 
+			value={Intl.DateTimeFormat().resolvedOptions().timeZone} 
+		/>
 		<div
 			class="flex w-full items-center justify-center"
 			onmouseenter={handleMouseEnter}

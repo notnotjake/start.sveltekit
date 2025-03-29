@@ -7,11 +7,34 @@ import { StructuredResponse as Response } from '$utils/structured-response'
 export async function login(
 	email: string,
 	token: string,
-	newAccount: boolean
+	newAccount: boolean,
+	timezone: string = 'UTC',
+	maxAgeMins: number = 10
 ): Promise<Response<never>> {
 	const resend = new Resend(RESEND_API)
 
 	const magicLink = `${PUBLIC_URL_BASE}/login?magic=${token}`
+	
+	// Calculate expiration time based on maxAgeMins
+	const expiresAt = new Date(Date.now() + maxAgeMins * 60 * 1000);
+	
+	// Format the expiration time in the user's timezone
+	const timeFormatter = new Intl.DateTimeFormat('en-US', {
+		hour: 'numeric',
+		minute: 'numeric',
+		timeZone: timezone,
+		hour12: true
+	});
+	
+	// Get timezone abbreviation
+	const timeZoneFormatter = new Intl.DateTimeFormat('en-US', {
+		timeZoneName: 'short',
+		timeZone: timezone
+	});
+	const timeZoneParts = timeZoneFormatter.formatToParts(expiresAt);
+	const timeZoneAbbr = timeZoneParts.find(part => part.type === 'timeZoneName')?.value || '';
+	
+	const formattedExpirationTime = timeFormatter.format(expiresAt);
 
 	const emailHtml = `
 	<!DOCTYPE html>
@@ -64,10 +87,10 @@ export async function login(
 								<!-- Footer Text -->
 								<div style="text-align: center; margin-top: 48px;">
 									<p style="margin: 0 0 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; color: #404040;">
-										This login will be available for 10 minutes
+										This login will be available for ${maxAgeMins} minutes
 									</p>
 									<p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: rgba(60,60,60,0.9);">
-										Expires at 12:13 PM
+										Expires at ${formattedExpirationTime} ${timeZoneAbbr}
 									</p>
 								</div>
 	

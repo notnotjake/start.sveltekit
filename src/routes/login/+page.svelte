@@ -13,6 +13,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { emailSchema, loginWithPasswordSchema } from './schema.ts'
+	import { onMount } from 'svelte'
 
 	let { data } = $props()
 
@@ -41,6 +42,11 @@
 	let editIdentity = $state(false)
 
 	let buttonWidth = $state(0)
+
+	// Set user's timezone on component mount
+	onMount(() => {
+		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	})
 
 	function handleNext() {
 		buttonElementWidth = buttonElement?.offsetWidth || 0
@@ -76,6 +82,13 @@
 				$emailErrors.email && 'text-rose-500',
 				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 			)}
+		/>
+		
+		<!-- Hidden input to capture user's timezone -->
+		<input 
+			type="hidden" 
+			name="timezone" 
+			bind:value={$emailForm.timezone} 
 		/>
 
 		<button

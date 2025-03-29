@@ -69,14 +69,22 @@ export const actions: Actions = {
 
 		if (!userExists.success) return fail(400, { emailForm })
 
+		// Default maxAgeMins to 5 minutes
+		const maxAgeMins = 5;
+		
 		if (userExists?.data?.exists) {
 			// returning user
 
-			// need to check their login preferences
+			// todo: need to check their login preferences
 
 			const emailToken = Auth.generateToken()
-			await SendMail.magiclink(emailForm.data.email, emailToken)
-			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, 5)
+			await SendMail.magiclink(
+				emailForm.data.email, 
+				emailToken, 
+				emailForm.data.timezone || 'UTC',
+				maxAgeMins
+			)
+			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -91,8 +99,13 @@ export const actions: Actions = {
 		} else {
 			// new user
 			const emailToken = Auth.generateToken()
-			await SendMail.register(emailForm.data.email, emailToken)
-			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, 5)
+			await SendMail.register(
+				emailForm.data.email, 
+				emailToken,
+				emailForm.data.timezone || 'UTC',
+				maxAgeMins
+			)
+			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -119,16 +132,27 @@ export const actions: Actions = {
 		if (!userExists.success) return fail(400, { emailResendForm })
 
 		const emailToken = Auth.generateToken()
+		const maxAgeMins = 5;
 
 		if (userExists?.data?.exists) {
 			// returning user
-			await SendMail.magiclink(emailResendForm.data.email, emailToken)
+			await SendMail.magiclink(
+				emailResendForm.data.email, 
+				emailToken,
+				emailResendForm.data.timezone || 'UTC',
+				maxAgeMins
+			)
 		} else {
 			// new user
-			await SendMail.register(emailResendForm.data.email, emailToken)
+			await SendMail.register(
+				emailResendForm.data.email, 
+				emailToken,
+				emailResendForm.data.timezone || 'UTC',
+				maxAgeMins
+			)
 		}
 
-		await Auth.createAuthAttempt(emailResendForm.data.email, event.locals.session.id, emailToken, 5)
+		await Auth.createAuthAttempt(emailResendForm.data.email, event.locals.session.id, emailToken, maxAgeMins)
 
 		return message(emailResendForm, {
 			success: true
