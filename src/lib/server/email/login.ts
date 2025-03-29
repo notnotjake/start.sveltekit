@@ -1,11 +1,17 @@
 import { Resend } from 'resend'
 import { RESEND_API } from '$env/static/private'
-import { base } from '$app/paths'
+import { PUBLIC_URL_BASE } from '$env/static/public'
 
-export async function sendMagiclinkEmail(email: string, token: string) {
+import { StructuredResponse as Response } from '$utils/structured-response'
+
+export async function login(
+	email: string,
+	token: string,
+	newAccount: boolean
+): Promise<Response<never>> {
 	const resend = new Resend(RESEND_API)
 
-	const magicLink = `${base}/login?magic=${token}`
+	const magicLink = `${PUBLIC_URL_BASE}/login?magic=${token}`
 
 	const emailHtml = `
 	<!DOCTYPE html>
@@ -13,7 +19,7 @@ export async function sendMagiclinkEmail(email: string, token: string) {
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Login Verification</title>
+		<title>${newAccount ? 'Verify Email' : 'Login Link'}</title>
 		<!--[if mso]>
 		<style>
 			table {border-collapse:collapse;border-spacing:0;margin:0;}
@@ -36,7 +42,7 @@ export async function sendMagiclinkEmail(email: string, token: string) {
 						<tr>
 							<td style="padding: 20px 28px;">
 								<h2 style="margin: 0 0 12px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 550; line-height: 1.6;">
-									Login
+									${newAccount ? 'Create Account' : 'Login'}
 								</h2>
 								<p style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 380; line-height: 1.4; color: #333;">
 									If you didn't try to login, you can safely ignore this email
@@ -76,16 +82,17 @@ export async function sendMagiclinkEmail(email: string, token: string) {
 	</body>
 	</html>`
 
-	const { data, error } = await resend.emails.send({
+	const { error } = await resend.emails.send({
 		from: 'LightDance <accounts@resend.notnotjake.com>',
 		to: email,
-		subject: 'Sign In Link',
+		subject: newAccount ? 'Verify Email' : 'Login Link',
 		html: emailHtml
 	})
 
 	if (error) {
 		console.log(error)
+		return Response.fail()
 	}
 
-	console.log(data)
+	return Response.succeed()
 }

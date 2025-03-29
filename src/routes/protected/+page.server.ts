@@ -20,7 +20,7 @@ export const actions: Actions = {
 			const result = await Auth.invalidateSession(event.locals.session.id)
 
 			if (result.success) {
-				redirect(307, '/login')
+				redirect(303, '/')
 			} else {
 				return fail(300, { message: 'Could not log out' })
 			}

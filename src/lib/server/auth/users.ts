@@ -3,7 +3,6 @@ import { eq, and, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { User, NewUser } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
-import { PromiseSettledResult } from '$utils/promise-settled-result'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -37,53 +36,55 @@ export async function createUser(identifier: string, name: string): Promise<Resp
 	}
 }
 
-export async function getUserByIdentifier(identifier: string) {
-	const userExists = await db
+export async function getUserByIdentifier(
+	identifier: string
+): Promise<Response<{ exists: boolean; id: string | null }>> {
+	const [userFound] = await db
 		.select({ id: table.user.id })
 		.from(table.user)
 		.where(eq(table.user.identifier, identifier.toLowerCase()))
 		.limit(1)
 
-	if (userExists.length > 0) {
-		return userExists
+	if (userFound) {
+		return Response.succeed({ exists: true, id: userFound.id })
 	} else {
-		return null
+		return Response.succeed({ exists: false, id: null })
 	}
 }
 
-export async function deleteUser(userId: string): Promise<Result> {
+export async function deleteUser(userId: string): Promise<Response<never>> {
 	try {
-		console.log('USERID', userId)
-
 		const result = await db.delete(table.user).where(eq(table.user.id, userId)).returning()
 
-		console.log('RESULT', result)
-
-		return { success: true }
+		if (result) {
+			return Response.succeed()
+		}
+		return Response.fail('User deletion failed')
 	} catch (error) {
 		console.log(error)
-		return { success: false, error: 'User deletion was unsuccessful' }
+		return Response.fail('User deletion failed')
 	}
 }
 
-export async function updateUserName(userId: string, newValue: string): Promise<Result> {
+export async function updateUserName(userId: string, newValue: string): Promise<Response<never>> {
 	try {
 		await db.update(table.user).set({ name: newValue }).where(eq(table.user.id, userId))
 
-		return { success: true }
+		return Response.succeed()
 	} catch (error) {
-		return { success: false, error: 'User deletion was unsuccessful' }
+		return Response.fail()
 	}
 }
 
-export async function updateUserIdentifier(userId: string, newValue: string): Promise<Result> {
+export async function updateUserIdentifier(
+	userId: string,
+	newValue: string
+): Promise<Response<never>> {
 	try {
 		await db.update(table.user).set({ identifier: newValue }).where(eq(table.user.id, userId))
 
-		return { success: true }
+		return Response.succeed()
 	} catch (error) {
-		return { success: false, error: 'User deletion was unsuccessful' }
+		return Response.fail()
 	}
 }
-
-export type Result = { success: boolean; error?: string }

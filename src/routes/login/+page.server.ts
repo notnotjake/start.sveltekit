@@ -7,7 +7,7 @@ import { fail, redirect } from '@sveltejs/kit'
 import Auth from '$lib/server/auth'
 import { emailSchema, loginWithPasswordSchema } from './schema'
 import { setDelay, withDelay } from '$lib/server/auth/utils'
-import { sendMagiclinkEmail } from '$lib/server/email/magic-link'
+import SendMail from '$lib/server/email'
 
 export const load: ServerLoad = async (event) => {
 	// If the user is logged in, redirect to protected route
@@ -28,7 +28,6 @@ export const load: ServerLoad = async (event) => {
 
 	// Validate magic link
 	const token = event.url.searchParams.get('magic')
-	let identifier = null
 	if (token && sessionId) {
 		const result = await Auth.verifyAuthAttempt(token, sessionId)
 		if (result) {
@@ -56,23 +55,28 @@ type CheckEmailMessage = {
 
 export const actions: Actions = {
 	checkEmail: async (event) => {
-		const delay = setDelay(500)
+		const delay = setDelay(500) // normalize response times
 
+		// validate form data
 		const emailForm = await superValidate(event.request, zod(emailSchema))
 		if (!emailForm.valid) return fail(400, { emailForm })
 
+		// ensure there is a valid session
 		if (!event.locals.session) return fail(400, { emailForm })
 
+		// check if a user already exists associated with the submitted email/identifier
 		const userExists = await Auth.getUserByIdentifier(emailForm.data.email)
-		if (userExists) {
+
+		if (!userExists.success) return fail(400, { emailForm })
+
+		if (userExists?.data?.exists) {
+			// returning user
+
+			// need to check their login preferences
+
 			const emailToken = Auth.generateToken()
-			await sendMagiclinkEmail(emailForm.data.email, emailToken)
-			const attempt = await Auth.createAuthAttempt(
-				emailForm.data.email,
-				event.locals.session.id,
-				emailToken,
-				5
-			)
+			await SendMail.magiclink(emailForm.data.email, emailToken)
+			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, 5)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -83,18 +87,12 @@ export const actions: Actions = {
 				oauthRequired: false
 			}
 
-			await withDelay(delay, '')
-
-			return message(emailForm, response)
+			return withDelay(delay, message(emailForm, response))
 		} else {
+			// new user
 			const emailToken = Auth.generateToken()
-			await sendMagiclinkEmail(emailForm.data.email, emailToken)
-			const attempt = await Auth.createAuthAttempt(
-				emailForm.data.email,
-				event.locals.session.id,
-				emailToken,
-				5
-			)
+			await SendMail.register(emailForm.data.email, emailToken)
+			await Auth.createAuthAttempt(emailForm.data.email, event.locals.session.id, emailToken, 5)
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -108,24 +106,32 @@ export const actions: Actions = {
 			return withDelay(delay, message(emailForm, response))
 		}
 	},
-	resendMagicLink: async ({ request }) => {
-		const emailResendForm = await superValidate(request, zod(emailSchema))
+	resendMagicLink: async (event) => {
+		// validate form data
+		const emailResendForm = await superValidate(event.request, zod(emailSchema))
 		if (!emailResendForm.valid) return fail(400, { emailResendForm })
 
-		const success = true
+		// ensure there is a valid session
+		if (!event.locals.session) return fail(400, { emailResendForm })
 
-		if (success) {
-			return message(emailResendForm, {
-				success: true
-			})
+		// check if user exists or it's a new user
+		const userExists = await Auth.getUserByIdentifier(emailResendForm.data.email)
+		if (!userExists.success) return fail(400, { emailResendForm })
+
+		const emailToken = Auth.generateToken()
+
+		if (userExists?.data?.exists) {
+			// returning user
+			await SendMail.magiclink(emailResendForm.data.email, emailToken)
 		} else {
-			return fail(429, {
-				emailResendForm,
-				message: {
-					success: false,
-					error: 'Rate Limited'
-				}
-			})
+			// new user
+			await SendMail.register(emailResendForm.data.email, emailToken)
 		}
+
+		await Auth.createAuthAttempt(emailResendForm.data.email, event.locals.session.id, emailToken, 5)
+
+		return message(emailResendForm, {
+			success: true
+		})
 	}
 }

@@ -38,7 +38,10 @@ export async function createAuthAttempt(
 	}
 }
 
-export async function verifyAuthAttempt(token: string, sessionId: string): Promise<User | null> {
+export async function verifyAuthAttempt(
+	token: string,
+	sessionId: string
+): Promise<User | null | undefined> {
 	const credential = hashToken(token)
 	try {
 		cleanupExpiredAttempts()
