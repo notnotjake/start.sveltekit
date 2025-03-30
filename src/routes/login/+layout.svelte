@@ -15,7 +15,11 @@
 		>
 			{@render cardHeading()}
 
-			<AdaptingContainer data-desc="platter inner" class="rounded-[0.8rem] bg-white shadow-xs">
+			<AdaptingContainer
+				startingSize={200}
+				data-desc="platter inner"
+				class="rounded-[0.8rem] bg-white shadow-xs"
+			>
 				<div class="flex w-full flex-col items-center gap-3 px-3.5 pt-7 pb-3">
 					{@render children?.()}
 				</div>

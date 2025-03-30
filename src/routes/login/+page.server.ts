@@ -32,7 +32,6 @@ export const load: ServerLoad = async (event) => {
 		const result = await Auth.verifyAuthAttempt(token, sessionId)
 		if (result) {
 			await Auth.authenticateSession(sessionId, result.id)
-			event.locals.user = result
 			redirect(307, '/protected')
 		}
 	}
@@ -183,9 +182,8 @@ export const actions: Actions = {
 		})
 	},
 	passwordLogin: async (event) => {
-		console.log('-----LOGIN')
 		// normalize response times
-		const delay = setDelay(500)
+		const delay = setDelay(750)
 
 		const passwordLoginForm = await superValidate(event.request, zod(passwordLoginSchema))
 		if (!passwordLoginForm.valid) return fail(400, { passwordLoginForm })
@@ -201,7 +199,6 @@ export const actions: Actions = {
 
 		if (result.success && result.data) {
 			await Auth.authenticateSession(event.locals.session.id, result.data.id)
-			// event.locals.user = result.data
 			redirect(307, '/protected')
 		}
 

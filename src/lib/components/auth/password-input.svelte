@@ -4,8 +4,13 @@
 	import { createClass } from '$utils/create-class'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
+	import { z } from 'zod'
 
-	let { formData: passwordLoginForm, schema, email } = $props()
+	const schema = z.object({
+		password: z.string().min(3, 'Too Short').max(64, 'Too Long')
+	})
+
+	let { formData: passwordLoginForm, email } = $props()
 
 	const {
 		form,
@@ -20,10 +25,12 @@
 		timeout
 	} = superForm(passwordLoginForm, {
 		id: 'passwordLoginForm',
+		resetForm: false,
 		onSubmit({ formData }) {
 			// Ensure email is set in form data
 			formData.set('email', email)
 		},
+		validators: zodClient(schema),
 		delayMs: 800,
 		timeoutMs: 9000
 	})
@@ -105,4 +112,6 @@
 </div>
 
 <p>{$errors.password}</p>
+<p>{$errors.email}</p>
+<p>{$allErrors}</p>
 <p>{$message}</p>

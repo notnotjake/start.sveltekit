@@ -72,13 +72,13 @@
 	>
 		<input
 			type="email"
-			{...$emailConstraints.email}
 			name="email"
 			autocomplete="email"
 			id="email"
 			placeholder="Continue with email"
 			aria-label="Enter your email"
 			bind:value={$emailForm.email}
+			{...$emailConstraints.email}
 			onfocusin={resetForm}
 			class:attention-animation={doAttentionAnimation}
 			class={createClass(
@@ -142,11 +142,7 @@
 {#if $emailMessage}
 	<div class="flex w-full flex-col flex-nowrap gap-2">
 		{#if $emailMessage?.passwordAvailable}
-			<PasswordInput
-				formData={data.passwordLoginForm}
-				schema={passwordLoginSchema}
-				email={$emailForm.email}
-			/>
+			<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
 		{/if}
 		{#if $emailMessage?.passkeyAvailable}
 			<PasskeyButton />
