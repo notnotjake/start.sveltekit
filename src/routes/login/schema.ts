@@ -5,8 +5,7 @@ export const emailSchema = z.object({
 	timezone: z.string().optional()
 })
 
-export const loginWithPasswordSchema = z.object({
+export const passwordLoginSchema = z.object({
 	email: z.string().email('Email Invalid'),
-	password: z.string().min(8, 'Too Short').max(64, 'Too Long'),
-	timezone: z.string().optional()
+	password: z.string().min(3, 'Too Short').max(64, 'Too Long')
 })

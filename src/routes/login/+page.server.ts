@@ -5,7 +5,7 @@ import { message } from 'sveltekit-superforms'
 import { fail, redirect } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
-import { emailSchema, loginWithPasswordSchema } from './schema'
+import { emailSchema, passwordLoginSchema } from './schema'
 import { setDelay, withDelay } from '$lib/server/auth/utils'
 import SendMail from '$lib/server/email'
 
@@ -37,11 +37,12 @@ export const load: ServerLoad = async (event) => {
 		}
 	}
 
+	// Instantiate the various forms with superform
 	const emailForm = await superValidate(zod(emailSchema))
 	const emailResendForm = await superValidate(zod(emailSchema))
-	const loginWithPasswordForm = await superValidate(zod(loginWithPasswordSchema))
+	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
-	return { emailForm, emailResendForm, loginWithPasswordForm }
+	return { emailForm, emailResendForm, passwordLoginForm }
 }
 
 type CheckEmailMessage = {
@@ -72,10 +73,18 @@ export const actions: Actions = {
 		// Default maxAgeMins to 5 minutes
 		const maxAgeMins = 5
 
-		if (userExists?.data?.exists) {
+		if (userExists?.data?.exists && userExists?.data?.user?.id) {
 			// returning user
 
 			// todo: need to check their login preferences
+			const keysReturned = await Auth.getUserKeysAvailable(userExists.data.user?.id)
+
+			if (!keysReturned.success || !Array.isArray(keysReturned.data))
+				return fail(400, { emailForm })
+
+			const keys = new Set(keysReturned.data.map((item) => item.type))
+
+			console.log(keys)
 
 			const emailToken = Auth.generateToken()
 			await SendMail.magiclink(
@@ -95,7 +104,7 @@ export const actions: Actions = {
 				existingUser: false,
 				emailAvailable: true,
 				emailSentSuccess: true,
-				passwordAvailable: false,
+				passwordAvailable: keys.has('password'),
 				passkeyAvailable: false,
 				oauthRequired: false
 			}
@@ -174,18 +183,28 @@ export const actions: Actions = {
 		})
 	},
 	passwordLogin: async (event) => {
+		console.log('-----LOGIN')
 		// normalize response times
 		const delay = setDelay(500)
 
-		// validate form data
-		const passwordLoginForm = await superValidate(event.request, zod(loginWithPasswordSchema))
+		const passwordLoginForm = await superValidate(event.request, zod(passwordLoginSchema))
 		if (!passwordLoginForm.valid) return fail(400, { passwordLoginForm })
 
 		// ensure there is a valid session
 		if (!event.locals.session) return fail(400, { passwordLoginForm })
 
 		// verify email and password
+		const result = await Auth.verifyPassword(
+			passwordLoginForm.data.email,
+			passwordLoginForm.data.password
+		)
 
-		return withDelay(delay, message(passwordLoginForm, { success: true }))
+		if (result.success && result.data) {
+			await Auth.authenticateSession(event.locals.session.id, result.data.id)
+			// event.locals.user = result.data
+			redirect(307, '/protected')
+		}
+
+		return withDelay(delay, setError(passwordLoginForm, 'password', 'Wrong Password'))
 	}
 }

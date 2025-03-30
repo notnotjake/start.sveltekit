@@ -130,6 +130,7 @@
 	<form method="POST" action="?/resendLoginEmail" use:enhance>
 		<!-- Hidden input to capture user's timezone -->
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
+
 		<div
 			class="flex w-full items-center justify-center"
 			onmouseenter={handleMouseEnter}
@@ -145,6 +146,7 @@
 				</div>
 			{:else}
 				<button
+					type="submit"
 					in:scale={{ duration: 300, opacity: 0 }}
 					class={createClass(
 						'tracking-tight-sm cursor-pointer text-[0.93rem] font-[350] text-neutral-900 transition-colors',

@@ -12,7 +12,7 @@
 	import type { PageData } from './$types'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
-	import { emailSchema, loginWithPasswordSchema } from './schema.ts'
+	import { emailSchema, passwordLoginSchema } from './schema.ts'
 	import { onMount } from 'svelte'
 
 	let { data } = $props()
@@ -72,13 +72,13 @@
 	>
 		<input
 			type="email"
+			{...$emailConstraints.email}
 			name="email"
 			autocomplete="email"
 			id="email"
 			placeholder="Continue with email"
 			aria-label="Enter your email"
 			bind:value={$emailForm.email}
-			{...$emailConstraints.email}
 			onfocusin={resetForm}
 			class:attention-animation={doAttentionAnimation}
 			class={createClass(
@@ -92,6 +92,7 @@
 		<input type="hidden" name="timezone" bind:value={$emailForm.timezone} />
 
 		<button
+			type="submit"
 			disabled={$emailAllErrors.length > 0 || $emailForm.email.length < 5}
 			class="group flex h-full shrink-0 flex-nowrap items-center justify-end px-1 transition-all duration-200"
 			bind:offsetWidth={buttonWidth}
@@ -141,7 +142,11 @@
 {#if $emailMessage}
 	<div class="flex w-full flex-col flex-nowrap gap-2">
 		{#if $emailMessage?.passwordAvailable}
-			<PasswordInput />
+			<PasswordInput
+				formData={data.passwordLoginForm}
+				schema={passwordLoginSchema}
+				email={$emailForm.email}
+			/>
 		{/if}
 		{#if $emailMessage?.passkeyAvailable}
 			<PasskeyButton />
