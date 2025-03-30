@@ -1,8 +1,8 @@
 import { db } from '$lib/server/db'
-import { eq, and, lt } from 'drizzle-orm'
+import { eq, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { AuthAttempt, NewAuthAttempt, User } from '$lib/server/db/schema/auth'
-import { getUserByIdentifier, createUser } from './users'
+import { createUser } from './users'
 
 import { hashToken } from './utils'
 import { randomUUID } from 'crypto'

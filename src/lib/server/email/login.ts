@@ -14,27 +14,27 @@ export async function login(
 	const resend = new Resend(RESEND_API)
 
 	const magicLink = `${PUBLIC_URL_BASE}/login?magic=${token}`
-	
+
 	// Calculate expiration time based on maxAgeMins
-	const expiresAt = new Date(Date.now() + maxAgeMins * 60 * 1000);
-	
+	const expiresAt = new Date(Date.now() + maxAgeMins * 60 * 1000)
+
 	// Format the expiration time in the user's timezone
 	const timeFormatter = new Intl.DateTimeFormat('en-US', {
 		hour: 'numeric',
 		minute: 'numeric',
 		timeZone: timezone,
 		hour12: true
-	});
-	
+	})
+
 	// Get timezone abbreviation
 	const timeZoneFormatter = new Intl.DateTimeFormat('en-US', {
 		timeZoneName: 'short',
 		timeZone: timezone
-	});
-	const timeZoneParts = timeZoneFormatter.formatToParts(expiresAt);
-	const timeZoneAbbr = timeZoneParts.find(part => part.type === 'timeZoneName')?.value || '';
-	
-	const formattedExpirationTime = timeFormatter.format(expiresAt);
+	})
+	const timeZoneParts = timeZoneFormatter.formatToParts(expiresAt)
+	const timeZoneAbbr = timeZoneParts.find((part) => part.type === 'timeZoneName')?.value || ''
+
+	const formattedExpirationTime = timeFormatter.format(expiresAt)
 
 	const emailHtml = `
 	<!DOCTYPE html>
@@ -105,17 +105,17 @@ export async function login(
 	</body>
 	</html>`
 
-	const { error } = await resend.emails.send({
-		from: 'LightDance <accounts@resend.notnotjake.com>',
-		to: email,
-		subject: newAccount ? 'Verify Email' : 'Login Link',
-		html: emailHtml
-	})
-
-	if (error) {
-		console.log(error)
-		return Response.fail()
-	}
+	// const { error } = await resend.emails.send({
+	// 	from: 'LightDance <accounts@resend.notnotjake.com>',
+	// 	to: email,
+	// 	subject: newAccount ? 'Verify Email' : 'Login Link',
+	// 	html: emailHtml
+	// })
+	//
+	// if (error) {
+	// 	console.log(error)
+	// 	return Response.fail()
+	// }
 
 	return Response.succeed()
 }

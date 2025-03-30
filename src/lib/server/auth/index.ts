@@ -9,11 +9,13 @@ import {
 	listAllUserSessions
 } from './session'
 import { generateToken } from './utils'
-import { getUserByIdentifier } from './users'
+import { getUserByIdentifier, getUserKeysAvailable } from './users'
 import { createAuthAttempt, verifyAuthAttempt } from './auth-attempt'
+import { verifyPassword, addPassword } from './password'
 
 const Auth = {
 	sessionCookieName,
+	getUserKeysAvailable,
 	setSessionTokenCookie,
 	deleteSessionTokenCookie,
 	generateSessionToken,
@@ -26,6 +28,8 @@ const Auth = {
 	generateToken,
 	getUserByIdentifier,
 	createAuthAttempt,
-	verifyAuthAttempt
+	verifyAuthAttempt,
+	verifyPassword,
+	addPassword
 }
 export default Auth

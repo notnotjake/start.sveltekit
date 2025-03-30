@@ -38,17 +38,30 @@ export async function createUser(identifier: string, name: string): Promise<Resp
 
 export async function getUserByIdentifier(
 	identifier: string
-): Promise<Response<{ exists: boolean; id: string | null }>> {
+): Promise<Response<{ exists: boolean; user: User | null }>> {
 	const [userFound] = await db
-		.select({ id: table.user.id })
+		.select()
 		.from(table.user)
 		.where(eq(table.user.identifier, identifier.toLowerCase()))
 		.limit(1)
 
 	if (userFound) {
-		return Response.succeed({ exists: true, id: userFound.id })
+		return Response.succeed({ exists: true, user: userFound })
 	} else {
-		return Response.succeed({ exists: false, id: null })
+		return Response.succeed({ exists: false, user: null })
+	}
+}
+
+export async function getUserKeysAvailable(userId: string): Promise<Response<unknown>> {
+	try {
+		const keys = await db
+			.select({ type: table.key.type })
+			.from(table.key)
+			.where(eq(table.key.userId, userId))
+		return Response.succeed(keys)
+	} catch (e) {
+		console.log(e)
+		return Response.fail()
 	}
 }
 

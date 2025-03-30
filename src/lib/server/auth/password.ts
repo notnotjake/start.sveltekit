@@ -19,13 +19,15 @@ const hashingOptions = {
 export async function verifyPassword(
 	identifier: string,
 	password: string
-): Promise<Response<string>> {
+): Promise<Response<User | null>> {
 	// first get the user by identifier
 	const user = await getUserByIdentifier(identifier)
 
 	if (!user.success) return Response.fail('Failed to complete request')
 
-	if (!user.data?.exists || !user.data?.id) return Response.fail('User not found')
+	const userId = user.data?.user?.id
+
+	if (!user.data?.exists || !userId) return Response.fail('User not found')
 
 	// second find the users password key
 	const [{ credential: storedPassword }] = await db
@@ -33,7 +35,7 @@ export async function verifyPassword(
 			credential: table.key.credential
 		})
 		.from(table.key)
-		.where(eq(table.key.userId, user.data.id))
+		.where(eq(table.key.userId, userId))
 		.limit(1)
 
 	if (!storedPassword) return Response.fail('No password found')
@@ -41,7 +43,7 @@ export async function verifyPassword(
 	// verify that password
 	const passwordValid = await verify(storedPassword, password, hashingOptions)
 	if (passwordValid) {
-		return Response.succeed(user.data?.id)
+		return Response.succeed(user.data.user)
 	} else {
 		return Response.fail('Password not accepted')
 	}
@@ -53,7 +55,20 @@ export async function addPassword(identifier: string, password: string): Promise
 
 	if (!user.success) return Response.fail('Failed to complete request')
 
-	if (!user.data?.exists || !user.data?.id) return Response.fail('User not found')
+	const userId = user.data?.user?.id
+
+	if (!user.data?.exists || !userId) return Response.fail('User not found')
+
+	// check for current passwords
+	const [key] = await db
+		.select({
+			credential: table.key.credential
+		})
+		.from(table.key)
+		.where(eq(table.key.userId, userId))
+		.limit(1)
+
+	if (key?.credential) return Response.fail('Password already set')
 
 	// Hash and salt password
 	const passwordHash = await hash(password, hashingOptions)
@@ -61,7 +76,7 @@ export async function addPassword(identifier: string, password: string): Promise
 	// Create new object
 	const newPassword: NewKey = {
 		id: randomUUID(),
-		userId: user.data.id,
+		userId: userId,
 		type: 'password',
 		credential: passwordHash,
 		createdAt: new Date(),
@@ -78,4 +93,51 @@ export async function addPassword(identifier: string, password: string): Promise
 	}
 
 	return Response.fail()
+}
+
+export async function updatePassword(
+	identifier: string,
+	currentPassword: string,
+	newPassword: string
+): Promise<Response<never>> {
+	// first get the user by identifier
+	const user = await getUserByIdentifier(identifier)
+
+	if (!user.success) return Response.fail('Failed to complete request')
+
+	const userId = user.data?.user?.id
+
+	if (!user.data?.exists || !userId) return Response.fail('User not found')
+
+	// second find the users password key
+	const [{ credential: storedPassword }] = await db
+		.select({
+			credential: table.key.credential
+		})
+		.from(table.key)
+		.where(eq(table.key.userId, userId))
+		.limit(1)
+
+	if (!storedPassword) return Response.fail('No current password found')
+
+	// verify that password
+	const passwordValid = await verify(storedPassword, currentPassword, hashingOptions)
+	if (passwordValid) {
+		// update to new password
+		try {
+			// Hash and salt password
+			const passwordHash = await hash(newPassword, hashingOptions)
+
+			await db
+				.update(table.key)
+				.set({ credential: passwordHash, updatedAt: new Date() })
+				.where(eq(table.key.userId, userId))
+				.returning()
+			return Response.succeed()
+		} catch (e) {
+			return Response.fail('Failed to update in database')
+		}
+	} else {
+		return Response.fail('Password not accepted')
+	}
 }
