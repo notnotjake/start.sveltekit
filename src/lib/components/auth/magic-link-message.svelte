@@ -43,7 +43,7 @@
 					timeLastSent = Date.now()
 					triesAttempted += 1
 
-					if (triesAttempted > 2) {
+					if (triesAttempted > RESENDS_BEFORE_ALERT) {
 						triggerAttention()
 					}
 
@@ -64,8 +64,9 @@
 		}
 	)
 
-	const COOLDOWN_TIME = 1000 // ms
+	const COOLDOWN_TIME = 20 * 1000 // ms
 	const SUCCESS_MESSAGE_DURATION = 4000 // ms
+	const RESENDS_BEFORE_ALERT = 2
 
 	let timeLastSent = $state(Date.now())
 
@@ -134,9 +135,9 @@
 			onmouseenter={handleMouseEnter}
 			onmouseleave={handleMouseLeave}
 		>
-			{#if triesAttempted > 2}
-				<p class="tracking-tight-md flash-appear text-[0.93rem] text-neutral-800">
-					Double check email address
+			{#if triesAttempted > RESENDS_BEFORE_ALERT}
+				<p class="tracking-tight-md flash-appear pr-2 text-[0.93rem] text-neutral-800">
+					Is email correct?
 				</p>
 			{/if}
 

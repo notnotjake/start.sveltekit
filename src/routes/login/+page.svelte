@@ -155,7 +155,7 @@
 
 <style>
 	.attention-animation {
-		animation: bounce 0.7s ease-in-out forwards;
+		animation: bounce 0.7s ease-in-out;
 	}
 
 	@keyframes bounce {
