@@ -4,7 +4,7 @@
 	let { children, text = '', isCollapsed = false } = $props()
 </script>
 
-<div class="divider flex w-full items-center py-0">
+<div class="divider flex h-fit w-full items-center py-0">
 	<div class="line h-[1px] w-full shrink-2 grow basis-1 rounded-full bg-neutral-200"></div>
 
 	{#if text !== ''}

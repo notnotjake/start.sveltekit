@@ -36,6 +36,9 @@
 	})
 
 	let isInput = $state(false)
+	$effect(() => {
+		if ($form.password.length) isInput = true
+	})
 	function toggleInput() {
 		isInput = true
 	}
@@ -55,6 +58,8 @@
 				isInput ? 'bg-neutral-50 ring-1 ring-neutral-200' : 'bg-neutral-150 cursor-pointer'
 			)}
 		>
+			<input class="hidden" type="email" name="email" value={email} />
+
 			<input
 				type="password"
 				{...$constraints.password}
@@ -110,8 +115,3 @@
 		>
 	{/if}
 </div>
-
-<p>{$errors.password}</p>
-<p>{$errors.email}</p>
-<p>{$allErrors}</p>
-<p>{$message}</p>

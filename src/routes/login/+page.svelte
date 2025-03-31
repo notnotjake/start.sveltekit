@@ -67,7 +67,7 @@
 	<div
 		class={createClass(
 			'group focus-within:shadow-input-pop relative flex h-11 h-[2.8rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-200',
-			$emailMessage ? 'bg-none' : 'bg-neutral-100 ring-1 ring-neutral-200'
+			$emailMessage ? 'bg-none' : 'bg-neutral-100'
 		)}
 	>
 		<input
@@ -82,7 +82,7 @@
 			onfocusin={resetForm}
 			class:attention-animation={doAttentionAnimation}
 			class={createClass(
-				'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
+				'h-full w-full flex-grow-1 translate-y-0 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
 				$emailErrors.email && 'text-rose-500',
 				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 			)}
@@ -135,22 +135,24 @@
 	{/if}
 </div>
 
-{#if !$emailMessage || $emailMessage.passwordAvailable || $emailMessage.passkeyAvailable}
-	<Divider text={'Or Continue With'} isCollapsed={$emailMessage} />
-{/if}
+<div class="w-full">
+	{#if !$emailMessage || $emailMessage.passwordAvailable || $emailMessage.passkeyAvailable}
+		<Divider text={'Or Continue With'} isCollapsed={$emailMessage} />
+	{/if}
 
-{#if $emailMessage}
-	<div class="flex w-full flex-col flex-nowrap gap-2">
-		{#if $emailMessage?.passwordAvailable}
-			<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
-		{/if}
-		{#if $emailMessage?.passkeyAvailable}
-			<PasskeyButton />
-		{/if}
-	</div>
-{:else}
-	<OAuth />
-{/if}
+	{#if $emailMessage}
+		<div class="flex w-full flex-col flex-nowrap gap-2">
+			{#if $emailMessage?.passwordAvailable}
+				<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
+			{/if}
+			{#if $emailMessage?.passkeyAvailable}
+				<PasskeyButton />
+			{/if}
+		</div>
+	{:else}
+		<OAuth />
+	{/if}
+</div>
 
 <style>
 	.attention-animation {
@@ -167,7 +169,6 @@
 			color: var(--color-blue-500);
 		}
 		30% {
-			/* Hold at the top for longer */
 			transform: translateY(-4px);
 			color: var(--color-blue-500);
 		}

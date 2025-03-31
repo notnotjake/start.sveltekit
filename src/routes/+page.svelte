@@ -15,4 +15,6 @@
 		authentication code setup. Each with good documenation.
 	</p>
 	<p>Drizzle Reset script in <code>/db</code></p>
+
+	<p>Go to <a class="text-blue-500" href="/login">login</a></p>
 </div>

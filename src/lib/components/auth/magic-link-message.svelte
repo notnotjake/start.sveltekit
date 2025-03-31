@@ -64,8 +64,8 @@
 		}
 	)
 
-	const COOLDOWN_TIME = 20000 // ms
-	const SUCCESS_MESSAGE_DURATION = 3000 // ms
+	const COOLDOWN_TIME = 1000 // ms
+	const SUCCESS_MESSAGE_DURATION = 4000 // ms
 
 	let timeLastSent = $state(Date.now())
 
@@ -119,8 +119,6 @@
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again
 		</p>
-	{:else if triesAttempted > 2}
-		<p class="tracking-tight-md flash-appear w-full text-center">Double check the email entered</p>
 	{:else}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center">
 			Check your email for a login link
@@ -132,10 +130,16 @@
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 
 		<div
-			class="flex w-full items-center justify-center"
+			class="flex w-full items-center justify-center pt-1"
 			onmouseenter={handleMouseEnter}
 			onmouseleave={handleMouseLeave}
 		>
+			{#if triesAttempted > 2}
+				<p class="tracking-tight-md flash-appear text-[0.93rem] text-neutral-800">
+					Double check email address
+				</p>
+			{/if}
+
 			{#if $delayed && !$timeout}
 				<div in:scale={{ duration: 250 }}>
 					<SuspenseText class="animate-fade-in-scale text-[0.93rem]">Trying to Resend</SuspenseText>
