@@ -32,7 +32,10 @@ export const load: ServerLoad = async (event) => {
 		const result = await Auth.verifyAuthAttempt(token, sessionId)
 		if (result) {
 			await Auth.authenticateSession(sessionId, result.id)
-			redirect(307, '/protected')
+
+			const redirectUrl = Auth.consumeRedirectUrl(event) // Get redirect path
+
+			redirect(307, redirectUrl)
 		}
 	}
 
@@ -199,7 +202,10 @@ export const actions: Actions = {
 
 		if (result.success && result.data) {
 			await Auth.authenticateSession(event.locals.session.id, result.data.id)
-			redirect(307, '/protected')
+
+			const redirectUrl = Auth.consumeRedirectUrl(event) // Get redirect path
+
+			redirect(307, redirectUrl)
 		}
 
 		return withDelay(delay, setError(passwordLoginForm, 'password', 'Wrong Password'))

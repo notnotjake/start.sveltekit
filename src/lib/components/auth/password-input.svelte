@@ -70,8 +70,7 @@
 				aria-label="Enter account password"
 				bind:value={$form.password}
 				class={createClass(
-					'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-					$errors.password && 'text-rose-500'
+					'h-full w-full flex-grow-1 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500'
 				)}
 				onclick={toggleInput}
 				onfocus={toggleInput}

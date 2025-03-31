@@ -83,7 +83,6 @@
 			class:attention-animation={doAttentionAnimation}
 			class={createClass(
 				'h-full w-full flex-grow-1 translate-y-0 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-				$emailErrors.email && 'text-rose-500',
 				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
 			)}
 		/>

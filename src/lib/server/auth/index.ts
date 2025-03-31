@@ -1,4 +1,10 @@
-import { sessionCookieName, setSessionTokenCookie, deleteSessionTokenCookie } from './cookie'
+import {
+	sessionCookieName,
+	setSessionTokenCookie,
+	deleteSessionTokenCookie,
+	setRedirectUrl,
+	consumeRedirectUrl
+} from './cookie'
 import {
 	generateSessionToken,
 	createSession,
@@ -30,6 +36,8 @@ const Auth = {
 	createAuthAttempt,
 	verifyAuthAttempt,
 	verifyPassword,
-	addPassword
+	addPassword,
+	setRedirectUrl,
+	consumeRedirectUrl
 }
 export default Auth
