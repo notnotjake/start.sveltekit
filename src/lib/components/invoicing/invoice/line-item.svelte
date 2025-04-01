@@ -2,7 +2,6 @@
 	interface lineItem {
 		name: string
 		description?: string
-		subtotalPrice: number
 		unitPrice: number
 		unitLabel?: string
 		unitQty: number
@@ -39,9 +38,11 @@
 			)
 		}
 	}
+
+	let subtotal = $derived(item.unitQty * item.unitPrice)
 </script>
 
-<div class="item flex justify-between tracking-tight-sm">
+<div class="item tracking-tight-sm flex justify-between">
 	<div>
 		<div class="description">
 			<p class="tw text-[0.95rem]">{item.name}</p>
@@ -50,7 +51,7 @@
 	</div>
 
 	<div class="total flex flex-col items-end">
-		<h3 class="font-medium">{formatCurrencyCompact(item.subtotalPrice)}</h3>
+		<h3 class="font-medium">{formatCurrencyCompact(subtotal)}</h3>
 		{#if item.unitQty == 1 && !item.unitLabel}
 			<!-- quantity of one and no unit label: -->
 			<p class="text-sm font-medium"></p>
