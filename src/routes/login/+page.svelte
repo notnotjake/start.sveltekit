@@ -111,7 +111,7 @@
 				</div>
 			{:else}
 				<Arrow
-					class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
+					class="bi bi-arrow-right-circle-fill text-vibrant-blue mr-1 h-6 w-6 cursor-pointer p-[0.1rem] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
 				/>
 			{/if}
 		</button>
@@ -149,7 +149,7 @@
 			{/if}
 		</div>
 	{:else}
-		<OAuth />
+		<div class="pt-2"><OAuth /></div>
 	{/if}
 </div>
 
