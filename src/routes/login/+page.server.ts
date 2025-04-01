@@ -95,12 +95,12 @@ export const actions: Actions = {
 				emailForm.data.timezone || 'UTC',
 				maxAgeMins
 			)
-			await Auth.createAuthAttempt(
-				emailForm.data.email,
-				event.locals.session.id,
-				emailToken,
+			await Auth.createAuthAttempt({
+				identifier: emailForm.data.email,
+				sessionId: event.locals.session.id,
+				token: emailToken,
 				maxAgeMins
-			)
+			})
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -121,12 +121,12 @@ export const actions: Actions = {
 				emailForm.data.timezone || 'UTC',
 				maxAgeMins
 			)
-			await Auth.createAuthAttempt(
-				emailForm.data.email,
-				event.locals.session.id,
-				emailToken,
+			await Auth.createAuthAttempt({
+				identifier: emailForm.data.email,
+				sessionId: event.locals.session.id,
+				token: emailToken,
 				maxAgeMins
-			)
+			})
 
 			const response: CheckEmailMessage = {
 				existingUser: false,
@@ -173,12 +173,12 @@ export const actions: Actions = {
 			)
 		}
 
-		await Auth.createAuthAttempt(
-			emailResendForm.data.email,
-			event.locals.session.id,
-			emailToken,
+		await Auth.createAuthAttempt({
+			identifier: emailResendForm.data.email,
+			sessionId: event.locals.session.id,
+			token: emailToken,
 			maxAgeMins
-		)
+		})
 
 		return message(emailResendForm, {
 			success: true

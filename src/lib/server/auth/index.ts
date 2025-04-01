@@ -16,11 +16,12 @@ import {
 } from './session'
 import { generateToken } from './utils'
 import { getUserByIdentifier, getUserKeysAvailable } from './users'
-import { createAuthAttempt, verifyAuthAttempt } from './auth-attempt'
+import { createAuthAttempt, verifyAuthAttempt, getAuthAttempt } from './auth-attempt'
 import { verifyPassword, addPassword } from './password'
 
 const Auth = {
 	sessionCookieName,
+	getAuthAttempt,
 	getUserKeysAvailable,
 	setSessionTokenCookie,
 	deleteSessionTokenCookie,

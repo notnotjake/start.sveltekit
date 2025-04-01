@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db'
-import { eq, lt } from 'drizzle-orm'
+import { eq, lt, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { AuthAttempt, NewAuthAttempt, User } from '$lib/server/db/schema/auth'
 import { createUser } from './users'
@@ -7,17 +7,28 @@ import { createUser } from './users'
 import { hashToken } from './utils'
 import { randomUUID } from 'crypto'
 
-export async function createAuthAttempt(
-	identifier: string,
-	sessionId: string,
-	token: string,
-	maxAgeMins: number = 10
-): Promise<AuthAttempt> {
-	const credential = hashToken(token)
+interface CreateAuthAttemptOptions {
+	identifier: string
+	sessionId: string
+	token: string
+	type?: 'email' | 'code' | 'passkey_register' | 'passkey_login' // defaults to email
+	maxAgeMins?: number // defaults to 10
+}
+export async function createAuthAttempt({
+	identifier,
+	sessionId,
+	token,
+	type = 'email',
+	maxAgeMins = 10
+}: CreateAuthAttemptOptions): Promise<AuthAttempt> {
+	cleanupExpiredAttempts()
+
+	const credential = type === 'email' ? hashToken(token) : token
+
 	const maxAgeMs = 1000 * 60 * maxAgeMins
 	const authAttempt: NewAuthAttempt = {
 		id: randomUUID(),
-		type: 'email',
+		type,
 		identifier,
 		sessionId,
 		credential,
@@ -36,6 +47,23 @@ export async function createAuthAttempt(
 		}
 		throw error
 	}
+}
+
+interface GetAuthAttemptOptions {
+	sessionId: string
+	type: 'email' | 'code' | 'passkey_register' | 'passkey_login' // defaults to email
+}
+export async function getAuthAttempt({
+	sessionId,
+	type
+}: GetAuthAttemptOptions): Promise<string | null> {
+	const [result] = await db
+		.select({ credential: table.authAttempt.credential })
+		.from(table.authAttempt)
+		.where(and(eq(table.authAttempt.sessionId, sessionId), eq(table.authAttempt.type, type)))
+		.limit(1)
+
+	return result.credential
 }
 
 export async function verifyAuthAttempt(

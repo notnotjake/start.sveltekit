@@ -1,10 +1,23 @@
 import type { Actions, ServerLoad } from '@sveltejs/kit'
 import { fail, redirect } from '@sveltejs/kit'
+import { superValidate, setError } from 'sveltekit-superforms'
+import { zod } from 'sveltekit-superforms/adapters'
+import { z } from 'zod'
+import { message } from 'sveltekit-superforms'
 
-import { generateAuthenticationOptions, generateRegistrationOptions } from '@simplewebauthn/server'
+import {
+	generateAuthenticationOptions,
+	generateRegistrationOptions,
+	verifyRegistrationResponse
+} from '@simplewebauthn/server'
 import Auth from '$lib/server/auth'
 
 const rpID = 'localhost'
+
+const registerFormSchema = z.object({
+	email: z.string(),
+	name: z.string()
+})
 
 export const load: ServerLoad = async () => {
 	// const options = await generateAuthenticationOptions({
@@ -13,29 +26,36 @@ export const load: ServerLoad = async () => {
 	// })
 
 	// return { options }
-	return {}
+
+	const registerForm = await superValidate(zod(registerFormSchema))
+
+	return { registerForm }
 }
 
 export const actions: Actions = {
 	registerPasskey: async (event) => {
-		const formData = await event.request.formData()
+		const registerForm = await superValidate(event.request, zod(registerFormSchema))
+		if (!registerForm.valid) return fail(400, { registerForm })
 
-		const email = formData.get('email')?.toString() || ''
-		const name = formData.get('name')?.toString() || ''
-
-		if (!email || !name) return fail(400)
+		// ensure there is a valid session
+		if (!event.locals.session) return fail(400, { registerForm })
 
 		const options = await generateRegistrationOptions({
 			rpName: 'Luxo',
-			rpID,
-			userName: email,
-			userDisplayName: name,
+			rpID: 'localhost',
+			userName: registerForm.data.email,
+			userDisplayName: registerForm.data.name,
 			timeout: 60000
 		})
 
-		const challenge = options.challenge
-		console.log(challenge) // should store on session
+		await Auth.createAuthAttempt({
+			identifier: registerForm.data.email,
+			sessionId: event.locals.session.id,
+			token: options.challenge,
+			type: 'passkey_register',
+			maxAgeMins: 2
+		})
 
-		return { options }
+		return message(registerForm, { success: true, options })
 	}
 }
