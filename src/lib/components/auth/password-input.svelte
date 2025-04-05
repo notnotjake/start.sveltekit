@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SuspenseSpinner } from '$ui/feedback/'
-	import Arrow from '$lib/theme/icons/arrow-circle-fill.svelte'
+	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import { createClass } from '$utils/create-class'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'

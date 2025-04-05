@@ -6,7 +6,7 @@
 	import PasskeyButton from '$ui/auth/passkey-button.svelte'
 	import OAuth from '$ui/auth/oauth.svelte'
 	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
-	import Arrow from '$lib/theme/icons/arrow-circle-fill.svelte'
+	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import Divider from '$ui/divider.svelte'
 
 	import type { PageData } from './$types'

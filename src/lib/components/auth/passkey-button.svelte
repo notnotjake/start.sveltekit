@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createClass } from '$utils/create-class'
 	import { Suspense } from '$ui/feedback'
-	import PasskeyIcon from '$lib/theme/icons/passkey.svelte'
+	import PasskeyIcon from '$ui/icons/passkey.svelte'
 	let isActivating = $state(false)
 </script>
 

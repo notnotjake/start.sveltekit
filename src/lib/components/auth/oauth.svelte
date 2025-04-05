@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Button from '$ui/input/button.svelte'
 
-	import GoogleIcon from '$lib/theme/icons/google.svelte'
-	import AppleIcon from '$lib/theme/icons/apple.svelte'
-	import PasskeyIcon from '$lib/theme/icons/passkey.svelte'
-	import MultiDeviceIcon from '$lib/theme/icons/multi-device.svelte'
+	import GoogleIcon from '$ui/icons/google.svelte'
+	import AppleIcon from '$ui/icons/apple.svelte'
+	import PasskeyIcon from '$ui/icons/passkey.svelte'
+	import MultiDeviceIcon from '$ui/icons/multi-device.svelte'
 </script>
 
 <div class="w-full">

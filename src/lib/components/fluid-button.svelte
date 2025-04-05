@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createClass } from '$utils/create-class'
-	import CheckmarkIcon from '$lib/theme/icons/checkmark.svelte'
-	import ErrorIcon from '$lib/theme/icons/exclamation-circle-fill.svelte'
+	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import ErrorIcon from '$ui/icons/exclamation-circle-fill.svelte'
 	import { Suspense } from '$ui/feedback'
 	import ResizableContainer from '$ui/resizable-container.svelte'
 	import { fly, fade, scale, slide } from 'svelte/transition'
