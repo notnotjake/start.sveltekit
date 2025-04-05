@@ -1,12 +1,57 @@
 <script lang="ts">
+	import type { Snippet, Component } from 'svelte'
 	import { createClass } from '$utils/create-class'
 	import { Suspense } from '$ui/feedback'
-	let { children, icon: Icon, suspense = false } = $props()
+
+	type Props = {
+		children: Snippet
+		icon?: Component | HTMLElement
+		onClick?: () => void
+		suspense?: boolean
+		class?: string
+		variant?: string
+		size?: string
+		role?: string
+		disabled?: boolean
+		type?: 'button' | 'submit'
+	}
+	let {
+		children,
+		icon,
+		onClick,
+		suspense = false,
+		class: classProp,
+		variant,
+		size,
+		role,
+		disabled,
+		type = 'button'
+	}: Props = $props()
+
+	const variants = {
+		base: 'relative flex items-center',
+		variant: {
+			primary: '',
+			secondary: '',
+			outline: '',
+			ghost: ''
+		},
+		size: {
+			sm: '',
+			md: '',
+			lg: ''
+		},
+		role: {
+			success: '',
+			destructive: ''
+		}
+	}
 </script>
 
 <div class="relative flex w-full shrink-1 grow basis-1 flex-col items-center">
 	<button
-		type="button"
+		{type}
+		{disabled}
 		onclick={() => {
 			suspense = !suspense
 		}}
@@ -14,9 +59,9 @@
 	>
 		{#if suspense}
 			<Suspense.Spinner size={16} />
-		{:else}
-			<Icon />
+		{:else if icon}
+			<icon />
 		{/if}
-		{@render children()}
+		{@render children?.()}
 	</button>
 </div>

@@ -7,6 +7,8 @@ import ProgressBar from './progress-bar.svelte'
 import ProgressRing from './progress-ring.svelte'
 import ProgressRadial from './progress-radial.svelte'
 
+import ToastInline from './toast-inline.svelte'
+
 export const Suspense = {
 	Text: SuspenseText,
 	Skeleton: SuspenseSkeleton,
@@ -20,6 +22,10 @@ export const Progress = {
 	Radial: ProgressRadial
 }
 
+export const Toast = {
+	Inline: ToastInline
+}
+
 export {
 	ProgressRing,
 	ProgressBar,
@@ -27,5 +33,6 @@ export {
 	SuspenseBar,
 	SuspenseSkeleton,
 	SuspenseSpinner,
-	SuspenseText
+	SuspenseText,
+	ToastInline
 }

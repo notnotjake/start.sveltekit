@@ -1,23 +1,37 @@
 <script lang="ts">
-	import { setContext } from 'svelte'
+	import { setContext, type Snippet } from 'svelte'
 	import { createClass } from '$utils/create-class'
 	import { Tween } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
 
 	// Component Props
+	type Props = {
+		isShown?: boolean
+		onChange?: () => void
+		children: Snippet
+		sidebarContent: Snippet
+		class?: string
+		minWidth?: number
+		maxWidth?: number
+		defaultWidth?: number
+		resizable?: boolean
+		side?: 'left' | 'right'
+	}
 	let {
+		isShown: isShownProp = $bindable(true),
+		onChange,
 		children,
-		class: classProp,
 		sidebarContent,
+		class: classProp,
 		minWidth = 150,
 		maxWidth = 500,
 		defaultWidth = 300,
-		isShown: isShownInit = true,
+		resizable = true,
 		side = 'left'
-	} = $props()
+	}: Props = $props()
 
 	let sidebar = $state({
-		isShown: isShownInit
+		isShown: isShownProp
 	})
 	setContext('sidebar', sidebar)
 
@@ -69,6 +83,15 @@
 			sidebarWidthTweened.target = contentWidth
 		}
 	})
+	$effect(() => {
+		if (isShownProp) {
+			sidebar.isShown = true
+		} else if (!isShownProp) {
+			sidebar.isShown = false
+		}
+	})
+
+	$inspect(sidebar.isShown)
 </script>
 
 <svelte:window on:mouseup={stopResize} />
@@ -98,6 +121,7 @@
 			desc="drag handle"
 			class={createClass(
 				'absolute top-0 h-full w-[0px] bg-blue-500 transition-all duration-200 has-hover:w-[3px] has-hover:opacity-100',
+				!resizable && 'hidden',
 				side == 'left' ? 'right-0' : 'left-0',
 				isResizing ? 'w-[3px] opacity-100' : 'opacity-0'
 			)}
