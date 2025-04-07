@@ -78,7 +78,6 @@ export const actions: Actions = {
 		if (userExists?.data?.exists && userExists?.data?.user?.id) {
 			// returning user
 
-			// todo: need to check their login preferences
 			const keysReturned = await Auth.getUserKeysAvailable(userExists.data.user?.id)
 
 			if (!keysReturned.success || !Array.isArray(keysReturned.data))
@@ -103,11 +102,11 @@ export const actions: Actions = {
 			})
 
 			const response: CheckEmailMessage = {
-				existingUser: false,
+				existingUser: true,
 				emailAvailable: true,
-				emailSentSuccess: true,
+				emailSentSuccess: false,
 				passwordAvailable: keys.has('password'),
-				passkeyAvailable: false,
+				passkeyAvailable: keys.has('passkey'),
 				oauthRequired: false
 			}
 

@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition'
+	import { fade, fly } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
 	import { createClass } from '$utils/create-class'
 	import { Suspense, Progress } from '$ui/feedback'
-	import PasswordInput from '$ui/auth/password-input.svelte'
+	import PasswordInput from './password-input.svelte'
 	import PasskeyButton from '$ui/auth/passkey-button.svelte'
 	import OAuth from '$ui/auth/oauth.svelte'
 	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
 	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import Divider from '$ui/divider.svelte'
+	import Chevron from '$ui/icons/chevron.svelte'
 
 	import type { PageData } from './$types'
 	import { superForm } from 'sveltekit-superforms'
@@ -16,6 +18,22 @@
 	import { onMount } from 'svelte'
 
 	let { data } = $props()
+
+	function wipeVertical(node, { duration = 250, delay = 0, easing = cubicOut }) {
+		const targetHeight = node.offsetHeight
+		return {
+			duration,
+			delay,
+			easing,
+			css: (t) => `
+				height: ${t * targetHeight}px;
+				min-height: ${t * targetHeight}px;
+				overflow: hidden;
+				white-space: nowrap;
+				opacity: ${t};
+			`
+		}
+	}
 
 	const {
 		form: emailForm,
@@ -35,7 +53,10 @@
 		validationMethod: 'auto',
 		delayMs: 150,
 		timeoutMs: 3000,
-		multipleSubmits: 'prevent'
+		multipleSubmits: 'prevent',
+		onSubmit({ formData, cancel }) {
+			console.log('test')
+		}
 	})
 
 	let identifier = $state('')
@@ -63,13 +84,34 @@
 	}
 </script>
 
+<div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
+	<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
+		{#if $emailMessage?.existingUser}Welcome back to Luxo{:else}Welcome to Luxo{/if}
+	</h2>
+	{#if !$emailMessage}
+		<p
+			class="animate-fade-in-scale text-[1.05rem] leading-5 font-[430] tracking-[-0.015em] text-neutral-500"
+			in:wipeVertical={{ duration: 400 }}
+			out:wipeVertical={{ duration: 400 }}
+		>
+			Log in or sign up to get started
+		</p>
+	{/if}
+</div>
+
 <form method="POST" action="?/checkEmail" use:emailEnhance class="w-full">
 	<div
 		class={createClass(
-			'group focus-within:shadow-input-pop relative flex h-11 h-[2.8rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-200',
-			$emailMessage ? 'bg-none' : 'bg-neutral-100'
+			'group relative flex h-[3rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
+			$emailMessage ? 'bg-neutral-50' : 'bg-neutral-100'
 		)}
 	>
+		{#if $emailMessage}
+			<div class="absolute inset-0 flex h-full w-full items-center justify-start">
+				<Chevron size="30px" class="text-neutral-400 group-hover:text-neutral-700" />
+			</div>
+		{/if}
+
 		<input
 			type="email"
 			name="email"
@@ -82,8 +124,8 @@
 			onfocusin={resetForm}
 			class:attention-animation={doAttentionAnimation}
 			class={createClass(
-				'h-full w-full flex-grow-1 translate-y-0 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center' : 'pr-1'
+				'h-full w-full flex-grow-1 translate-y-0 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-[450] placeholder:text-neutral-400',
+				$emailMessage ? 'cursor-pointer bg-none pr-4 text-center text-neutral-500' : 'pr-1'
 			)}
 		/>
 
@@ -101,7 +143,7 @@
 		>
 			{#if $emailErrors.email}
 				<p
-					class="animate-fade-in-scale-right cursor-[w-resize] rounded-full bg-rose-100 px-3 py-1 text-[0.83rem] font-medium text-rose-600"
+					class="animate-fade-in-scale-right pointer-events-none cursor-[w-resize] rounded-full bg-rose-100 px-3 py-1 text-[0.83rem] font-medium text-rose-600"
 				>
 					{$emailErrors.email}
 				</p>
@@ -111,7 +153,7 @@
 				</div>
 			{:else}
 				<Arrow
-					class="bi bi-arrow-right-circle-fill text-vibrant-blue mr-1 h-6 w-6 cursor-pointer p-[0.1rem] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
+					class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-blue-500 transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
 				/>
 			{/if}
 		</button>
@@ -123,34 +165,48 @@
 	{/if}
 </form>
 
-<div class="min-h-24">
-	{#if $emailMessage?.emailSentSuccess}
-		<MagicLinkMessage
-			formData={data.emailResendForm}
-			schema={emailSchema}
-			email={$emailForm.email}
-			triggerAttention={emailAttentionAnimate}
-		/>
-	{/if}
-</div>
+{#if !$emailMessage || $emailMessage?.emailSentSuccess}
+	<div class="min-h-24" in:wipeVertical={{ duration: 400 }} out:wipeVertical={{ duration: 400 }}>
+		{#if $emailMessage?.emailSentSuccess}
+			<MagicLinkMessage
+				formData={data.emailResendForm}
+				schema={emailSchema}
+				email={$emailForm.email}
+				triggerAttention={emailAttentionAnimate}
+			/>
+		{/if}
+	</div>
+{/if}
 
 <div class="w-full">
-	{#if !$emailMessage || $emailMessage.passwordAvailable || $emailMessage.passkeyAvailable}
-		<Divider text={'Or Continue With'} isCollapsed={$emailMessage} />
+	{#if !$emailMessage || ($emailMessage?.emailSentSuccess && ($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable))}
+		<Divider text={'Or Continue With'} />
 	{/if}
 
-	{#if $emailMessage}
-		<div class="flex w-full flex-col flex-nowrap gap-2">
-			{#if $emailMessage?.passwordAvailable}
-				<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
-			{/if}
-			{#if $emailMessage?.passkeyAvailable}
-				<PasskeyButton />
-			{/if}
-		</div>
-	{:else}
-		<div class="pt-2"><OAuth /></div>
-	{/if}
+	<div
+		class={createClass(
+			'flex flex-col gap-2',
+			$emailMessage?.passkeyAvailable || $emailMessage?.passwordAvailable ? 'pt-5' : 'pt-2'
+		)}
+	>
+		{#if !$emailMessage}
+			<div out:wipeVertical={{ duration: 250 }} in:wipeVertical={{ duration: 250 }}><OAuth /></div>
+		{/if}
+
+		{#if $emailMessage?.passkeyAvailable}
+			<PasskeyButton />
+		{/if}
+
+		{#if $emailMessage?.passwordAvailable}
+			<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
+		{/if}
+
+		{#if $emailMessage?.emailAvailable && !$emailMessage?.emailSentSuccess}
+			<p class="pt-3 text-center text-[0.9rem] text-neutral-500">
+				or <a class="text-neutral-900 underline" href="/">login with email</a>
+			</p>
+		{/if}
+	</div>
 </div>
 
 <style>

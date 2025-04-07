@@ -17,7 +17,7 @@
 	}
 	let {
 		children,
-		icon,
+		icon: Icon,
 		onClick,
 		suspense = false,
 		class: classProp,
@@ -59,8 +59,8 @@
 	>
 		{#if suspense}
 			<Suspense.Spinner size={16} />
-		{:else if icon}
-			<icon />
+		{:else}
+			<Icon />
 		{/if}
 		{@render children?.()}
 	</button>

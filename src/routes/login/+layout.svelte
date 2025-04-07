@@ -8,22 +8,12 @@
 >
 	{@render title()}
 
-	<div data-desc="container" class="mt-20 mb-12 flex h-full flex-col items-center">
+	<div data-desc="container" class="mt-8 flex h-full flex-col items-center justify-center">
 		<div
 			data-desc="platter outer"
-			class="flex min-h-40 w-[23rem] flex-shrink-0 flex-col rounded-[1.3rem] bg-gradient-to-b from-[hsl(214,100%,96%)] to-[hsl(282,100%,98%)] p-[0.5rem]"
+			class="flex min-h-40 w-[25rem] flex-shrink-0 flex-col items-center rounded-[1.8rem] p-[0.5rem] px-3.5"
 		>
-			{@render cardHeading()}
-
-			<AdaptingContainer
-				startingSize={200}
-				data-desc="platter inner"
-				class="rounded-[0.8rem] bg-white shadow-xs"
-			>
-				<div class="flex w-full flex-col items-center gap-3 px-3.5 pt-7 pb-3">
-					{@render children?.()}
-				</div>
-			</AdaptingContainer>
+			{@render children?.()}
 		</div>
 	</div>
 
@@ -37,29 +27,22 @@
 	>
 {/snippet}
 
-{#snippet cardHeading(
-	action = 'Start Creating',
-	welcome = 'Connect with others and schedule practice with our vibrant community'
-)}
-	<div class="mb-2 px-7 py-5">
-		<h2 class="tracking-tight-md text-[1.3rem] leading-loose font-[550]">{action}</h2>
-		<p class="tracking-tight-lg text-[0.96rem] leading-5 font-[380]">
-			{welcome}
-		</p>
-	</div>
-{/snippet}
-
 {#snippet footer()}
-	<div class="mx-auto mb-6 flex w-fit flex-row gap-8 rounded-full bg-[hsla(0,0%,97%,1)] px-6 py-3">
+	<div class="mx-auto mb-6 flex w-fit flex-row gap-6 rounded-full px-6 py-3">
 		<a
 			href="/help"
-			class="text-[0.95rem] tracking-tighter text-slate-800 hover:text-black hover:underline"
+			class="text-[0.85rem] tracking-tight text-neutral-500 hover:text-black hover:underline"
 			>Help</a
 		>
 		<a
 			href="/privacy"
-			class="text-[0.95rem] tracking-tighter text-slate-800 hover:text-black hover:underline"
+			class="text-[0.85rem] tracking-tight text-neutral-500 hover:text-black hover:underline"
 			>Privacy</a
+		>
+		<a
+			href="/terms"
+			class="text-[0.85rem] tracking-tight text-neutral-500 hover:text-black hover:underline"
+			>Terms</a
 		>
 	</div>
 {/snippet}

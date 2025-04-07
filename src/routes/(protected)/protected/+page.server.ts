@@ -11,7 +11,8 @@ export const load: ServerLoad = async (event) => {
 
 	return {
 		sessionId: event.locals.session?.id,
-		userEmail: event.locals.user?.identifier
+		userEmail: event.locals.user?.identifier,
+		userName: event.locals.user?.name
 	}
 }
 

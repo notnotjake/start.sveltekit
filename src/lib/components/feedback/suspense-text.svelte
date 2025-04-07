@@ -8,7 +8,21 @@
 		speed?: number
 		spread?: number
 	}
-	let { children, class: classProp, speed = 0.15, spread = 6 }: Props = $props()
+	let {
+		children,
+		class: classProp,
+		speed = 0.15,
+		spread = 6,
+		colorBase = '#828282',
+		colorHighlight = '#000'
+	}: {
+		children: Snippet
+		class?: string
+		speed?: number
+		spread?: number
+		colorBase?: string
+		colorHighlight?: string
+	} = $props()
 
 	let element: HTMLElement
 
@@ -24,6 +38,8 @@
 		bind:this={element}
 		style:--duration={`calc(${textLength} * ${speed}s)`}
 		style:--spread={`calc(${spread} * 0.5ch)`}
+		style:--base-color={colorBase}
+		style:--base-gradient-color={colorHighlight}
 		class={createClass(
 			'relative inline-block whitespace-nowrap text-transparent',
 			preserveClass('text-shimmer'),
@@ -36,8 +52,6 @@
 
 <style>
 	.text-shimmer {
-		--base-color: #828282;
-		--base-gradient-color: #000;
 		background:
 			linear-gradient(
 					100deg,

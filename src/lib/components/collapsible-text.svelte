@@ -13,7 +13,7 @@
 	<div
 		bind:offsetWidth={elementWidth}
 		class={createClass(
-			'absolute top-0 left-0 flex h-full items-center px-2.5 whitespace-nowrap transition-all duration-200',
+			'absolute top-0 left-0 flex h-full items-center whitespace-nowrap transition-all duration-200',
 			isCollapsed ? 'scale-90 opacity-0' : 'scale-100 opacity-100'
 		)}
 	>
