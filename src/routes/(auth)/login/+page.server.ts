@@ -7,6 +7,7 @@ import { fail, redirect } from '@sveltejs/kit'
 import Auth from '$lib/server/auth'
 import { emailSchema, passwordLoginSchema } from './schema'
 import { setDelay, withDelay } from '$lib/server/auth/utils'
+import { generateAuthenticationOptions } from '@simplewebauthn/server'
 import SendMail from '$lib/server/email'
 
 export const load: ServerLoad = async (event) => {
@@ -39,12 +40,18 @@ export const load: ServerLoad = async (event) => {
 		}
 	}
 
+	// Create Passkey Challenge Options
+	const options = await generateAuthenticationOptions({
+		rpID: 'localhost',
+		userVerification: 'preferred'
+	})
+
 	// Instantiate the various forms with superform
 	const emailForm = await superValidate(zod(emailSchema))
 	const emailResendForm = await superValidate(zod(emailSchema))
 	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
-	return { emailForm, emailResendForm, passwordLoginForm }
+	return { emailForm, emailResendForm, passwordLoginForm, options }
 }
 
 type CheckEmailMessage = {

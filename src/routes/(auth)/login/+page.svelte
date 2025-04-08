@@ -15,6 +15,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { emailSchema, passwordLoginSchema } from './schema.ts'
+	import { startAuthentication } from '@simplewebauthn/browser'
 	import { onMount } from 'svelte'
 
 	let { data } = $props()
@@ -65,8 +66,16 @@
 	let buttonWidth = $state(0)
 
 	// Set user's timezone on component mount
-	onMount(() => {
+	onMount(async () => {
 		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+		const optionsJSON = data.options
+
+		try {
+			const asseResp = await startAuthentication({ optionsJSON, useBrowserAutofill: true })
+		} catch (e) {
+			console.error(e)
+		}
 	})
 
 	function resetForm() {
@@ -115,7 +124,7 @@
 		<input
 			type="email"
 			name="email"
-			autocomplete="email"
+			autocomplete="webauthn"
 			id="email"
 			placeholder="Continue with email"
 			aria-label="Enter your email"
