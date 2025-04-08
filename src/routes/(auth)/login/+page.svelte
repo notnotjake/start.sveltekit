@@ -6,7 +6,7 @@
 	import PasswordInput from './password-input.svelte'
 	import PasskeyButton from '$ui/auth/passkey-button.svelte'
 	import OAuth from '$ui/auth/oauth.svelte'
-	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
+	import MagicLinkMessage from './magic-link-message.svelte'
 	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import Divider from '$ui/divider.svelte'
 	import Chevron from '$ui/icons/chevron.svelte'
@@ -165,48 +165,35 @@
 	{/if}
 </form>
 
-{#if !$emailMessage || $emailMessage?.emailSentSuccess}
-	<div class="min-h-24" in:wipeVertical={{ duration: 400 }} out:wipeVertical={{ duration: 400 }}>
-		{#if $emailMessage?.emailSentSuccess}
-			<MagicLinkMessage
-				formData={data.emailResendForm}
-				schema={emailSchema}
-				email={$emailForm.email}
-				triggerAttention={emailAttentionAnimate}
-			/>
-		{/if}
-	</div>
-{/if}
-
-<div class="w-full">
-	{#if !$emailMessage || ($emailMessage?.emailSentSuccess && ($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable))}
-		<Divider text={'Or Continue With'} />
+<div class="flex w-full flex-col gap-2 pt-5">
+	{#if !$emailMessage}
+		<div
+			class="flex min-h-45 flex-col justify-end gap-2"
+			out:wipeVertical={{ duration: 250 }}
+			in:wipeVertical={{ duration: 250 }}
+		>
+			<Divider text={'Or Continue With'} />
+			<OAuth />
+		</div>
 	{/if}
 
-	<div
-		class={createClass(
-			'flex flex-col gap-2',
-			$emailMessage?.passkeyAvailable || $emailMessage?.passwordAvailable ? 'pt-5' : 'pt-2'
-		)}
-	>
-		{#if !$emailMessage}
-			<div out:wipeVertical={{ duration: 250 }} in:wipeVertical={{ duration: 250 }}><OAuth /></div>
-		{/if}
+	{#if $emailMessage?.passkeyAvailable}
+		<PasskeyButton />
+	{/if}
 
-		{#if $emailMessage?.passkeyAvailable}
-			<PasskeyButton />
-		{/if}
+	{#if $emailMessage?.passwordAvailable}
+		<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
+	{/if}
 
-		{#if $emailMessage?.passwordAvailable}
-			<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
-		{/if}
-
-		{#if $emailMessage?.emailAvailable && !$emailMessage?.emailSentSuccess}
-			<p class="pt-3 text-center text-[0.9rem] text-neutral-500">
-				or <a class="text-neutral-900 underline" href="/">login with email</a>
-			</p>
-		{/if}
-	</div>
+	{#if $emailMessage?.emailAvailable}
+		<MagicLinkMessage
+			formData={data.emailResendForm}
+			schema={emailSchema}
+			email={$emailForm.email}
+			triggerAttention={emailAttentionAnimate}
+			automaticMethod={!($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable)}
+		/>
+	{/if}
 </div>
 
 <style>

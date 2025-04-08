@@ -64,6 +64,9 @@ export const actions: Actions = {
 		const emailForm = await superValidate(event.request, zod(emailSchema))
 		if (!emailForm.valid) return fail(400, { emailForm })
 
+		// Change to lowercase
+		emailForm.data.email = emailForm.data.email.toLowerCase()
+
 		// ensure there is a valid session
 		if (!event.locals.session) return fail(400, { emailForm })
 
@@ -78,6 +81,7 @@ export const actions: Actions = {
 		if (userExists?.data?.exists && userExists?.data?.user?.id) {
 			// returning user
 
+			// get users login keys (password, passkeys)
 			const keysReturned = await Auth.getUserKeysAvailable(userExists.data.user?.id)
 
 			if (!keysReturned.success || !Array.isArray(keysReturned.data))
@@ -85,26 +89,28 @@ export const actions: Actions = {
 
 			const keys = new Set(keysReturned.data.map((item) => item.type))
 
-			console.log(keys)
-
-			const emailToken = Auth.generateToken()
-			await SendMail.magiclink(
-				emailForm.data.email,
-				emailToken,
-				emailForm.data.timezone || 'UTC',
-				maxAgeMins
-			)
-			await Auth.createAuthAttempt({
-				identifier: emailForm.data.email,
-				sessionId: event.locals.session.id,
-				token: emailToken,
-				maxAgeMins
-			})
+			let emailSent = false
+			if (!keys.has('password') && !keys.has('passkey')) {
+				const emailToken = Auth.generateToken()
+				await SendMail.magiclink(
+					emailForm.data.email,
+					emailToken,
+					emailForm.data.timezone || 'UTC',
+					maxAgeMins
+				)
+				await Auth.createAuthAttempt({
+					identifier: emailForm.data.email,
+					sessionId: event.locals.session.id,
+					token: emailToken,
+					maxAgeMins
+				})
+				emailSent = true
+			}
 
 			const response: CheckEmailMessage = {
 				existingUser: true,
 				emailAvailable: true,
-				emailSentSuccess: false,
+				emailSentSuccess: emailSent,
 				passwordAvailable: keys.has('password'),
 				passkeyAvailable: keys.has('passkey'),
 				oauthRequired: false
@@ -156,6 +162,9 @@ export const actions: Actions = {
 
 		if (userExists?.data?.exists) {
 			// returning user
+
+			// todo: check if user allows login with email
+
 			await SendMail.magiclink(
 				emailResendForm.data.email,
 				emailToken,

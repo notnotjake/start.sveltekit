@@ -25,7 +25,20 @@ export const POST: RequestHandler = async (event) => {
 	})
 
 	if (attempt.verified) {
-		console.log('SUCCESS', attempt)
+		const userId = event.locals.user?.id
+		const passkeyId = attempt.registrationInfo?.credential.id
+		const credential = attempt.registrationInfo?.credential.publicKey
+
+		if (!userId || !passkeyId || !credential) {
+			return fail(400)
+		}
+
+		Auth.addPasskey({
+			userId,
+			passkeyId,
+			credential
+		})
+
 		return json({ success: true, message: 'Passkey registered successfully' })
 	} else {
 		return json({ success: false, message: 'PVerification failed' })

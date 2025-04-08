@@ -18,6 +18,7 @@ import { generateToken } from './utils'
 import { getUserByIdentifier, getUserKeysAvailable } from './users'
 import { createAuthAttempt, verifyAuthAttempt, getAuthAttempt } from './auth-attempt'
 import { verifyPassword, addPassword } from './password'
+import { addPasskey } from './key'
 
 const Auth = {
 	sessionCookieName,
@@ -39,6 +40,7 @@ const Auth = {
 	verifyPassword,
 	addPassword,
 	setRedirectUrl,
-	consumeRedirectUrl
+	consumeRedirectUrl,
+	addPasskey
 }
 export default Auth

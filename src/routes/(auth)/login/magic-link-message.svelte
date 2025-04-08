@@ -8,7 +8,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 
-	let { formData: resendEmailForm, schema, email, triggerAttention } = $props()
+	let { formData: resendEmailForm, schema, email, triggerAttention, automaticMethod } = $props()
 
 	function wipeIn(node, { duration = 300, delay = 0, easing = cubicOut }) {
 		const targetWidth = node.offsetWidth
@@ -30,6 +30,7 @@
 		{
 			id: 'resendEmailForm',
 			onSubmit({ formData, cancel }) {
+				initiated = true
 				if (buttonState === 'disabled') {
 					showCountdown = 'clicked'
 					cancel()
@@ -72,14 +73,18 @@
 
 	let triesAttempted = $state(1)
 
+	let initiated = $state(automaticMethod)
+
 	type ButtonState = 'enabled' | 'disabled' | 'success' | 'error'
 	let buttonState: ButtonState = $state('enabled')
 
 	onMount(() => {
-		buttonState = 'disabled'
-		setTimeout(() => {
-			buttonState = 'enabled'
-		}, COOLDOWN_TIME)
+		if (automaticMethod) {
+			buttonState = 'disabled'
+			setTimeout(() => {
+				buttonState = 'enabled'
+			}, COOLDOWN_TIME)
+		}
 	})
 	$effect(() => {
 		if ($message?.success === false || $allErrors.length > 0 || $timeout) {
@@ -113,14 +118,12 @@
 	}
 </script>
 
-<p></p>
-
-<div class="w-full py-6">
+<div class={createClass('w-full transition-all duration-300', initiated ? 'py-6' : 'py-1')}>
 	{#if buttonState === 'error'}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again
 		</p>
-	{:else}
+	{:else if initiated}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center">
 			Check your email for a login link
 		</p>
@@ -130,53 +133,65 @@
 		<!-- Hidden input to capture user's timezone -->
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 
-		<div
-			class="flex w-full items-center justify-center pt-1"
-			onmouseenter={handleMouseEnter}
-			onmouseleave={handleMouseLeave}
-		>
-			{#if triesAttempted > RESENDS_BEFORE_ALERT}
-				<p class="tracking-tight-md flash-appear pr-2 text-[0.93rem] text-neutral-800">
-					Is email correct?
-				</p>
-			{/if}
-
-			{#if $delayed && !$timeout}
-				<div in:scale={{ duration: 250 }}>
-					<SuspenseText class="animate-fade-in-scale text-[0.93rem]">Trying to Resend</SuspenseText>
-				</div>
-			{:else if buttonState === 'success'}
-				<div in:wipeIn={{ duration: 400 }}>
-					<p class="rounded-full bg-green-100/60 px-2 text-[0.93rem] text-green-600">Email Sent</p>
-				</div>
-			{:else}
-				<button
-					type="submit"
-					in:scale={{ duration: 300, opacity: 0 }}
-					class={createClass(
-						'tracking-tight-sm cursor-pointer text-[0.93rem] font-[350] text-neutral-900 transition-colors',
-						buttonState === 'disabled' ? 'text-neutral-500' : 'font-medium text-blue-500'
-					)}
+		{#if !initiated}
+			<div class="flex w-full justify-center">
+				<button type="submit"
+					>or <span class="text-neutral-900 underline">login with email</span></button
 				>
-					Resend
-				</button>
-			{/if}
+			</div>
+		{:else}
+			<div
+				class="flex w-full items-center justify-center pt-1"
+				onmouseenter={handleMouseEnter}
+				onmouseleave={handleMouseLeave}
+			>
+				{#if triesAttempted > RESENDS_BEFORE_ALERT}
+					<p class="tracking-tight-md flash-appear pr-2 text-[0.93rem] text-neutral-800">
+						Is email correct?
+					</p>
+				{/if}
 
-			{#if buttonState === 'disabled'}
-				<div
-					class="overflow-hidden transition-all duration-250"
-					style:opacity={showCountdown ? '100%' : '0%'}
-					style:max-width={showCountdown ? '200px' : '0px'}
-				>
-					<div
-						class="w-fit pl-1 transition-all duration-250"
-						style:transform={showCountdown ? 'translateX(0)' : 'translateX(-100%)'}
-					>
-						<ProgressRadial totalTime={COOLDOWN_TIME / 1000} currentTime={getTimeElapsed()} />
+				{#if $delayed && !$timeout}
+					<div in:scale={{ duration: 250 }}>
+						<SuspenseText class="animate-fade-in-scale text-[0.93rem]"
+							>Trying to Resend</SuspenseText
+						>
 					</div>
-				</div>
-			{/if}
-		</div>
+				{:else if buttonState === 'success'}
+					<div in:wipeIn={{ duration: 400 }}>
+						<p class="rounded-full bg-green-100/60 px-2 text-[0.93rem] text-green-600">
+							Email Sent
+						</p>
+					</div>
+				{:else}
+					<button
+						type="submit"
+						in:scale={{ duration: 300, opacity: 0 }}
+						class={createClass(
+							'tracking-tight-sm cursor-pointer text-[0.93rem] font-[350] text-neutral-900 transition-colors',
+							buttonState === 'disabled' ? 'text-neutral-500' : 'font-medium text-blue-500'
+						)}
+					>
+						Resend
+					</button>
+				{/if}
+
+				{#if buttonState === 'disabled'}
+					<div
+						class="overflow-hidden transition-all duration-250"
+						style:opacity={showCountdown ? '100%' : '0%'}
+						style:max-width={showCountdown ? '200px' : '0px'}
+					>
+						<div
+							class="w-fit pl-1 transition-all duration-250"
+							style:transform={showCountdown ? 'translateX(0)' : 'translateX(-100%)'}
+						>
+							<ProgressRadial totalTime={COOLDOWN_TIME / 1000} currentTime={getTimeElapsed()} />
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</form>
 </div>
 
