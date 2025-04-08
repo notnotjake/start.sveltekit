@@ -16,8 +16,9 @@ export const session = sqliteTable('user_session', {
 	userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
 	ipAddress: text('ip_address'),
 	userAgent: text('user_agent'),
-	lastSeenAt: integer('last_seen_at', { mode: 'timestamp' }).notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	lastSeenAt: integer('last_seen_at', { mode: 'timestamp' }).notNull(),
+	lastAuthAt: integer('last_auth_at', { mode: 'timestamp' }),
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 	invalidatedAt: integer('invalidated_at', { mode: 'timestamp' })
 })
@@ -30,9 +31,9 @@ export const key = sqliteTable('user_key', {
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	type: text('type').notNull(),
+	name: text('name'),
 	credential: text('credential'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 })
 export type Key = InferSelectModel<typeof key>
 export type NewKey = InferInsertModel<typeof key>

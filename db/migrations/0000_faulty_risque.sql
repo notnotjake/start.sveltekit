@@ -12,9 +12,9 @@ CREATE TABLE `user_key` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`type` text NOT NULL,
+	`name` text,
 	`credential` text,
 	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -23,8 +23,9 @@ CREATE TABLE `user_session` (
 	`user_id` text,
 	`ip_address` text,
 	`user_agent` text,
-	`last_seen_at` integer NOT NULL,
 	`created_at` integer NOT NULL,
+	`last_seen_at` integer NOT NULL,
+	`last_auth_at` integer,
 	`expires_at` integer NOT NULL,
 	`invalidated_at` integer,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade

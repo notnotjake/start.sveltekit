@@ -79,8 +79,7 @@ export async function addPassword(identifier: string, password: string): Promise
 		userId: userId,
 		type: 'password',
 		credential: passwordHash,
-		createdAt: new Date(),
-		updatedAt: new Date()
+		createdAt: new Date()
 	}
 
 	// Insert into database
@@ -130,7 +129,7 @@ export async function updatePassword(
 
 			await db
 				.update(table.key)
-				.set({ credential: passwordHash, updatedAt: new Date() })
+				.set({ credential: passwordHash, createdAt: new Date() })
 				.where(eq(table.key.userId, userId))
 				.returning()
 			return Response.succeed()

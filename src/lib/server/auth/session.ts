@@ -23,6 +23,7 @@ export async function createSession(event: RequestEvent, token: string) {
 		userAgent,
 		lastSeenAt: new Date(),
 		createdAt: new Date(),
+		lastAuthAt: null,
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
 		invalidatedAt: null
 	}
@@ -38,7 +39,10 @@ export async function createSession(event: RequestEvent, token: string) {
 }
 export async function authenticateSession(sessionId: string, userId: string) {
 	try {
-		await db.update(table.session).set({ userId }).where(eq(table.session.id, sessionId))
+		await db
+			.update(table.session)
+			.set({ userId, lastAuthAt: new Date() })
+			.where(eq(table.session.id, sessionId))
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Failed to create session', error)
@@ -61,6 +65,7 @@ export async function createAuthenticatedSession(
 		userAgent,
 		lastSeenAt: new Date(),
 		createdAt: new Date(),
+		lastAuthAt: new Date(),
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
 		invalidatedAt: null
 	}
