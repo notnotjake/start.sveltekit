@@ -65,7 +65,7 @@ export const load: ServerLoad = async (event) => {
 	return { emailForm, emailResendForm, passwordLoginForm, magicStatus, passkeyAuto }
 }
 
-type CheckEmailMessage = {
+type FindUserMessage = {
 	existingUser: boolean | null
 	emailAvailable: boolean | null
 	emailSentSuccess: boolean | null
@@ -75,93 +75,67 @@ type CheckEmailMessage = {
 }
 
 export const actions: Actions = {
-	checkEmail: async (event) => {
+	startLogin: async (event) => {
 		const delay = setDelay(500) // normalize response times
 
 		// validate form data
 		const emailForm = await superValidate(event.request, zod(emailSchema))
 		if (!emailForm.valid) return fail(400, { emailForm })
-
-		// Change to lowercase
-		emailForm.data.email = emailForm.data.email.toLowerCase()
-
 		// ensure there is a valid session
 		if (!event.locals.session) return fail(400, { emailForm })
 
-		// check if a user already exists associated with the submitted email/identifier
-		const userExists = await Auth.getUserByIdentifier(emailForm.data.email)
+		// change email to lowercase
+		emailForm.data.email = emailForm.data.email.toLowerCase()
 
-		if (!userExists.success) return fail(400, { emailForm })
+		// check if a user exists
+		const userExistsRequest = await Auth.getUserByIdentifier(emailForm.data.email)
+		if (!userExistsRequest.success) return fail(400, { emailForm })
 
-		// Default maxAgeMins to 5 minutes
-		const maxAgeMins = 5
+		// Default Values
+		let existingUser = false
+		let passwordAvailable = false
+		let passkeyAvailable = false
+		let sendLoginEmail = false
+		let emailSentSuccess = false
 
-		if (userExists?.data?.exists && userExists?.data?.user?.id) {
-			// returning user
+		if (userExistsRequest?.data?.exists && userExistsRequest?.data?.user?.id) {
+			existingUser = true
 
-			// get users login keys (password, passkeys)
-			const keysReturned = await Auth.getUserKeysAvailable(userExists.data.user?.id)
+			const keysReturned = await Auth.getUserKeysAvailable(userExistsRequest.data.user.id)
+			if (!keysReturned.success || !keysReturned.data) return fail(400, { emailForm })
 
-			if (!keysReturned.success || !Array.isArray(keysReturned.data))
-				return fail(400, { emailForm })
+			const keys = keysReturned.data
+			passwordAvailable = keys.has('password')
+			passkeyAvailable = keys.has('passkey')
 
-			const keys = new Set(keysReturned.data.map((item) => item.type))
-
-			let emailSent = false
-			if (!keys.has('password') && !keys.has('passkey')) {
-				const emailToken = Auth.generateToken()
-				await SendMail.magiclink(
-					emailForm.data.email,
-					emailToken,
-					emailForm.data.timezone || 'UTC',
-					maxAgeMins
-				)
-				const authAttemptResult = await Auth.createAuthAttempt({
-					identifier: emailForm.data.email,
-					sessionId: event.locals.session.id,
-					token: emailToken,
-					maxAgeMins
-				})
-				emailSent = authAttemptResult.success
+			if (!passwordAvailable && !passkeyAvailable) {
+				sendLoginEmail = true
 			}
-
-			const response: CheckEmailMessage = {
-				existingUser: true,
-				emailAvailable: true,
-				emailSentSuccess: emailSent,
-				passwordAvailable: keys.has('password'),
-				passkeyAvailable: keys.has('passkey'),
-				oauthRequired: false
-			}
-
-			return withDelay(delay, message(emailForm, response))
 		} else {
-			// new user
-			const emailToken = Auth.generateToken()
-			await SendMail.register(
-				emailForm.data.email,
-				emailToken,
-				emailForm.data.timezone || 'UTC',
-				maxAgeMins
-			)
-			await Auth.createAuthAttempt({
-				identifier: emailForm.data.email,
+			sendLoginEmail = true
+		}
+
+		if (sendLoginEmail) {
+			const response = await Auth.sendMagiclink({
+				email: emailForm.data.email,
 				sessionId: event.locals.session.id,
-				token: emailToken,
-				maxAgeMins
+				type: existingUser ? 'login' : 'register',
+				timezone: emailForm.data.timezone || 'UTC'
 			})
 
-			const response: CheckEmailMessage = {
-				existingUser: false,
-				emailAvailable: true,
-				emailSentSuccess: true,
-				passwordAvailable: false,
-				passkeyAvailable: false,
-				oauthRequired: false
-			}
-
-			return withDelay(delay, message(emailForm, response))
+			emailSentSuccess = response.success
 		}
+
+		const response: FindUserMessage = {
+			existingUser,
+			emailAvailable: true,
+			emailSentSuccess,
+			passwordAvailable,
+			passkeyAvailable,
+			oauthRequired: false
+		}
+
+		return withDelay(delay, message(emailForm, response))
 	},
 	resendLoginEmail: async (event) => {
 		// validate form data
@@ -170,41 +144,6 @@ export const actions: Actions = {
 
 		// ensure there is a valid session
 		if (!event.locals.session) return fail(400, { emailResendForm })
-
-		// check if user exists or it's a new user
-		const userExists = await Auth.getUserByIdentifier(emailResendForm.data.email)
-		if (!userExists.success) return fail(400, { emailResendForm })
-
-		const emailToken = Auth.generateToken()
-		const maxAgeMins = 5
-
-		if (userExists?.data?.exists) {
-			// returning user
-
-			// todo: check if user allows login with email
-
-			await SendMail.magiclink(
-				emailResendForm.data.email,
-				emailToken,
-				emailResendForm.data.timezone || 'UTC',
-				maxAgeMins
-			)
-		} else {
-			// new user
-			await SendMail.register(
-				emailResendForm.data.email,
-				emailToken,
-				emailResendForm.data.timezone || 'UTC',
-				maxAgeMins
-			)
-		}
-
-		await Auth.createAuthAttempt({
-			identifier: emailResendForm.data.email,
-			sessionId: event.locals.session.id,
-			token: emailToken,
-			maxAgeMins
-		})
 
 		return message(emailResendForm, {
 			success: true

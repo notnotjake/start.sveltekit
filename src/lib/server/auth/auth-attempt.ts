@@ -68,8 +68,6 @@ export async function createAuthAttempt({
 			})
 			.returning()
 
-		console.log('new attempt', result)
-
 		return Response.succeed(result)
 	} catch (error) {
 		if (error instanceof Error) {

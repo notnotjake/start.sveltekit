@@ -52,13 +52,18 @@ export async function getUserByIdentifier(
 	}
 }
 
-export async function getUserKeysAvailable(userId: string): Promise<Response<unknown>> {
+export async function getUserKeysAvailable(userId: string): Promise<Response<Set<string>>> {
 	try {
 		const keys = await db
 			.select({ type: table.key.type })
 			.from(table.key)
 			.where(eq(table.key.userId, userId))
-		return Response.succeed(keys)
+
+		if (!Array.isArray(keys)) return Response.fail()
+
+		const keysMap = new Set(keys.map((item) => item.type))
+
+		return Response.succeed(keysMap)
 	} catch (e) {
 		console.log(e)
 		return Response.fail()

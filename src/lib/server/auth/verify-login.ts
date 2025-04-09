@@ -19,16 +19,12 @@ export async function verifyLoginWithEmail({
 }): Promise<Response<{ user: User | null; code: string | null }>> {
 	const result = await getAuthAttempt({ type: 'email', token })
 
-	console.log('Inspecting:', result.data)
-
 	if (result.success && !result.data) return Response.fail('invalid token')
 	if (!result.success || !result.data) return Response.fail('Failed getting auth attempt')
 
 	const authAttempt = result.data
 
 	if (sessionId === authAttempt.sessionId) {
-		console.log('Inside session')
-
 		// Remove all attempts associated with identifier or session
 		await cleanupAttempts({ identifier: authAttempt.identifier, sessionId: authAttempt.sessionId })
 
@@ -50,8 +46,6 @@ export async function verifyLoginWithEmail({
 			return Response.succeed({ user: newUserResult.data, code: null })
 		}
 	} else {
-		console.log('Inside code')
-
 		// Switch to using code to authenticate
 		const shortCode = generateShortCode()
 

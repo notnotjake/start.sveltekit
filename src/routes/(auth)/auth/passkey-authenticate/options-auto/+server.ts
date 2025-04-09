@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types'
-import { json, fail, redirect } from '@sveltejs/kit'
+import { json, fail } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
 import { generateAuthenticationOptions } from '@simplewebauthn/server'

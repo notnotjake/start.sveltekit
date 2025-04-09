@@ -1,17 +1,23 @@
 import { Resend } from 'resend'
 import { RESEND_API } from '$env/static/private'
 import { PUBLIC_URL_BASE } from '$env/static/public'
-import MagicLinkEmail from './templates/login-email'
+import LoginEmail from './templates/login-email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
-export async function login(
-	email: string,
-	token: string,
-	newAccount: boolean,
-	timezone: string = 'UTC',
-	maxAgeMins: number = 10
-): Promise<Response<never>> {
+export async function login({
+	email,
+	token,
+	newAccount = false,
+	timezone = 'UTC',
+	maxAgeMins = 5
+}: {
+	email: string
+	token: string
+	newAccount?: boolean
+	timezone: string
+	maxAgeMins?: number
+}): Promise<Response<never>> {
 	const resend = new Resend(RESEND_API)
 
 	const url = `${PUBLIC_URL_BASE}/login?magic=${token}`
@@ -48,7 +54,7 @@ export async function login(
 	// 		from: 'LightDance <accounts@resend.notnotjake.com>',
 	// 		to: email,
 	// 		subject: newAccount ? 'Verify Email' : 'Login Link',
-	// 		react: MagicLinkEmail(options)
+	// 		react: LoginEmail(options)
 	// 	})
 	//
 	// 	if (error) {

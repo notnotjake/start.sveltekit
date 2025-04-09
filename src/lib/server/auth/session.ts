@@ -24,7 +24,7 @@ export async function createSession(event: RequestEvent, token: string) {
 		lastSeenAt: new Date(),
 		createdAt: new Date(),
 		lastAuthAt: null,
-		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
+		expiresAt: new Date(Date.now() + DAY_IN_MS * 7),
 		invalidatedAt: null
 	}
 	try {

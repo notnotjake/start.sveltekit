@@ -22,6 +22,8 @@ import { addPasskey, getPasskeyCredential, getPasskeyUser } from './key'
 
 import { verifyLoginWithEmail } from './verify-login'
 
+import { sendMagiclink } from './magiclink'
+
 const Auth = {
 	sessionCookieName,
 	getAuthAttempt,
@@ -45,6 +47,7 @@ const Auth = {
 	addPasskey,
 	getPasskeyCredential,
 	getPasskeyUser,
+	sendMagiclink,
 	verify: {
 		withEmail: verifyLoginWithEmail
 	}

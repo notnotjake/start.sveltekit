@@ -108,7 +108,7 @@
 	{/if}
 </div>
 
-<form method="POST" action="?/checkEmail" use:emailEnhance class="w-full">
+<form method="POST" action="?/startLogin" use:emailEnhance class="w-full">
 	<div
 		class={createClass(
 			'group relative flex h-[3rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
