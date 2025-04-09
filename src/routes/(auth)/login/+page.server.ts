@@ -27,31 +27,42 @@ export const load: ServerLoad = async (event) => {
 		sessionId = event.locals.session.id
 	}
 
+	let passkeyAuto = true
+
 	// Validate magic link
 	const token = event.url.searchParams.get('magic')
+	let magicStatus = ''
 	if (token && sessionId) {
-		const result = await Auth.verifyAuthAttempt(token, sessionId)
-		if (result) {
-			await Auth.authenticateSession(sessionId, result.id)
+		let passkeyAuto = false
 
-			const redirectUrl = Auth.consumeRedirectUrl(event) // Get redirect path
+		const result = await Auth.verify.withEmail({ token, sessionId })
+		console.log(result)
 
+		if (!result.success) {
+			if (result.error === 'invalid token') {
+				// TODO: display message to user that token has expired
+				magicStatus = 'invalid token'
+			} else {
+				// TODO: display error message
+				console.log(result.error)
+				magicStatus = 'error'
+			}
+		} else if (result.data && result.data.user) {
+			await Auth.authenticateSession(sessionId, result.data.user.id)
+			const redirectUrl = Auth.consumeRedirectUrl(event)
 			redirect(307, redirectUrl)
+		} else if (result.data && result.data.code) {
+			// TODO: need to show the code on the page with UI
+			magicStatus = result.data.code
 		}
 	}
-
-	// Create Passkey Challenge Options
-	const options = await generateAuthenticationOptions({
-		rpID: 'localhost',
-		userVerification: 'preferred'
-	})
 
 	// Instantiate the various forms with superform
 	const emailForm = await superValidate(zod(emailSchema))
 	const emailResendForm = await superValidate(zod(emailSchema))
 	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
-	return { emailForm, emailResendForm, passwordLoginForm, options }
+	return { emailForm, emailResendForm, passwordLoginForm, magicStatus, passkeyAuto }
 }
 
 type CheckEmailMessage = {
@@ -105,13 +116,13 @@ export const actions: Actions = {
 					emailForm.data.timezone || 'UTC',
 					maxAgeMins
 				)
-				await Auth.createAuthAttempt({
+				const authAttemptResult = await Auth.createAuthAttempt({
 					identifier: emailForm.data.email,
 					sessionId: event.locals.session.id,
 					token: emailToken,
 					maxAgeMins
 				})
-				emailSent = true
+				emailSent = authAttemptResult.success
 			}
 
 			const response: CheckEmailMessage = {

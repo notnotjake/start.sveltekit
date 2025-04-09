@@ -1,11 +1,11 @@
 CREATE TABLE `auth_attempt` (
 	`id` text PRIMARY KEY NOT NULL,
 	`identifier` text NOT NULL,
-	`session_id` text,
+	`session_id` text NOT NULL,
 	`type` text NOT NULL,
 	`credential` text,
 	`expires_at` integer NOT NULL,
-	FOREIGN KEY (`session_id`) REFERENCES `user_session`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`session_id`) REFERENCES `user_session`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `user_key` (

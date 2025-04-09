@@ -25,20 +25,13 @@ export function setRedirectUrl(event: RequestEvent) {
 	event.cookies.set(redirectCookieName, event.url.pathname, {
 		httpOnly: true,
 		sameSite: 'lax',
-		expires: new Date(Date.now() + 1000 * 60 * 15),
+		maxAge: 60 * 10, // 10 minutes
 		path: '/'
 	})
 }
 
 export function consumeRedirectUrl(event: RequestEvent) {
 	const redirectUrl = event.cookies.get(redirectCookieName) ?? '/protected'
-
-	event.cookies.set(redirectCookieName, '', {
-		httpOnly: true,
-		sameSite: 'lax',
-		maxAge: 0,
-		path: '/'
-	})
 
 	return redirectUrl
 }

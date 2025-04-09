@@ -41,7 +41,9 @@ export type NewKey = InferInsertModel<typeof key>
 export const authAttempt = sqliteTable('auth_attempt', {
 	id: text('id').primaryKey(),
 	identifier: text('identifier').notNull(),
-	sessionId: text('session_id').references(() => session.id),
+	sessionId: text('session_id')
+		.references(() => session.id, { onDelete: 'cascade' })
+		.notNull(),
 	type: text('type').notNull(),
 	credential: text('credential'),
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()

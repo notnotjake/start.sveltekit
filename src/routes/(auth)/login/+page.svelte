@@ -3,20 +3,20 @@
 	import { cubicOut } from 'svelte/easing'
 	import { createClass } from '$utils/create-class'
 	import { Suspense, Progress } from '$ui/feedback'
-	import PasswordInput from './password-input.svelte'
-	import PasskeyButton from '$ui/auth/passkey-button.svelte'
-	import OAuth from '$ui/auth/oauth.svelte'
-	import MagicLinkMessage from './magic-link-message.svelte'
 	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import Divider from '$ui/divider.svelte'
 	import Chevron from '$ui/icons/chevron.svelte'
 
+	import PasswordInput from '$ui/auth/password-input.svelte'
+	import PasskeyAuto from '$ui/auth/passkey-auto.svelte'
+	import PasskeyButton from '$ui/auth/passkey-button.svelte'
+	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
+
 	import type { PageData } from './$types'
+	import { onMount } from 'svelte'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { emailSchema, passwordLoginSchema } from './schema.ts'
-	import { startAuthentication } from '@simplewebauthn/browser'
-	import { onMount } from 'svelte'
 
 	let { data } = $props()
 
@@ -68,14 +68,6 @@
 	// Set user's timezone on component mount
 	onMount(async () => {
 		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-		const optionsJSON = data.options
-
-		try {
-			const asseResp = await startAuthentication({ optionsJSON, useBrowserAutofill: true })
-		} catch (e) {
-			console.error(e)
-		}
 	})
 
 	function resetForm() {
@@ -92,6 +84,14 @@
 		}, 5)
 	}
 </script>
+
+{#if data.passkeyAuto}
+	<PasskeyAuto />
+{/if}
+
+{#if data.magicStatus}
+	<p>{data.magicStatus}</p>
+{/if}
 
 <div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
 	<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
@@ -116,7 +116,9 @@
 		)}
 	>
 		{#if $emailMessage}
-			<div class="absolute inset-0 flex h-full w-full items-center justify-start">
+			<div
+				class="pointer-events-none absolute inset-0 z-10 flex h-full w-full items-center justify-start"
+			>
 				<Chevron size="30px" class="text-neutral-400 group-hover:text-neutral-700" />
 			</div>
 		{/if}
@@ -175,17 +177,6 @@
 </form>
 
 <div class="flex w-full flex-col gap-2 pt-5">
-	{#if !$emailMessage}
-		<div
-			class="flex min-h-45 flex-col justify-end gap-2"
-			out:wipeVertical={{ duration: 250 }}
-			in:wipeVertical={{ duration: 250 }}
-		>
-			<Divider text={'Or Continue With'} />
-			<OAuth />
-		</div>
-	{/if}
-
 	{#if $emailMessage?.passkeyAvailable}
 		<PasskeyButton />
 	{/if}

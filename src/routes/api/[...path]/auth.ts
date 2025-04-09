@@ -1,7 +1,5 @@
 import { Hono } from 'hono'
-
-import Auth from '$lib/server/auth'
-import { verifyRegistrationResponse } from '@simplewebauthn/server'
+import { streamSSE } from 'hono/streaming'
 
 const authRoutes = new Hono()
 

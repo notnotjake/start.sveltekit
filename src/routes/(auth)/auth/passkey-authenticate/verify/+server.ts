@@ -2,45 +2,49 @@ import type { RequestHandler } from './$types'
 import { json, fail, redirect } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
-import { verifyRegistrationResponse } from '@simplewebauthn/server'
+import { verifyAuthenticationResponse } from '@simplewebauthn/server'
 
 export const POST: RequestHandler = async (event) => {
 	if (!event.locals.session) return fail(400)
 
 	const body = await event.request.json()
 
+	// Get auth attempt attached to session
 	const challenge = await Auth.getAuthAttempt({
 		sessionId: event.locals.session.id,
-		type: 'passkey_register'
+		type: 'passkey_login'
 	})
 
 	if (!challenge) return fail(400)
 
-	const attempt = await verifyRegistrationResponse({
+	if (!body?.id) return fail(400)
+	const keyId = body.id
+
+	const savedKey = await Auth.getPasskeyCredential(keyId)
+	if (!savedKey) return fail(400)
+
+	const attempt = await verifyAuthenticationResponse({
 		response: body,
 		expectedChallenge: challenge,
 		expectedOrigin: 'http://localhost:5173',
 		expectedRPID: 'localhost',
-		requireUserVerification: true
+		credential: {
+			id: keyId,
+			publicKey: savedKey,
+			counter: 0
+		}
 	})
 
 	if (attempt.verified) {
-		const userId = event.locals.user?.id
-		const passkeyId = attempt.registrationInfo?.credential.id
-		const credential = attempt.registrationInfo?.credential.publicKey
+		// find user attached
+		const userId = await Auth.getPasskeyUser(body.id)
 
-		if (!userId || !passkeyId || !credential) {
-			return fail(400)
-		}
+		if (!userId) return fail(400)
 
-		Auth.addPasskey({
-			userId,
-			passkeyId,
-			credential
-		})
-
-		return json({ success: true, message: 'Passkey registered successfully' })
-	} else {
-		return json({ success: false, message: 'PVerification failed' })
+		// authenticate
+		await Auth.authenticateSession(event.locals.session.id, userId)
+		const redirectUrl = Auth.consumeRedirectUrl(event)
+		return json({ success: true, redirect: redirectUrl })
 	}
+	return fail(400)
 }

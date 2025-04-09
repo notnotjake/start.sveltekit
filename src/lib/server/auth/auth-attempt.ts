@@ -1,153 +1,193 @@
 import { db } from '$lib/server/db'
-import { eq, lt, and } from 'drizzle-orm'
+import { eq, lt, and, or } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import type { AuthAttempt, NewAuthAttempt, User } from '$lib/server/db/schema/auth'
-import { createUser } from './users'
+import type { AuthAttempt } from '$lib/server/db/schema/auth'
 
-import { hashToken } from './utils'
+import { hash } from '@node-rs/argon2'
 import { randomUUID } from 'crypto'
+import { hashToken } from './utils'
 
-interface CreateAuthAttemptOptions {
-	identifier: string
-	sessionId: string
-	token: string
-	type?: 'email' | 'code' | 'passkey_register' | 'passkey_login' // defaults to email
-	maxAgeMins?: number // defaults to 10
-}
+import { StructuredResponse as Response } from '$utils/structured-response'
+
 export async function createAuthAttempt({
 	identifier,
 	sessionId,
 	token,
 	type = 'email',
 	maxAgeMins = 10
-}: CreateAuthAttemptOptions): Promise<AuthAttempt> {
+}: {
+	identifier: string
+	sessionId: string
+	token: string
+	type?: 'email' | 'code' | 'passkey_register' | 'passkey_login'
+	maxAgeMins?: number
+}): Promise<Response<AuthAttempt>> {
 	cleanupExpiredAttempts()
 
-	const credential = type === 'email' ? hashToken(token) : token
+	let credential: string
+	if (type === 'email') {
+		// For magic link emails we want to store a simple hash of the token
+		credential = hashToken(token)
 
-	const maxAgeMs = 1000 * 60 * maxAgeMins
-	const authAttempt: NewAuthAttempt = {
-		id: randomUUID(),
-		type,
-		identifier,
-		sessionId,
-		credential,
-		expiresAt: new Date(Date.now() + maxAgeMs)
+		await cleanupAttempts({ identifier, sessionId })
+	} else if (type === 'code') {
+		// For 6 digit codes, because there is less entropy, we salt and hash
+		const argon2HashingOptions = {
+			memoryCost: 4096,
+			timeCost: 1,
+			outputLen: 32,
+			parallelism: 1
+		}
+		credential = await hash(token, argon2HashingOptions)
+
+		await cleanupAttemptsByType({ type: 'code', sessionId, identifier })
+	} else if (type === 'passkey_login' || type === 'passkey_register') {
+		// For passkeys, we store the raw token (the challenge)
+		credential = token
+
+		if (identifier) {
+			await cleanupAttemptsByType({ type, sessionId, identifier })
+		} else {
+			await cleanupAttemptsBySessionId({ sessionId })
+		}
+	} else {
+		return Response.fail('auth attempt type not valid')
 	}
-	try {
-		// Delete all existing auth attempts for identifier
-		await db.delete(table.authAttempt).where(eq(table.authAttempt.identifier, identifier))
 
+	try {
 		// Create a new auth attempt tied to identifier and session
-		const [result] = await db.insert(table.authAttempt).values(authAttempt).returning()
-		return result
+		const [result] = await db
+			.insert(table.authAttempt)
+			.values({
+				id: randomUUID(),
+				type,
+				identifier,
+				sessionId,
+				credential,
+				expiresAt: new Date(Date.now() + maxAgeMins * 60 * 1000)
+			})
+			.returning()
+
+		console.log('new attempt', result)
+
+		return Response.succeed(result)
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Failed to create auth attempt', error)
 		}
-		throw error
+		return Response.fail('Failed to save auth attempt to db')
 	}
 }
 
-interface GetAuthAttemptOptions {
-	sessionId: string
-	type: 'email' | 'code' | 'passkey_register' | 'passkey_login' // defaults to email
-}
+type GetAuthAttemptOptions =
+	| { type: 'email'; token: string; sessionId?: never }
+	| { type: 'code' | 'passkey_register' | 'passkey_login'; sessionId: string; token?: never }
+
 export async function getAuthAttempt({
 	sessionId,
+	token,
 	type
-}: GetAuthAttemptOptions): Promise<string | null> {
-	const [result] = await db
-		.select({ credential: table.authAttempt.credential })
-		.from(table.authAttempt)
-		.where(and(eq(table.authAttempt.sessionId, sessionId), eq(table.authAttempt.type, type)))
-		.limit(1)
+}: GetAuthAttemptOptions): Promise<Response<AuthAttempt>> {
+	cleanupExpiredAttempts()
 
-	return result.credential
-}
-
-export async function verifyAuthAttempt(
-	token: string,
-	sessionId: string
-): Promise<User | null | undefined> {
-	const credential = hashToken(token)
-	try {
-		cleanupExpiredAttempts()
-
+	if (type === 'email') {
+		const credential = hashToken(token)
 		const [result] = await db
 			.select()
 			.from(table.authAttempt)
 			.where(eq(table.authAttempt.credential, credential))
 			.limit(1)
 
-		// Check that auth attempt exists
-		if (!result) {
-			console.log('Auth Attempt Not Found')
-			return null
-		}
-
-		// Check if session is expired
-		const expired = Date.now() >= result.expiresAt.getTime()
-		if (expired) {
-			console.log('Expired')
-			await db.delete(table.authAttempt).where(eq(table.authAttempt.id, result.id))
-			return null
-		}
-
-		// Delete auth attempt now that it's been used
-		await db.delete(table.authAttempt).where(eq(table.authAttempt.id, result.id))
-
-		// Get the user
-		const [user] = await db
+		return Response.succeed(result)
+	} else if (type === 'code') {
+		const [result] = await db
 			.select()
-			.from(table.user)
-			.where(eq(table.user.identifier, result.identifier))
+			.from(table.authAttempt)
+			.where(and(eq(table.authAttempt.sessionId, sessionId), eq(table.authAttempt.type, type)))
 			.limit(1)
 
-		if (user) {
-			return user
-		} else {
-			const tempName = generateAdjectiveAnimalName()
-			const newUser = await createUser(result.identifier, tempName)
+		return Response.succeed(result)
+	} else if (type === 'passkey_login' || type === 'passkey_register') {
+		const [result] = await db
+			.select()
+			.from(table.authAttempt)
+			.where(and(eq(table.authAttempt.sessionId, sessionId), eq(table.authAttempt.type, type)))
+			.limit(1)
 
-			if (newUser.success) {
-				return newUser.data
-			} else {
-				return null
-			}
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Failed to authenticate auth attempt', error)
-		}
-		throw error
+		return Response.succeed(result)
 	}
+
+	return Response.fail('auth attempt type not valid')
+}
+
+export async function cleanupAttempts({
+	identifier,
+	sessionId
+}: {
+	identifier: string
+	sessionId: string
+}): Promise<Response<unknown>> {
+	if (identifier && sessionId) {
+		// Delete any existing auth attempts for this identifier OR this session
+		try {
+			await db
+				.delete(table.authAttempt)
+				.where(
+					or(
+						eq(table.authAttempt.identifier, identifier),
+						eq(table.authAttempt.sessionId, sessionId)
+					)
+				)
+		} catch (error) {
+			return Response.fail('Failed deleting email auth attempts')
+		}
+	}
+
+	return Response.fail()
+}
+export async function cleanupAttemptsByType({
+	identifier,
+	sessionId,
+	type
+}: {
+	identifier: string | null
+	sessionId: string | null
+	type: 'email' | 'code' | 'passkey_login' | 'passkey_register'
+}): Promise<Response<unknown>> {
+	if (identifier && sessionId) {
+		// Delete any existing auth attempts of the same type for this identifier OR this session
+		try {
+			await db
+				.delete(table.authAttempt)
+				.where(
+					or(
+						and(eq(table.authAttempt.identifier, identifier), eq(table.authAttempt.type, type)),
+						and(eq(table.authAttempt.sessionId, sessionId), eq(table.authAttempt.type, type))
+					)
+				)
+		} catch (error) {
+			return Response.fail('Failed deleting email auth attempts')
+		}
+	}
+
+	return Response.fail()
+}
+export async function cleanupAttemptsBySessionId({
+	sessionId
+}: {
+	sessionId: string
+}): Promise<Response<unknown>> {
+	// Delete any existing auth attempts with the same sessionId
+	try {
+		await db.delete(table.authAttempt).where(eq(table.authAttempt.sessionId, sessionId))
+	} catch (error) {
+		return Response.fail('Failed to delete auth attempts by session id')
+	}
+
+	return Response.fail()
 }
 
 export async function cleanupExpiredAttempts() {
 	const currentTime = new Date()
 	await db.delete(table.authAttempt).where(lt(table.authAttempt.expiresAt, currentTime))
 }
-
-export function generateAdjectiveAnimalName(): string {
-	const adjectives = [
-		'Cuddly',
-		'Curious',
-		'Brave',
-		'Sly',
-		'Swift',
-		'Gentle',
-		'Witty',
-		'Fierce',
-		'Jolly',
-		'Quiet'
-	]
-	const animals = ['Koala', 'Cat', 'Fox', 'Bear', 'Wolf', 'Owl', 'Tiger', 'Panda', 'Hawk', 'Deer']
-	const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
-	const animal = animals[Math.floor(Math.random() * animals.length)]
-	const num = Math.floor(Math.random() * 100) // Optional: adds uniqueness
-
-	return `${adj} ${animal}${num}`
-}
-
-export type Result = { success: boolean; error?: string; message?: string; data?: any }

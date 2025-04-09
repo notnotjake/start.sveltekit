@@ -16,9 +16,11 @@ import {
 } from './session'
 import { generateToken } from './utils'
 import { getUserByIdentifier, getUserKeysAvailable } from './users'
-import { createAuthAttempt, verifyAuthAttempt, getAuthAttempt } from './auth-attempt'
+import { createAuthAttempt, getAuthAttempt } from './auth-attempt'
 import { verifyPassword, addPassword } from './password'
-import { addPasskey } from './key'
+import { addPasskey, getPasskeyCredential, getPasskeyUser } from './key'
+
+import { verifyLoginWithEmail } from './verify-login'
 
 const Auth = {
 	sessionCookieName,
@@ -36,11 +38,15 @@ const Auth = {
 	generateToken,
 	getUserByIdentifier,
 	createAuthAttempt,
-	verifyAuthAttempt,
 	verifyPassword,
 	addPassword,
 	setRedirectUrl,
 	consumeRedirectUrl,
-	addPasskey
+	addPasskey,
+	getPasskeyCredential,
+	getPasskeyUser,
+	verify: {
+		withEmail: verifyLoginWithEmail
+	}
 }
 export default Auth

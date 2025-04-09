@@ -35,7 +35,7 @@ export async function login(
 	const timeZoneParts = timeZoneFormatter.formatToParts(expiresAt)
 	const timeZoneAbbr = timeZoneParts.find((part) => part.type === 'timeZoneName')?.value || ''
 
-	const formattedExpirationTime = timeFormatter.format(expiresAt)
+	const formattedExpirationTime = timeFormatter.format(expiresAt) + ' ' + timeZoneAbbr
 
 	const options = {
 		newAccount: newAccount,
@@ -44,19 +44,19 @@ export async function login(
 		expiresAtString: formattedExpirationTime
 	}
 
-	const { error } = await resend.emails.send({
-		from: 'LightDance <accounts@resend.notnotjake.com>',
-		to: email,
-		subject: newAccount ? 'Verify Email' : 'Login Link',
-		react: MagicLinkEmail(options)
-	})
+	// 	const { error } = await resend.emails.send({
+	// 		from: 'LightDance <accounts@resend.notnotjake.com>',
+	// 		to: email,
+	// 		subject: newAccount ? 'Verify Email' : 'Login Link',
+	// 		react: MagicLinkEmail(options)
+	// 	})
+	//
+	// 	if (error) {
+	// 		console.log(error)
+	// 		return Response.fail()
+	// 	}
 
-	if (error) {
-		console.log(error)
-		return Response.fail()
-	}
-
-	console.log('simulated email')
+	console.log('Simulated email. Magic Link: ', url)
 
 	return Response.succeed()
 }

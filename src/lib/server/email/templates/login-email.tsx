@@ -23,7 +23,7 @@ const MagicLinkEmail = ({ newAccount, url, maxAgeMins, expiresAtString }: Option
 		? 'finish creating your account'
 		: 'securely log in to your account'
 	const headingText = newAccount ? 'Create your account' : 'Log in to your account'
-	const descriptiveText = newAccount ? 'finish creating your account' : 'securely log in'
+	const descriptiveText = newAccount ? 'activate account' : 'securely log in'
 
 	return (
 		<Html>
