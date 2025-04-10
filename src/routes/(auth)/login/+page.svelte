@@ -187,8 +187,6 @@
 
 	{#if $emailMessage?.emailAvailable}
 		<MagicLinkMessage
-			formData={data.emailResendForm}
-			schema={emailSchema}
 			email={$emailForm.email}
 			triggerAttention={emailAttentionAnimate}
 			automaticMethod={!($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable)}

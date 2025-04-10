@@ -6,10 +6,8 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { createClass } from '$utils/create-class'
-	import { superForm } from 'sveltekit-superforms'
-	import { zodClient } from 'sveltekit-superforms/adapters'
 
-	let { formData: resendEmailForm, schema, email, triggerAttention, automaticMethod } = $props()
+	let { email, triggerAttention, automaticMethod } = $props()
 
 	function wipeIn(node, { duration = 300, delay = 0, easing = cubicOut }) {
 		const targetWidth = node.offsetWidth
@@ -25,46 +23,6 @@
 			`
 		}
 	}
-
-	const { form, errors, allErrors, message, enhance, delayed, timeout } = superForm(
-		resendEmailForm,
-		{
-			id: 'resendEmailForm',
-			onSubmit({ formData, cancel }) {
-				initiated = true
-				if (buttonState === 'disabled') {
-					showCountdown = 'clicked'
-					cancel()
-				} else {
-					formData.set('email', email)
-					showCountdown = false
-				}
-			},
-			onResult({ result }) {
-				if (result.type === 'success') {
-					timeLastSent = Date.now()
-					triesAttempted += 1
-
-					if (triesAttempted > RESENDS_BEFORE_ALERT) {
-						triggerAttention()
-					}
-
-					buttonState = 'success'
-					setTimeout(() => {
-						$message = null
-						buttonState = 'disabled'
-					}, SUCCESS_MESSAGE_DURATION)
-					setTimeout(() => {
-						buttonState = 'enabled'
-					}, COOLDOWN_TIME)
-				} else {
-					buttonState = 'error'
-				}
-			},
-			delayMs: 800,
-			timeoutMs: 9000
-		}
-	)
 
 	const COOLDOWN_TIME = 20 * 1000 // ms
 	const SUCCESS_MESSAGE_DURATION = 4000 // ms
@@ -87,16 +45,6 @@
 			}, COOLDOWN_TIME)
 		}
 	})
-	$effect(() => {
-		if ($message?.success === false || $allErrors.length > 0 || $timeout) {
-			buttonState = 'error'
-		}
-	})
-	$effect(() => {
-		if ($message?.success) {
-			buttonState = 'success'
-		}
-	})
 
 	// Should show after clicked until button is activated and when hovering
 	type CountdownVisibility = false | 'clicked' | 'hover'
@@ -117,6 +65,77 @@
 		if (!timeLastSent) return COOLDOWN_TIME
 		return Math.floor(Date.now() - timeLastSent) / 1000
 	}
+
+	let delayed = $state(false)
+	let delayedTimeout
+	function clearDelay() {
+		if (delayedTimeout) {
+			clearTimeout(delayedTimeout)
+			delayedTimeout = null
+		}
+		delayed = false
+	}
+	function startDelay() {
+		delayedTimeout = setTimeout(() => {
+			delayed = true
+		}, 800)
+	}
+
+	async function requestEmailResend() {
+		initiated = true
+
+		if (buttonState === 'disabled') {
+			showCountdown = 'clicked'
+			return
+		} else {
+			showCountdown = false
+		}
+
+		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+		clearDelay()
+		startDelay()
+
+		try {
+			const response = await fetch('/auth/magiclink-send', {
+				method: 'POST',
+				body: JSON.stringify({
+					email,
+					timezone
+				})
+			})
+
+			const result = await response.json()
+
+			if (result?.success) {
+				clearDelay()
+				timeLastSent = Date.now()
+				triesAttempted += 1
+
+				if (triesAttempted > RESENDS_BEFORE_ALERT) {
+					triggerAttention()
+				}
+
+				buttonState = 'success'
+				setTimeout(() => {
+					buttonState = 'disabled'
+				}, SUCCESS_MESSAGE_DURATION)
+				setTimeout(() => {
+					buttonState = 'enabled'
+				}, COOLDOWN_TIME)
+			} else {
+				buttonState = 'error'
+				clearDelay()
+			}
+		} catch (e) {
+			buttonState = 'error'
+			clearDelay()
+		}
+	}
+
+	onDestroy(() => {
+		clearDelay()
+	})
 </script>
 
 <div class={createClass('w-full transition-all duration-300', initiated ? 'py-6' : 'py-1')}>
@@ -130,7 +149,7 @@
 		</p>
 	{/if}
 
-	<form method="POST" action="?/resendLoginEmail" use:enhance>
+	<div>
 		<!-- Hidden input to capture user's timezone -->
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 
@@ -152,7 +171,7 @@
 					</p>
 				{/if}
 
-				{#if $delayed && !$timeout}
+				{#if delayed}
 					<div in:scale={{ duration: 250 }}>
 						<SuspenseText class="animate-fade-in-scale text-[0.93rem]"
 							>Trying to Resend</SuspenseText
@@ -166,7 +185,7 @@
 					</div>
 				{:else}
 					<button
-						type="submit"
+						onclick={requestEmailResend}
 						in:scale={{ duration: 300, opacity: 0 }}
 						class={createClass(
 							'tracking-tight-sm cursor-pointer text-[0.93rem] font-[350] text-neutral-900 transition-colors',
@@ -193,7 +212,7 @@
 				{/if}
 			</div>
 		{/if}
-	</form>
+	</div>
 </div>
 
 <style>

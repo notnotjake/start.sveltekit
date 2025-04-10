@@ -137,18 +137,6 @@ export const actions: Actions = {
 
 		return withDelay(delay, message(emailForm, response))
 	},
-	resendLoginEmail: async (event) => {
-		// validate form data
-		const emailResendForm = await superValidate(event.request, zod(emailSchema))
-		if (!emailResendForm.valid) return fail(400, { emailResendForm })
-
-		// ensure there is a valid session
-		if (!event.locals.session) return fail(400, { emailResendForm })
-
-		return message(emailResendForm, {
-			success: true
-		})
-	},
 	passwordLogin: async (event) => {
 		// normalize response times
 		const delay = setDelay(750)

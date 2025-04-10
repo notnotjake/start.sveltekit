@@ -1,34 +1,57 @@
 import type { RequestHandler } from './$types'
 import { json, fail, redirect } from '@sveltejs/kit'
 
+import { z } from 'zod'
 import Auth from '$lib/server/auth'
-import Email from '$lib/server/email'
+import { StructuredResponse as Response } from '$utils/structured-response'
+import { setDelay, withDelay } from '$lib/server/auth/utils'
 
-export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json()
+const requestSchema = z.object({
+	email: z.string().email(),
+	timezone: z.string()
+})
 
-	// Validate required fields
-	if (!data.email || !data.sessionId || !data.type || !data.timezone) {
-		return json({ success: false, error: 'Missing required fields' }, { status: 400 })
-	}
+type Data = z.infer<typeof requestSchema>
 
-	const sessionId = data.sessionId
-	const email = data.email.toLowerCase()
-	const type = data.type // 'login' or 'register'
-	const timezone = data.timezone || 'UTC'
+export const POST: RequestHandler = async ({ locals, request }) => {
+	const delay = setDelay(3000) // normalize response times
 
-	const existingUser = false
+	try {
+		const requestData = await request.json()
+		const validatedData = requestSchema.safeParse(requestData)
 
-	const response = await Auth.sendMagiclink({
-		email,
-		sessionId,
-		type: existingUser ? 'login' : 'register',
-		timezone
-	})
+		if (!validatedData.success) return json(Response.fail('Request object invalid - zod'))
 
-	if (response.success) {
-		return json({ success: false, data: null }, { status: 500 })
-	} else {
-		return json({ success: true, data: null })
+		const data: Data = validatedData.data
+
+		if (!locals?.session?.id) {
+			return json(Response.fail('No session found'), { status: 500 })
+		}
+		const sessionId = locals.session.id
+
+		// Check if user exists
+		const userRequest = await Auth.getUserByIdentifier(data.email)
+
+		if (!userRequest.success || !userRequest.data) {
+			return json(Response.fail('Failed to get user'), { status: 500 })
+		}
+
+		const existingUser = userRequest.data.exists
+
+		const response = await Auth.sendMagiclink({
+			email: data.email,
+			sessionId: sessionId,
+			type: existingUser ? 'login' : 'register',
+			timezone: data.timezone
+		})
+
+		if (response.success) {
+			await withDelay(delay, '')
+			return json(Response.succeed())
+		} else {
+			return json(Response.fail('Failed to send email'), { status: 500 })
+		}
+	} catch (e) {
+		return json(Response.fail('An unexpected error occurred'), { status: 400 })
 	}
 }
