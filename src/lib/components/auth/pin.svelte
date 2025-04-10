@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createClass } from '$utils/create-class'
-	let { value, active = false } = $props()
-
+	let { value, active = false, selected = false } = $props()
 	let expanded = $derived(value !== '')
 </script>
 
@@ -23,7 +22,8 @@
 		style:opacity={expanded ? '1.0' : '0.0'}
 		style:transform={expanded ? 'translateY(0%)' : 'translateY(-35%)'}
 		class:text-blue-500={active}
-		class="w-full text-center text-[1.15rem] font-medium transition-all delay-100 duration-200"
+		class:bg-blue-100={selected}
+		class="w-full text-center text-[1.15rem] font-medium transition-transform duration-200"
 	>
 		{value}
 	</p>
