@@ -137,7 +137,7 @@
 					</div>
 
 					<div
-						class="ring-neutral-150 w-breakout-40 my-3 w-full rounded-2xl bg-neutral-50 px-3 py-3 ring-1 shadow-xs"
+						class="ring-neutral-150 w-breakout-40 my-3 w-full rounded-2xl bg-neutral-50 px-3 py-3 shadow-xs ring-1"
 					>
 						<div class="flex items-center justify-between text-[0.95rem] hover:bg-neutral-50">
 							<div class="flex w-fit gap-2 text-[0.95rem]">
@@ -155,53 +155,57 @@
 
 					<h2 class="mt-1 text-lg font-semibold">Security</h2>
 
-					<div class="flex items-center justify-between py-1">
-						<div class="flex w-fit items-center gap-2 text-[0.95rem]">
-							<p class="font-medium">Login with Email</p>
-							<p class="text-neutral-700">{allowEmail ? 'Enabled' : 'Disabled'}</p>
+					<section class="py-3">
+						<div class="flex items-center justify-between py-1">
+							<div class="flex w-fit items-center gap-2 text-[0.95rem]">
+								<p class="font-medium">Login with Email</p>
+								<p class="text-neutral-700">{allowEmail ? 'Enabled' : 'Disabled'}</p>
 
-							<ToastInline
-								bind:trigger={triggerToast}
-								class="flex items-center gap-[0.2rem] rounded-full bg-green-100 p-[2px]"
+								<ToastInline
+									bind:trigger={triggerToast}
+									class="flex items-center gap-[0.2rem] rounded-full bg-green-100 p-[2px]"
+								>
+									<Checkmark size="20px" class="text-green-400" />
+									<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">Saved</p>
+								</ToastInline>
+							</div>
+
+							<Toggle
+								bind:checked={allowEmail}
+								onChange={() => {
+									triggerToast()
+								}}
+							/>
+						</div>
+
+						<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>
+
+						<div class="flex items-center justify-between py-1">
+							<div class="flex w-fit items-center gap-2 text-[0.95rem]">
+								<p class="font-medium">Passkey</p>
+								<p class="text-neutral-700">None Setup</p>
+							</div>
+
+							<button
+								class="shadow-primary rounded-full border-1 border-neutral-200 px-3.5 py-1.5 text-[0.9rem] font-medium text-neutral-800 hover:border-neutral-300 hover:bg-neutral-100"
+								>Add Passkey</button
 							>
-								<Checkmark size="20px" class="text-green-400" />
-								<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">Saved</p>
-							</ToastInline>
 						</div>
 
-						<Toggle
-							bind:checked={allowEmail}
-							onChange={() => {
-								triggerToast()
-							}}
-						/>
-					</div>
+						<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>
 
-					<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>
+						<div class="flex items-center justify-between py-1">
+							<div class="flex w-fit items-center gap-2 text-[0.95rem]">
+								<p class="font-medium">Password</p>
+								<p class="text-neutral-700">Set 2 weeks ago</p>
+							</div>
 
-					<div class="flex items-center justify-between py-2">
-						<div class="flex w-fit gap-2 text-[0.95rem]">
-							<p class="font-medium">Passkey</p>
-							<p class="text-neutral-700">None Setup</p>
+							<button
+								class="shadow-primary rounded-full border-1 border-neutral-200 px-3.5 py-1.5 text-[0.9rem] font-medium text-neutral-800 hover:border-neutral-300 hover:bg-neutral-100"
+								>Change Password</button
+							>
 						</div>
-						<button
-							class="shadow-primary rounded-full border-1 border-neutral-200 px-3.5 py-1.5 text-[0.95rem] font-medium text-neutral-800 hover:border-neutral-300 hover:bg-neutral-100"
-							>Add Passkey</button
-						>
-					</div>
-
-					<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>
-
-					<div class="flex items-center justify-between py-2">
-						<div class="flex w-fit gap-2 text-[0.95rem]">
-							<p class="font-medium">Password</p>
-							<p class="text-neutral-700">Set 2 Weeks Ago</p>
-						</div>
-						<button
-							class="shadow-primary rounded-full border-1 border-neutral-200 px-3.5 py-1.5 text-[0.95rem] font-medium text-neutral-800 hover:border-neutral-300 hover:bg-neutral-100"
-							>Change Password</button
-						>
-					</div>
+					</section>
 
 					<div class="shadow-primary my-3 w-full rounded-2xl border border-gray-200 px-3 py-2">
 						<div class="flex items-center justify-between py-2 text-[0.95rem]">

@@ -2,6 +2,8 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 
+	import { createClass } from '$utils/create-class'
+
 	import { startRegistration } from '@simplewebauthn/browser'
 
 	let {} = $props()
@@ -45,4 +47,6 @@
 	}
 </script>
 
-<button onclick={passkeyOptionsRequest}>Add a Passkey</button>
+<div class={createClass('w-full bg-neutral-100 px-3 py-2 font-medium')}>
+	<button onclick={passkeyOptionsRequest}>Add a Passkey</button>
+</div>
