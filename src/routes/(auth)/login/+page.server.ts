@@ -57,12 +57,23 @@ export const load: ServerLoad = async (event) => {
 		}
 	}
 
+	const reauthTitle = event.url.searchParams.get('reauth-title')
+	const reauthMessage = event.url.searchParams.get('reauth-message')
+
 	// Instantiate the various forms with superform
 	const emailForm = await superValidate(zod(emailSchema))
 	const emailResendForm = await superValidate(zod(emailSchema))
 	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
-	return { emailForm, emailResendForm, passwordLoginForm, magicStatus, passkeyAuto }
+	return {
+		emailForm,
+		emailResendForm,
+		passwordLoginForm,
+		magicStatus,
+		passkeyAuto,
+		reauthTitle,
+		reauthMessage
+	}
 }
 
 type FindUserMessage = {

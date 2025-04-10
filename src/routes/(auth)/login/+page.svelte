@@ -95,13 +95,20 @@
 
 <div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
 	<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
-		{#if $emailMessage?.existingUser}Welcome back to Luxo{:else}Welcome to Luxo{/if}
+		{#if data.reauthTitle}{data.reauthTitle}{:else if $emailMessage?.existingUser}Welcome back to
+			Luxo{:else}Welcome to Luxo{/if}
 	</h2>
-	{#if !$emailMessage}
+	{#if data.reauthMessage}
 		<p
 			class="animate-fade-in-scale text-[1.05rem] leading-5 font-[430] tracking-[-0.015em] text-neutral-500"
-			in:wipeVertical={{ duration: 400 }}
-			out:wipeVertical={{ duration: 400 }}
+			transition:wipeVertical={{ duration: 400 }}
+		>
+			{data.reauthMessage}
+		</p>
+	{:else if !$emailMessage}
+		<p
+			class="animate-fade-in-scale text-[1.05rem] leading-5 font-[430] tracking-[-0.015em] text-neutral-500"
+			transition:wipeVertical={{ duration: 400 }}
 		>
 			Log in or sign up to get started
 		</p>
@@ -141,7 +148,7 @@
 		/>
 
 		<!-- Hidden input to capture user's timezone -->
-		<input type="hidden" name="timezone" bind:value={$emailForm.timezone} />
+		<input type="hidden" aria-hidden name="timezone" bind:value={$emailForm.timezone} />
 
 		<button
 			type="submit"
@@ -177,7 +184,7 @@
 </form>
 
 {#if $emailMessage}
-	<div in:wipeVertical out:wipeVertical class="flex w-full flex-col gap-2 pt-5">
+	<div transition:wipeVertical class="flex w-full flex-col gap-2 pt-5">
 		{#if $emailMessage?.passkeyAvailable}
 			<PasskeyButton />
 		{/if}
