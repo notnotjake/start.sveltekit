@@ -12,6 +12,7 @@ import {
 	authenticateSession,
 	invalidateSession,
 	validateSessionToken,
+	isSessionRecentlyAuthenticated,
 	listAllUserSessions
 } from './session'
 import { generateToken } from './utils'
@@ -48,6 +49,7 @@ const Auth = {
 	getPasskeyCredential,
 	getPasskeyUser,
 	sendMagiclink,
+	isSessionRecentlyAuthenticated,
 	verify: {
 		withEmail: verifyLoginWithEmail
 	}

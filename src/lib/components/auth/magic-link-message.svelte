@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation'
 	import { scale, slide } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
-	import { wipeVertical, wipeHorizontal } from '$ui/motion/svelte-transitions'
+	import { wipeVertical, wipeHorizontal } from '$ui/motion/transitions'
 
 	import { createClass } from '$utils/create-class'
 	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
@@ -146,7 +146,7 @@
 	)}
 >
 	{#if usingCode}
-		<div in:wipeVertical out:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
+		<div transition:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
 			<CodeInput bind:code={pinCode} {onComplete} submitSuccess={submitPinResult} />
 		</div>
 	{:else if buttonState === 'error'}
