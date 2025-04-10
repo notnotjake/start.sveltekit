@@ -10,34 +10,30 @@
 	let proto = $state('')
 	let pinLength = $state(6) // Default number of pin cells
 
-	let identifier = $state('jake@notnotjake.com')
-	let editIdentity = $state(false)
-	let continueButton = $state()
-
 	let textSelected = $state(true)
 </script>
 
 <div class="w-full">
-	<div class="flex w-full flex-col items-center gap-2 pt-3 pb-10">
-		<p class="font-medium text-neutral-600">Enter Code</p>
-		<div class="group relative inline-block h-[2.8rem]">
+	<div class="flex w-full flex-col items-center gap-0.5 pt-3 pb-10">
+		<p class="text-center font-medium tracking-tight text-neutral-600">Enter Code</p>
+		<div
+			class="group bg-neutral-150 relative inline-block h-[2.8rem] rounded-[0.9rem] focus-within:ring-2 focus-within:ring-blue-500"
+		>
 			<input
 				type="text"
 				bind:value={pin}
 				name="pin-input"
 				inputmode="numeric"
 				maxlength={pinLength}
-				class="absolute top-0 left-0 h-full min-h-0 min-w-0 cursor-pointer opacity-0 focus:border-none focus:outline-none"
+				class="absolute top-0 left-0 h-full min-h-0 w-full min-w-0 cursor-pointer opacity-0"
 			/>
 
 			<div
-				class={createClass(
-					'bg-neutral-150 group-focus-within:shadow-input-pop pointer-events-none flex h-full w-fit items-center rounded-[0.9rem] px-6 ring-1 ring-neutral-200 group-hover:ring-neutral-300'
-				)}
+				class="bg-neutral-150 pointer-events-none flex h-full w-fit items-center rounded-[0.9rem] px-6"
 			>
 				{#each Array(pinLength) as _, i}
 					{#if i === 3}
-						<p class="h-fit w-4 text-[1.15rem]" class:bg-sky-200={textSelected}>&nbsp;</p>
+						<p class="h-fit w-4 text-[1.15rem]">&nbsp;</p>
 					{/if}
 					<PinCell value={pin[i] ?? ''} active={i === pin.length || textSelected} />
 				{/each}

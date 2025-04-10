@@ -22,8 +22,7 @@
 	<p
 		style:opacity={expanded ? '1.0' : '0.0'}
 		style:transform={expanded ? 'translateY(0%)' : 'translateY(-35%)'}
-		class:text-blue-600={active}
-		class:bg-sky-200={active}
+		class:text-blue-500={active}
 		class="w-full text-center text-[1.15rem] font-medium transition-all delay-100 duration-200"
 	>
 		{value}
