@@ -4,6 +4,8 @@ import { eq, and, isNull } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { Session, User } from '$lib/server/db/schema/auth'
 
+import { StructuredResponse as Response } from '$utils/structured-response'
+
 import { generateToken, hashToken } from './utils'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
@@ -120,6 +122,15 @@ export async function validateSessionToken(token: string) {
 	}
 
 	return { session, user }
+}
+
+export async function isSessionRecentlyAuthenticated(session: Session): Promise<boolean> {
+	const lastAuthAt = session.lastAuthAt?.getTime()
+	if (!lastAuthAt) return false
+
+	const authWindow = 15 * 60 * 1000 // 15 mins
+
+	return Date.now() < lastAuthAt + authWindow
 }
 
 export async function invalidateSession(sessionId: string): Promise<Result> {
