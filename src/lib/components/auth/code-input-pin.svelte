@@ -22,7 +22,7 @@
 		style:opacity={expanded ? '1.0' : '0.0'}
 		style:transform={expanded ? 'translateY(0%)' : 'translateY(-35%)'}
 		class:text-blue-500={active}
-		class:bg-blue-100={selected}
+		class:bg-blue-200={selected}
 		class="w-full text-center text-[1.15rem] font-medium transition-transform duration-200"
 	>
 		{value}

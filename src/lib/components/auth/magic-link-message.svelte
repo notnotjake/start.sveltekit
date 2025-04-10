@@ -1,28 +1,16 @@
 <script lang="ts">
-	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
-	import SuspenseText from '$ui/feedback/suspense-text.svelte'
-	import { scale, slide } from 'svelte/transition'
-	import { cubicOut } from 'svelte/easing'
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
+	import { scale, slide } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
+	import { wipeVertical, wipeHorizontal } from '$ui/motion/svelte-transitions'
+
 	import { createClass } from '$utils/create-class'
+	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
+	import SuspenseText from '$ui/feedback/suspense-text.svelte'
+	import CodeInput from '$ui/auth/code-input.svelte'
 
 	let { email, triggerAttention, automaticMethod } = $props()
-
-	function wipeIn(node, { duration = 300, delay = 0, easing = cubicOut }) {
-		const targetWidth = node.offsetWidth
-		return {
-			duration,
-			delay,
-			easing,
-			css: (t) => `
-				width: ${t * targetWidth}px;
-				overflow: hidden;
-				white-space: nowrap;
-				opacity: ${t};
-			`
-		}
-	}
 
 	const COOLDOWN_TIME = 20 * 1000 // ms
 	const SUCCESS_MESSAGE_DURATION = 4000 // ms
@@ -44,6 +32,10 @@
 				buttonState = 'enabled'
 			}, COOLDOWN_TIME)
 		}
+
+		setTimeout(() => {
+			usingCode = true
+		}, 3000)
 	})
 
 	// Should show after clicked until button is activated and when hovering
@@ -136,10 +128,28 @@
 	onDestroy(() => {
 		clearDelay()
 	})
+
+	let usingCode = $state(false)
+
+	let pinCode = $state('')
+	let submitPinResult = $state(null)
+	function onComplete() {
+		console.log('submitting ', pinCode)
+	}
 </script>
 
-<div class={createClass('w-full transition-all duration-300', initiated ? 'py-6' : 'py-1')}>
-	{#if buttonState === 'error'}
+<div
+	class={createClass(
+		'w-full transition-all duration-300',
+		initiated ? 'py-3' : 'py-1',
+		usingCode ? '' : ''
+	)}
+>
+	{#if usingCode}
+		<div in:wipeVertical out:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
+			<CodeInput bind:code={pinCode} {onComplete} submitSuccess={submitPinResult} />
+		</div>
+	{:else if buttonState === 'error'}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again
 		</p>
@@ -178,7 +188,7 @@
 						>
 					</div>
 				{:else if buttonState === 'success'}
-					<div in:wipeIn={{ duration: 400 }}>
+					<div in:wipeHorizontal={{ duration: 400 }}>
 						<p class="rounded-full bg-green-100/60 px-2 text-[0.93rem] text-green-600">
 							Email Sent
 						</p>

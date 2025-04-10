@@ -176,23 +176,25 @@
 	{/if}
 </form>
 
-<div class="flex w-full flex-col gap-2 pt-5">
-	{#if $emailMessage?.passkeyAvailable}
-		<PasskeyButton />
-	{/if}
+{#if $emailMessage}
+	<div in:wipeVertical out:wipeVertical class="flex w-full flex-col gap-2 pt-5">
+		{#if $emailMessage?.passkeyAvailable}
+			<PasskeyButton />
+		{/if}
 
-	{#if $emailMessage?.passwordAvailable}
-		<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
-	{/if}
+		{#if $emailMessage?.passwordAvailable}
+			<PasswordInput formData={data.passwordLoginForm} email={$emailForm.email} />
+		{/if}
 
-	{#if $emailMessage?.emailAvailable}
-		<MagicLinkMessage
-			email={$emailForm.email}
-			triggerAttention={emailAttentionAnimate}
-			automaticMethod={!($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable)}
-		/>
-	{/if}
-</div>
+		{#if $emailMessage?.emailAvailable}
+			<MagicLinkMessage
+				email={$emailForm.email}
+				triggerAttention={emailAttentionAnimate}
+				automaticMethod={!($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable)}
+			/>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	.attention-animation {
