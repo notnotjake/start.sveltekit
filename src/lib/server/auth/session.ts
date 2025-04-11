@@ -227,12 +227,13 @@ export async function listAllUserSessions(userId: string): Promise<Session[] | R
 
 export async function cleanupOldInvalidSessions(): Promise<Response<never>> {
 	try {
-		const retentionWindow = Date.now() - 30 * 24 * 60 * 60 * 1000 // 30 days in ms
+		const retentionWindow = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days in ms
+
 		await db.delete(table.session).where(lt(table.session.invalidatedAt, retentionWindow))
 
 		return Response.succeed()
 	} catch (e) {
-		console.error(e)
+		console.error('hee', e)
 		return Response.fail()
 	}
 }
