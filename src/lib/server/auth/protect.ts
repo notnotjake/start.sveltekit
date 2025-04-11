@@ -1,15 +1,15 @@
 import type { RequestEvent } from '@sveltejs/kit'
-import type { Session } from '$lib/server/db/schema/auth'
+import type { User, Session } from '$lib/server/db/schema/auth'
 import { fail, redirect } from '@sveltejs/kit'
 import Auth from '$lib/server/auth'
-
-import type { User } from '$lib/server/db/schema/auth'
 
 /**
  * Checks if session has been authenticated in last 15 mins
  * If it hasn't, redirect user to redirects them to step up auth
  */
 export async function requireRecentAuth(event: RequestEvent) {
+	const AUTH_WINDOW = 15 * 60 * 1000 // 15 mins
+
 	let session: Session | null = null
 	if (event.locals.session) {
 		session = event.locals.session
@@ -17,7 +17,11 @@ export async function requireRecentAuth(event: RequestEvent) {
 
 	let recentlyAuthenticated = false
 	if (session) {
-		recentlyAuthenticated = isSessionRecentlyAuthenticated(session)
+		if (!session.lastAuthAt) return false
+
+		const lastAuthAt = session.lastAuthAt.getTime()
+
+		recentlyAuthenticated = Date.now() < lastAuthAt + AUTH_WINDOW
 	}
 
 	if (!recentlyAuthenticated) {
@@ -51,12 +55,26 @@ export async function requireAuthenticatedUser(event: RequestEvent): Promise<Use
 	return event.locals.user
 }
 
-function isSessionRecentlyAuthenticated(session: Session): boolean {
-	const authWindow = 15 * 60 * 1000 // 15 mins
+/**
+ * Ensures that a session is attached to the event or creates one.
+ * Only checks that there is an unauthenticated session and does not check
+ * for a user attached to session or event.
+ *
+ * Will create a new unauthenticated session if one doesn't exist
+ */
+export async function requireSession(event: RequestEvent): Promise<Session> {
+	if (!event.locals.session) {
+		const createSessionResult = await Auth.createUnauthenticatedSession(event)
+		if (!createSessionResult.success || !createSessionResult.data) {
+			console.error(createSessionResult.error)
+			throw Error
+		}
 
-	if (!session.lastAuthAt) return false
+		const { rawSessionToken, session } = createSessionResult?.data
 
-	const lastAuthAt = session.lastAuthAt.getTime()
-
-	return Date.now() < lastAuthAt + authWindow
+		Auth.setSessionTokenCookie(event, rawSessionToken, session.expiresAt)
+		return session
+	} else {
+		return event.locals.session
+	}
 }

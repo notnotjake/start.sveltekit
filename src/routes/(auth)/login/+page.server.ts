@@ -20,15 +20,7 @@ export const load: ServerLoad = async (event) => {
 	}
 
 	// Ensure there is an unauthenticated session created
-	let sessionId: string
-	if (!event.locals.session) {
-		const sessionToken = Auth.generateToken()
-		const session = await Auth.createSession(event, sessionToken)
-		Auth.setSessionTokenCookie(event, sessionToken, session.expiresAt)
-		sessionId = session.id
-	} else {
-		sessionId = event.locals.session.id
-	}
+	let { id: sessionId } = await Auth.protect.requireSession(event)
 
 	let automaticPasskeyEnabled = true
 

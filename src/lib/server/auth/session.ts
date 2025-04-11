@@ -11,14 +11,15 @@ import { generateToken, hashToken } from './utils'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
 
-export function generateSessionToken(): string {
-	return generateToken()
-}
+export async function createUnauthenticatedSession(
+	event: RequestEvent
+): Promise<Response<{ session: Session; rawSessionToken: string }>> {
+	const rawSessionToken = generateToken()
+	const sessionId = hashToken(rawSessionToken)
 
-export async function createSession(event: RequestEvent, token: string) {
-	const sessionId = hashToken(token)
 	const ipAddress = event.getClientAddress() || 'unknown'
 	const userAgent = event.request.headers.get('user-agent') || 'unknown'
+
 	const session: Session = {
 		id: sessionId,
 		userId: null,
@@ -30,14 +31,13 @@ export async function createSession(event: RequestEvent, token: string) {
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 7),
 		invalidatedAt: null
 	}
+
 	try {
-		await db.insert(table.session).values(session)
-		return session
+		const [newSession] = await db.insert(table.session).values(session).returning()
+		return Response.succeed({ session: newSession, rawSessionToken })
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Failed to create session', error)
-		}
-		throw error
+		console.error('Failed to create session', error)
+		return Response.fail()
 	}
 }
 
@@ -47,11 +47,7 @@ export async function createSession(event: RequestEvent, token: string) {
  * This function updates the session record in the database with the provided user ID and
  * the current timestamp, effectively attaching the user to the session. It also clears
  * any step-up reauthentication cookies and performs cleanup of old invalid sessions.
- *
- * @param {Object} params - The parameters object
- * @param {RequestEvent} params.event - The request event object containing session information
- * @param {string} params.userId - The ID of the user to attach to the session
- * @returns {Promise<Response<never>>} A response object indicating success or failure
+
  *
  * @throws Will return a failure response if no session ID is provided or if database operations fail
  *
@@ -85,12 +81,14 @@ export async function authenticateSession({
 
 export async function createAuthenticatedSession(
 	event: RequestEvent,
-	token: string,
 	userId: string
-) {
-	const sessionId = hashToken(token)
+): Promise<Response<{ session: Session; rawSessionToken: string }>> {
+	const rawSessionToken = generateToken()
+	const sessionId = hashToken(rawSessionToken)
+
 	const ipAddress = event.getClientAddress() || 'unknown'
 	const userAgent = event.request.headers.get('user-agent') || 'unknown'
+
 	const session: Session = {
 		id: sessionId,
 		userId,
@@ -102,14 +100,13 @@ export async function createAuthenticatedSession(
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
 		invalidatedAt: null
 	}
+
 	try {
-		await db.insert(table.session).values(session)
-		return session
+		const [newSession] = await db.insert(table.session).values(session).returning()
+		return Response.succeed({ session: newSession, rawSessionToken })
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Failed to create session', error)
-		}
-		throw error
+		console.error('Failed to create session', error)
+		return Response.fail()
 	}
 }
 

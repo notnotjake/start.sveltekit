@@ -9,8 +9,7 @@ import {
 	clearStepUpReauthCookie
 } from './cookie'
 import {
-	generateSessionToken,
-	createSession,
+	createUnauthenticatedSession,
 	createAuthenticatedSession,
 	authenticateSession,
 	invalidateSession,
@@ -27,7 +26,7 @@ import { verifyLoginWithEmail } from './verify-login'
 
 import { sendMagiclink } from './magiclink'
 
-import { requireRecentAuth, requireAuthenticatedUser } from './protect'
+import { requireRecentAuth, requireAuthenticatedUser, requireSession } from './protect'
 
 const Auth = {
 	getAuthAttempt,
@@ -37,9 +36,8 @@ const Auth = {
 	getUserKeysAvailable,
 	setSessionTokenCookie,
 	deleteSessionTokenCookie,
-	generateSessionToken,
 	invalidateSession,
-	createSession,
+	createUnauthenticatedSession,
 	authenticateSession,
 	createAuthenticatedSession,
 	validateSessionToken,
@@ -61,7 +59,8 @@ const Auth = {
 	},
 	protect: {
 		requireRecentAuth,
-		requireAuthenticatedUser
+		requireAuthenticatedUser,
+		requireSession
 	}
 }
 export default Auth
