@@ -2,10 +2,13 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { passwordSchema } from './schema.ts'
+	import { goto } from '$app/navigation'
+	import { onDestroy } from 'svelte'
 
 	import PasskeyIcon from '$ui/icons/passkey.svelte'
 	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
 	import TextInput from '$ui/input/text-input.svelte'
+	import { ToastInline } from '$ui/feedback'
 	import { wipeVertical } from '$ui/motion/transitions'
 
 	let submitSuccess: boolean | null = $state(null)
@@ -26,9 +29,28 @@
 	} = superForm(data.addPasswordForm, {
 		resetForm: false,
 		validators: zodClient(passwordSchema),
+		validatorMethod: 'auto',
 		delayMs: 300,
 		timeoutMs: 1000,
 		multipleSubmits: 'prevent'
+	})
+
+	let redirectTimeout
+	let triggerToast
+
+	$effect(() => {
+		if ($message?.success) {
+			// password has been added successfully
+			triggerToast()
+			redirectTimeout = setTimeout(() => {
+				goto('/settings')
+			}, 2500)
+		}
+	})
+	onDestroy(() => {
+		if (redirectTimeout) {
+			clearTimeout(redirectTimeout)
+		}
 	})
 </script>
 
@@ -78,4 +100,14 @@
 			class="hidden"
 		/>
 	</form>
+
+	<div class="py-5">
+		<ToastInline
+			bind:trigger={triggerToast}
+			class="flex items-center gap-[0.2rem] rounded-full bg-green-100 p-[2px]"
+		>
+			<CheckmarkIcon size="20px" class="text-green-400" />
+			<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">Password Saved</p>
+		</ToastInline>
+	</div>
 </div>

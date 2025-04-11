@@ -1,28 +1,30 @@
-import type { Actions, ServerLoad } from '@sveltejs/kit'
-import { superValidate, setError, message } from 'sveltekit-superforms'
-import { zod } from 'sveltekit-superforms/adapters'
-import { z } from 'zod'
+import type { ServerLoad, Actions } from '@sveltejs/kit'
 import { fail, redirect } from '@sveltejs/kit'
 
-const schema = z.object({
-	emailEnabled: z.boolean()
-})
-
-let buttonValue = true
+import Auth from '$lib/server/auth'
 
 export const load: ServerLoad = async (event) => {
-	const form = await superValidate(zod(schema))
+	const user = await Auth.protect.requireAuthenticatedUser(event)
 
-	return { form }
+	return {
+		sessionId: event.locals.session?.id,
+		userEmail: user.identifier,
+		userName: user.name
+	}
 }
 
 export const actions: Actions = {
-	changeEmailEnabled: async (event) => {
-		const form = await superValidate(event.request, zod(schema))
-		if (!form.valid) return fail(400, { form })
+	logout: async (event) => {
+		if (event.locals.session?.id) {
+			const result = await Auth.invalidateSession(event.locals.session.id)
 
-		console.log(form.data)
-
-		return message(form, { success: true })
+			if (result.success) {
+				redirect(303, '/')
+			} else {
+				return fail(300, { message: 'Could not log out' })
+			}
+		} else {
+			return fail(300, { message: 'Could not log out' })
+		}
 	}
 }

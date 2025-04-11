@@ -4,15 +4,12 @@ import { fail, redirect } from '@sveltejs/kit'
 import Auth from '$lib/server/auth'
 
 export const load: ServerLoad = async (event) => {
-	if (!event.locals.user) {
-		Auth.setRedirectUrl(event)
-		redirect(307, '/login')
-	}
+	const user = await Auth.protect.requireAuthenticatedUser(event)
 
 	return {
 		sessionId: event.locals.session?.id,
-		userEmail: event.locals.user?.identifier,
-		userName: event.locals.user?.name
+		userEmail: user.identifier,
+		userName: user.name
 	}
 }
 

@@ -52,10 +52,10 @@ export async function requireAuthenticatedUser(event: RequestEvent): Promise<Use
 }
 
 function isSessionRecentlyAuthenticated(session: Session): boolean {
-	const lastAuthAt = session.lastAuthAt?.getTime()
-	if (!lastAuthAt) return false
-
 	const authWindow = 15 * 60 * 1000 // 15 mins
+
+	if (!session.lastAuthAt) return false
+	const lastAuthAt = session.lastAuthAt.getTime()
 
 	return Date.now() < lastAuthAt + authWindow
 }

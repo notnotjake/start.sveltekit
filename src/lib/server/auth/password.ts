@@ -49,7 +49,26 @@ export async function verifyPassword(
 	}
 }
 
-export async function addPassword(identifier: string, password: string): Promise<Response<never>> {
+/**
+ * Adds a password for a user identified by an email or username.
+ *
+ * @description
+ * This function performs the following steps:
+ * 1. Retrieves the user by the provided identifier.
+ * 2. Verifies the user exists and has a valid ID.
+ * 3. Checks if the user already has a password set.
+ * 4. Hashes the provided password.
+ * 5. Creates a new password entry for the user.
+ * 6. Inserts the password into the database.
+ *
+ */
+export async function addPassword({
+	identifier,
+	password
+}: {
+	identifier: string
+	password: string
+}): Promise<Response<never>> {
 	// first get the user by identifier
 	const user = await getUserByIdentifier(identifier)
 

@@ -20,21 +20,25 @@ export const load: ServerLoad = async (event) => {
 
 export const actions: Actions = {
 	addPassword: async (event) => {
-		const delay = setDelay(900)
-
 		// validate form data
 		const addPasswordForm = await superValidate(event.request, zod(passwordSchema))
 		if (!addPasswordForm.valid) return fail(400, { addPasswordForm })
 
 		// ensure there is a valid session
-		if (!event.locals.session || !event.locals.user) return fail(400, { addPasswordForm })
+		if (!event.locals.session || !event.locals.user?.identifier)
+			return fail(400, { addPasswordForm })
 
-		console.log(addPasswordForm.data.password)
+		const result = await Auth.addPassword({
+			identifier: event.locals.user.identifier,
+			password: addPasswordForm.data.password
+		})
+
+		if (!result.success) return fail(400, { addPasswordForm })
 
 		const response = {
 			success: true
 		}
 
-		return withDelay(delay, message(addPasswordForm, response))
+		return message(addPasswordForm, response)
 	}
 }
