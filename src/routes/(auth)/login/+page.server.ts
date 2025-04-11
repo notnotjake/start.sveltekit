@@ -7,13 +7,16 @@ import { fail, redirect } from '@sveltejs/kit'
 import Auth from '$lib/server/auth'
 import { emailSchema, passwordLoginSchema } from './schema'
 import { setDelay, withDelay } from '$lib/server/auth/utils'
-import { generateAuthenticationOptions } from '@simplewebauthn/server'
-import SendMail from '$lib/server/email'
 
 export const load: ServerLoad = async (event) => {
+	const stepUpReauth = Auth.getStepUpReauthCookie(event)
+	const reauthTitle = event.url.searchParams.get('reauth-title')
+	const reauthMessage = event.url.searchParams.get('reauth-message')
+
 	// If the user is logged in, redirect to protected route
-	if (event.locals.user) {
-		redirect(307, '/protected')
+	if (event.locals.user && !(reauthTitle || reauthMessage || stepUpReauth)) {
+		const redirectUrl = Auth.getRedirectUrl(event)
+		redirect(303, redirectUrl)
 	}
 
 	// Ensure there is an unauthenticated session created
@@ -27,16 +30,15 @@ export const load: ServerLoad = async (event) => {
 		sessionId = event.locals.session.id
 	}
 
-	let passkeyAuto = true
+	let automaticPasskeyEnabled = true
 
 	// Validate magic link
 	const token = event.url.searchParams.get('magic')
 	let magicStatus = ''
 	if (token && sessionId) {
-		let passkeyAuto = false
+		automaticPasskeyEnabled = false
 
 		const result = await Auth.verify.withEmail({ token, sessionId })
-		console.log(result)
 
 		if (!result.success) {
 			if (result.error === 'invalid token') {
@@ -48,29 +50,24 @@ export const load: ServerLoad = async (event) => {
 				magicStatus = 'error'
 			}
 		} else if (result.data && result.data.user) {
-			await Auth.authenticateSession(sessionId, result.data.user.id)
-			const redirectUrl = Auth.consumeRedirectUrl(event)
-			redirect(307, redirectUrl)
+			await Auth.authenticateSession({ event, userId: result.data.user.id })
+			const redirectUrl = Auth.getRedirectUrl(event)
+			redirect(303, redirectUrl)
 		} else if (result.data && result.data.code) {
 			// TODO: need to show the code on the page with UI
 			magicStatus = result.data.code
 		}
 	}
 
-	const reauthTitle = event.url.searchParams.get('reauth-title')
-	const reauthMessage = event.url.searchParams.get('reauth-message')
-
-	// Instantiate the various forms with superform
+	// Instantiate the forms
 	const emailForm = await superValidate(zod(emailSchema))
-	const emailResendForm = await superValidate(zod(emailSchema))
 	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
 	return {
 		emailForm,
-		emailResendForm,
 		passwordLoginForm,
 		magicStatus,
-		passkeyAuto,
+		automaticPasskeyEnabled,
 		reauthTitle,
 		reauthMessage
 	}
@@ -165,9 +162,9 @@ export const actions: Actions = {
 		)
 
 		if (result.success && result.data) {
-			await Auth.authenticateSession(event.locals.session.id, result.data.id)
+			await Auth.authenticateSession({ event, userId: result.data.id })
 
-			const redirectUrl = Auth.consumeRedirectUrl(event) // Get redirect path
+			const redirectUrl = Auth.getRedirectUrl(event) // Get redirect path
 
 			redirect(307, redirectUrl)
 		}

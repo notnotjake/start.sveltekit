@@ -17,7 +17,7 @@ if (!building) {
 }
 
 const handleAuth: Handle = async ({ event, resolve }) => {
-	const sessionToken = event.cookies.get(Auth.sessionCookieName) ?? null // Get session cookie
+	const sessionToken = Auth.getSessionTokenCookie(event)
 
 	// If there is no cookie, set user and session to null value
 	if (!sessionToken) {

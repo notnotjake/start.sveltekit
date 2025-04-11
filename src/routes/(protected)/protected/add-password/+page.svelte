@@ -5,6 +5,7 @@
 
 	import PasskeyIcon from '$ui/icons/passkey.svelte'
 	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import TextInput from '$ui/input/text-input.svelte'
 	import { wipeVertical } from '$ui/motion/transitions'
 
 	let submitSuccess: boolean | null = $state(null)
@@ -53,40 +54,28 @@
 		{/if}
 	</div>
 
-	<form method="POST" action="?/addPassword" use:enhance autocomplete="new-password">
-		<div class="my-4 flex w-80 flex-col">
-			<input
-				type="hidden"
-				id="username"
-				name="username"
-				autocomplete="username"
-				value={data.email}
-				disabled
-				class="hidden"
-			/>
+	<form method="POST" class="w-full" action="?/addPassword" use:enhance autocomplete="new-password">
+		<TextInput
+			bind:value={$form.password}
+			{...$constraints.password}
+			autocomplete="new-password"
+			name="password"
+			id="password"
+			placeholder="Enter new password"
+			submits
+			buttonDisabled={$allErrors.length > 0 || $form.password.length < 4}
+			error={$errors.password}
+			delayed={$delayed}
+			timeout={$timeout}
+		/>
 
-			<label
-				for="password"
-				class="mb-1 px-2 text-[0.95rem] font-medium tracking-tight text-neutral-500"
-				>New Password</label
-			>
-			<input
-				type="password"
-				name="password"
-				id="password"
-				autocomplete="new-password"
-				bind:value={$form.password}
-				{...$constraints.password}
-				placeholder="Create new password"
-				class="h-12 w-full rounded-[0.9rem] bg-neutral-100 px-4 ring-1 ring-neutral-100 outline-none focus:ring-2 focus:ring-blue-500"
-			/>
-		</div>
-
-		<button
-			type="submit"
-			class="h-12 w-full rounded-[0.9rem] bg-blue-500 px-4 ring-1 ring-neutral-100 outline-none focus:ring-2 focus:ring-blue-500"
-		>
-			Submit
-		</button>
+		<input
+			type="hidden"
+			id="username"
+			name="username"
+			autocomplete="username"
+			value="{data.email}disabled"
+			class="hidden"
+		/>
 	</form>
 </div>

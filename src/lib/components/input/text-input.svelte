@@ -1,53 +1,100 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { createClass } from '$utils/create-class'
 
-	let value = $state()
+	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
+
 	let errors = $state()
+
+	let {
+		value = $bindable(),
+		withButton = true,
+		submits = false,
+		onSubmit,
+		containerClass,
+		inputClass,
+		label,
+		labelClass,
+		disabled,
+		buttonDisabled,
+		error = false,
+		message,
+		delayed = false,
+		timeout = false,
+		elementLeft,
+		elementRight,
+		ref = $bindable(),
+		...restProps
+	}: {
+		value: string
+		withButton: boolean
+		submits: boolean
+		onSubmit: () => void
+		containerClass: string
+		inputClass: string
+		label: string
+		labelClass: string
+		disabled: boolean
+		buttonDisabled: boolean
+		message: string | null
+		error: string | boolean
+		delayed: boolean
+		timeout: boolean
+		elementLeft: Snippet
+		elementRight: Snippet
+		ref: HTMLButtonElement
+		[key: string]: any
+	} = $props()
 </script>
 
 <div
-	class="group focus-within:shadow-input-pop relative flex flex h-11 h-[2.8rem] w-full items-center overflow-hidden rounded-[0.9rem] bg-neutral-100 ring-1 ring-neutral-200"
+	class={createClass(
+		'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] bg-neutral-100 ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
+		containerClass
+	)}
 >
+	{#if elementLeft}
+		{@render elementLeft?.()}
+	{/if}
+
 	<input
-		type="text"
-		placeholder="Continue with email"
 		bind:value
-		aria-label="Enter your email or phone"
+		{disabled}
+		{...restProps}
 		class={createClass(
 			'h-full w-full flex-grow-1 pr-2 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-normal placeholder:text-neutral-500',
-			next ? 'bg-none text-center' : ''
+			inputClass
 		)}
 	/>
 
-	<button
-		onclick={handleNext}
-		bind:this={buttonElement}
-		aria-label="Continue"
-		class="group flex h-full shrink-0 flex-nowrap items-center justify-end px-2 transition-all duration-200"
-		style:margin-right={next ? `-${buttonElementWidth}px` : '0px'}
-		class:cursor-[w-resize]={error}
-		class:cursor-pointer={!error}
-	>
-		{#if error}
-			<p
-				aria-label="Continue"
-				class="animate-fade-in-scale-right cursor-[w-resize] rounded-full bg-rose-100 px-3 py-1 text-[0.92rem] font-medium text-rose-600"
-			>
-				Email Invalid
-			</p>
-		{:else}
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				fill="currentColor"
-				class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
-				viewBox="0 0 16 16"
-			>
-				<path
-					d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
+	{#if elementRight}
+		{@render elementRight?.()}
+	{:else}
+		<button
+			type={submits ? 'submit' : 'button'}
+			disabled={buttonDisabled}
+			onclick={onSubmit}
+			aria-label="Continue"
+			class={createClass(
+				'group flex h-full shrink-0 flex-nowrap items-center justify-end px-2 transition-all duration-200',
+				error ? 'cursor-[w-resize]' : 'cursor-pointer'
+			)}
+		>
+			{#if error}
+				<p
+					class="animate-fade-in-scale-right pointer-events-none cursor-[w-resize] rounded-full bg-rose-100 px-3 py-1 text-[0.83rem] font-medium text-rose-600"
+				>
+					{error}
+				</p>
+			{:else if delayed && !timeout}
+				<div class="flex h-full items-center px-3">
+					<Suspense.Spinner size={18} thickness={7} />
+				</div>
+			{:else}
+				<Arrow
+					class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-blue-500 transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
 				/>
-			</svg>
-		{/if}
-	</button>
+			{/if}
+		</button>
+	{/if}
 </div>

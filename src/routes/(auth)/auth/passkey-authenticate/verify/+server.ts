@@ -42,8 +42,8 @@ export const POST: RequestHandler = async (event) => {
 		if (!userId) return fail(400)
 
 		// authenticate
-		await Auth.authenticateSession(event.locals.session.id, userId)
-		const redirectUrl = Auth.consumeRedirectUrl(event)
+		await Auth.authenticateSession({ event, userId })
+		const redirectUrl = Auth.getRedirectUrl(event)
 		return json({ success: true, redirect: redirectUrl })
 	}
 	return fail(400)

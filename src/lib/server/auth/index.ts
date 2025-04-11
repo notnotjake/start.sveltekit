@@ -1,9 +1,12 @@
 import {
-	sessionCookieName,
 	setSessionTokenCookie,
+	getSessionTokenCookie,
 	deleteSessionTokenCookie,
 	setRedirectUrl,
-	consumeRedirectUrl
+	getRedirectUrl,
+	setStepUpReauthCookie,
+	getStepUpReauthCookie,
+	clearStepUpReauthCookie
 } from './cookie'
 import {
 	generateSessionToken,
@@ -12,7 +15,6 @@ import {
 	authenticateSession,
 	invalidateSession,
 	validateSessionToken,
-	isSessionRecentlyAuthenticated,
 	listAllUserSessions
 } from './session'
 import { generateToken } from './utils'
@@ -25,9 +27,13 @@ import { verifyLoginWithEmail } from './verify-login'
 
 import { sendMagiclink } from './magiclink'
 
+import { requireRecentAuth, requireAuthenticatedUser } from './protect'
+
 const Auth = {
-	sessionCookieName,
 	getAuthAttempt,
+	getSessionTokenCookie,
+	setStepUpReauthCookie,
+	getStepUpReauthCookie,
 	getUserKeysAvailable,
 	setSessionTokenCookie,
 	deleteSessionTokenCookie,
@@ -44,14 +50,18 @@ const Auth = {
 	verifyPassword,
 	addPassword,
 	setRedirectUrl,
-	consumeRedirectUrl,
+	getRedirectUrl,
 	addPasskey,
 	getPasskeyCredential,
 	getPasskeyUser,
 	sendMagiclink,
-	isSessionRecentlyAuthenticated,
+	clearStepUpReauthCookie,
 	verify: {
 		withEmail: verifyLoginWithEmail
+	},
+	protect: {
+		requireRecentAuth,
+		requireAuthenticatedUser
 	}
 }
 export default Auth

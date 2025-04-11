@@ -118,7 +118,7 @@
 <form method="POST" action="?/startLogin" use:emailEnhance class="w-full">
 	<div
 		class={createClass(
-			'group relative flex h-[3rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
+			'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
 			$emailMessage ? 'bg-neutral-50' : 'bg-neutral-100'
 		)}
 	>

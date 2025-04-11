@@ -1,10 +1,11 @@
 import { db } from '$lib/server/db'
 import type { RequestEvent } from '@sveltejs/kit'
-import { eq, and, isNull } from 'drizzle-orm'
+import { eq, and, lt, isNull } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import type { Session, User } from '$lib/server/db/schema/auth'
+import type { Session } from '$lib/server/db/schema/auth'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
+import { clearStepUpReauthCookie } from './cookie'
 
 import { generateToken, hashToken } from './utils'
 
@@ -39,19 +40,49 @@ export async function createSession(event: RequestEvent, token: string) {
 		throw error
 	}
 }
-export async function authenticateSession(sessionId: string, userId: string) {
+
+/**
+ * Authenticates a user session after successful verification via magic link, passkey, or password.
+ *
+ * This function updates the session record in the database with the provided user ID and
+ * the current timestamp, effectively attaching the user to the session. It also clears
+ * any step-up reauthentication cookies and performs cleanup of old invalid sessions.
+ *
+ * @param {Object} params - The parameters object
+ * @param {RequestEvent} params.event - The request event object containing session information
+ * @param {string} params.userId - The ID of the user to attach to the session
+ * @returns {Promise<Response<never>>} A response object indicating success or failure
+ *
+ * @throws Will return a failure response if no session ID is provided or if database operations fail
+ *
+ */
+export async function authenticateSession({
+	event,
+	userId
+}: {
+	event: RequestEvent
+	userId: string
+}): Promise<Response<never>> {
 	try {
+		if (!event.locals.session?.id) {
+			return Response.fail('No session id provided')
+		}
+
 		await db
 			.update(table.session)
 			.set({ userId, lastAuthAt: new Date() })
-			.where(eq(table.session.id, sessionId))
+			.where(eq(table.session.id, event.locals.session?.id))
+
+		clearStepUpReauthCookie(event)
+
+		await cleanupOldInvalidSessions()
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Failed to create session', error)
-		}
-		throw error
+		console.error('Failed to authenticate session', error)
+		return Response.fail()
 	}
+	return Response.fail()
 }
+
 export async function createAuthenticatedSession(
 	event: RequestEvent,
 	token: string,
@@ -124,15 +155,6 @@ export async function validateSessionToken(token: string) {
 	return { session, user }
 }
 
-export async function isSessionRecentlyAuthenticated(session: Session): Promise<boolean> {
-	const lastAuthAt = session.lastAuthAt?.getTime()
-	if (!lastAuthAt) return false
-
-	const authWindow = 15 * 60 * 1000 // 15 mins
-
-	return Date.now() < lastAuthAt + authWindow
-}
-
 export async function invalidateSession(sessionId: string): Promise<Result> {
 	try {
 		// Perform invalidation
@@ -200,6 +222,18 @@ export async function listAllUserSessions(userId: string): Promise<Session[] | R
 			error:
 				error instanceof Error ? error.message : 'Failed to invalidate all sessions. Unknown error.'
 		}
+	}
+}
+
+export async function cleanupOldInvalidSessions(): Promise<Response<never>> {
+	try {
+		const retentionWindow = Date.now() - 30 * 24 * 60 * 60 * 1000 // 30 days in ms
+		await db.delete(table.session).where(lt(table.session.invalidatedAt, retentionWindow))
+
+		return Response.succeed()
+	} catch (e) {
+		console.error(e)
+		return Response.fail()
 	}
 }
 

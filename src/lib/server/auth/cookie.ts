@@ -2,6 +2,7 @@ import type { RequestEvent } from '@sveltejs/kit'
 
 export const sessionCookieName = 'session'
 export const redirectCookieName = 'redirect'
+export const stepUpReauthCookieName = 'stepUpReauth'
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
 	event.cookies.set(sessionCookieName, token, {
@@ -10,6 +11,10 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
 		expires: expiresAt,
 		path: '/'
 	})
+}
+
+export function getSessionTokenCookie(event: RequestEvent): string | null {
+	return event.cookies.get(sessionCookieName) ?? null
 }
 
 export function deleteSessionTokenCookie(event: RequestEvent) {
@@ -30,8 +35,28 @@ export function setRedirectUrl(event: RequestEvent) {
 	})
 }
 
-export function consumeRedirectUrl(event: RequestEvent) {
-	const redirectUrl = event.cookies.get(redirectCookieName) ?? '/protected'
+export function getRedirectUrl(event: RequestEvent): string {
+	return event.cookies.get(redirectCookieName) ?? '/protected'
+}
 
-	return redirectUrl
+export function setStepUpReauthCookie(event: RequestEvent) {
+	event.cookies.set(stepUpReauthCookieName, 'true', {
+		httpOnly: true,
+		sameSite: 'lax',
+		maxAge: 60 * 10, // 10 minutes
+		path: '/'
+	})
+}
+
+export function getStepUpReauthCookie(event: RequestEvent): boolean {
+	return event.cookies.get(stepUpReauthCookieName) === 'true'
+}
+
+export function clearStepUpReauthCookie(event: RequestEvent) {
+	event.cookies.set(stepUpReauthCookieName, '', {
+		httpOnly: true,
+		sameSite: 'lax',
+		maxAge: 0,
+		path: '/'
+	})
 }
