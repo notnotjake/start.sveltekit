@@ -55,6 +55,7 @@ function isSessionRecentlyAuthenticated(session: Session): boolean {
 	const authWindow = 15 * 60 * 1000 // 15 mins
 
 	if (!session.lastAuthAt) return false
+
 	const lastAuthAt = session.lastAuthAt.getTime()
 
 	return Date.now() < lastAuthAt + authWindow

@@ -30,7 +30,7 @@ export function setRedirectUrl(event: RequestEvent) {
 	event.cookies.set(redirectCookieName, event.url.pathname, {
 		httpOnly: true,
 		sameSite: 'lax',
-		maxAge: 60 * 10, // 10 minutes
+		maxAge: 60 * 5, // 5 minutes
 		path: '/'
 	})
 }
