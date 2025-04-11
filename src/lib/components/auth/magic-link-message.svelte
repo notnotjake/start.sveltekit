@@ -146,7 +146,7 @@
 	)}
 >
 	{#if usingCode}
-		<div transition:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
+		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
 			<CodeInput bind:code={pinCode} {onComplete} submitSuccess={submitPinResult} />
 		</div>
 	{:else if buttonState === 'error'}
