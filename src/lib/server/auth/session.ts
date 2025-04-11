@@ -70,13 +70,13 @@ export async function authenticateSession({
 			.where(eq(table.session.id, event.locals.session?.id))
 
 		clearStepUpReauthCookie(event)
-
 		await cleanupOldInvalidSessions()
+
+		return Response.succeed()
 	} catch (error) {
 		console.error('Failed to authenticate session', error)
 		return Response.fail()
 	}
-	return Response.fail()
 }
 
 export async function createAuthenticatedSession(
