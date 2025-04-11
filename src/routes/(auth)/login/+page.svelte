@@ -2,11 +2,12 @@
 	import { fade, fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { createClass } from '$utils/create-class'
+	import { wipeVertical } from '$ui/motion/transitions'
+
 	import { Suspense, Progress } from '$ui/feedback'
 	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
 	import Divider from '$ui/divider.svelte'
 	import Chevron from '$ui/icons/chevron.svelte'
-
 	import PasswordInput from '$ui/auth/password-input.svelte'
 	import PasskeyAuto from '$ui/auth/passkey-auto.svelte'
 	import PasskeyButton from '$ui/auth/passkey-button.svelte'
@@ -19,22 +20,6 @@
 	import { emailSchema, passwordLoginSchema } from './schema.ts'
 
 	let { data } = $props()
-
-	function wipeVertical(node, { duration = 250, delay = 0, easing = cubicOut }) {
-		const targetHeight = node.offsetHeight
-		return {
-			duration,
-			delay,
-			easing,
-			css: (t) => `
-				height: ${t * targetHeight}px;
-				min-height: ${t * targetHeight}px;
-				overflow: hidden;
-				white-space: nowrap;
-				opacity: ${t};
-			`
-		}
-	}
 
 	const {
 		form: emailForm,
