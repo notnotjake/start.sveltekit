@@ -28,6 +28,7 @@
 		timeout
 	} = superForm(data.addPasswordForm, {
 		resetForm: false,
+		invalidateAll: false,
 		validators: zodClient(passwordSchema),
 		validatorMethod: 'auto',
 		delayMs: 300,

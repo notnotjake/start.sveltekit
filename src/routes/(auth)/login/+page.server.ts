@@ -14,7 +14,7 @@ export const load: ServerLoad = async (event) => {
 	const reauthMessage = event.url.searchParams.get('reauth-message')
 
 	// If the user is logged in, redirect to protected route
-	if (event.locals.user && !(reauthTitle || reauthMessage || stepUpReauth)) {
+	if (event.locals.user && !stepUpReauth) {
 		const redirectUrl = Auth.getRedirectUrlCookie(event)
 		redirect(303, redirectUrl)
 	}
