@@ -74,6 +74,7 @@
 	}
 
 	async function requestEmailResend() {
+		// Set initiated to true, regardless of whether usingCode is true
 		initiated = true
 
 		if (buttonState === 'disabled') {
@@ -165,7 +166,7 @@
 
 		{#if !initiated}
 			<div class="flex w-full justify-center">
-				<button type="submit"
+				<button type="submit" onclick={requestEmailResend}
 					>or <span class="text-neutral-900 underline">login with email</span></button
 				>
 			</div>

@@ -83,6 +83,7 @@
 			autocomplete="new-password"
 			name="password"
 			id="password"
+			type="password"
 			placeholder="Enter new password"
 			submits
 			buttonDisabled={$allErrors.length > 0 || $form.password.length < 4}
@@ -92,12 +93,13 @@
 		/>
 
 		<input
-			type="hidden"
+			class="hidden"
+			disabled
+			type="text"
 			id="username"
 			name="username"
 			autocomplete="username"
-			value="{data.email}disabled"
-			class="hidden"
+			value={data.email}
 		/>
 	</form>
 

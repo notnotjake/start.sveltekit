@@ -11,10 +11,10 @@
 	<div data-desc="container" class="mt-8 flex h-full flex-col items-center justify-center">
 		<div
 			data-desc="platter outer"
-			class="relative flex min-h-40 w-[25rem] flex-shrink-0 flex-col items-center rounded-[1.8rem] p-[0.5rem] px-7"
+			class="relative flex min-h-40 w-[25rem] flex-shrink-0 flex-col items-center rounded-[1.8rem] p-[0.5rem] px-5"
 		>
 			<div
-				class="absolute inset-0 h-18 w-full rounded-t-[1.5rem] bg-gradient-to-b from-[#E8F9FF] to-[#E8F9FF]/0"
+				class="absolute top-0 left-0 h-18 w-full rounded-t-[1.5rem] bg-gradient-to-b from-[#E8F9FF] to-[#E8F9FF]/0"
 			></div>
 			{@render children?.()}
 		</div>
