@@ -182,7 +182,7 @@
 			<MagicLinkMessage
 				email={$emailForm.email}
 				triggerAttention={emailAttentionAnimate}
-				automaticMethod={!($emailMessage?.passwordAvailable || $emailMessage?.passkeyAvailable)}
+				emailSent={$emailMessage?.emailSentSuccess}
 			/>
 		{/if}
 	</div>

@@ -40,6 +40,7 @@ CREATE TABLE `user` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_identifier_unique` ON `user` (`identifier`);--> statement-breakpoint
+CREATE UNIQUE INDEX `emailUniqueIndex` ON `user` (lower("identifier"));--> statement-breakpoint
 CREATE TABLE `contact` (
 	`id` text PRIMARY KEY NOT NULL,
 	`customer_id` text NOT NULL,

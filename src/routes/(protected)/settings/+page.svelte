@@ -10,6 +10,7 @@
 	import Sidebar from '$ui/containers/sidebar-provider.svelte'
 	import { ToastInline } from '$ui/feedback'
 	import Toggle from '$ui/input/toggle.svelte'
+	import LogoutButton from '$ui/auth/logout.svelte'
 
 	let { data }: PageData = $props()
 
@@ -226,12 +227,10 @@
 
 					<div class="flex items-center justify-between py-2">
 						<p class="">Log out on this device</p>
-						<form method="POST" action="?/logout" use:enhance>
-							<button
-								class="rounded-full bg-neutral-700 px-3.5 py-1.5 text-[0.95rem] font-medium text-white hover:bg-neutral-800"
-								>Log Out</button
-							>
-						</form>
+
+						<LogoutButton
+							class="rounded-full bg-neutral-700 px-3.5 py-1.5 text-[0.95rem] font-medium text-white hover:bg-neutral-800"
+						/>
 					</div>
 
 					<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>

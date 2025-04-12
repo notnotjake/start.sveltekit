@@ -25,7 +25,7 @@ export async function requireRecentAuth(event: RequestEvent) {
 	}
 
 	if (!recentlyAuthenticated) {
-		Auth.setRedirectUrl(event)
+		Auth.setRedirectUrlCookie(event)
 		Auth.setStepUpReauthCookie(event)
 
 		const params = new URLSearchParams({
@@ -45,7 +45,7 @@ export async function requireRecentAuth(event: RequestEvent) {
  */
 export async function requireAuthenticatedUser(event: RequestEvent): Promise<User> {
 	if (!event.locals.user || !event.locals.session) {
-		Auth.setRedirectUrl(event)
+		Auth.setRedirectUrlCookie(event)
 		const params = new URLSearchParams({
 			'reauth-title': 'Welcome Back',
 			'reauth-message': `Your login has expired. Log in below`

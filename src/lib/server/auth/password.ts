@@ -113,19 +113,22 @@ export async function addPassword({
 	return Response.fail()
 }
 
-export async function updatePassword(
-	identifier: string,
-	currentPassword: string,
+export async function updatePassword({
+	identifier,
+	currentPassword,
+	newPassword
+}: {
+	identifier: string
+	currentPassword: string
 	newPassword: string
-): Promise<Response<never>> {
+}): Promise<Response<never>> {
 	// first get the user by identifier
 	const user = await getUserByIdentifier(identifier)
 
-	if (!user.success) return Response.fail('Failed to complete request')
+	if (!user.success || !user.data?.exists || !user.data?.user?.id)
+		return Response.fail('Failed to complete request')
 
-	const userId = user.data?.user?.id
-
-	if (!user.data?.exists || !userId) return Response.fail('User not found')
+	const userId = user.data.user.id
 
 	// second find the users password key
 	const [{ credential: storedPassword }] = await db
@@ -140,6 +143,7 @@ export async function updatePassword(
 
 	// verify that password
 	const passwordValid = await verify(storedPassword, currentPassword, hashingOptions)
+
 	if (passwordValid) {
 		// update to new password
 		try {

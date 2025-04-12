@@ -18,6 +18,9 @@ export const actions: Actions = {
 		if (event.locals.session?.id) {
 			const result = await Auth.invalidateSession(event.locals.session.id)
 
+			Auth.clearStepUpReauthCookie(event)
+			Auth.clearRedirecctUrl(event)
+
 			if (result.success) {
 				redirect(303, '/')
 			} else {

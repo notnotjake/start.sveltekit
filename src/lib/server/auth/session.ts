@@ -152,73 +152,52 @@ export async function validateSessionToken(token: string) {
 	return { session, user }
 }
 
-export async function invalidateSession(sessionId: string): Promise<Result> {
+export async function invalidateSession(sessionId: string): Promise<Response<never>> {
 	try {
-		// Perform invalidation
-		const [affectedSession] = await db
+		await db
 			.update(table.session)
 			.set({ invalidatedAt: new Date() })
 			.where(eq(table.session.id, sessionId))
-			.returning()
-		// Verify the session is invalidated
-		if (!affectedSession) {
-			return {
-				success: false,
-				error: 'Failed to invalidate session'
-			}
-		}
 
-		return { success: true }
+		return Response.succeed()
 	} catch (error) {
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Failed to invalidate session. Unknown error.'
-		}
+		return Response.fail('Failed to invalidate session')
 	}
 }
 
-export async function invalidateAllUserSessions(userId: string): Promise<Result> {
+export async function invalidateAllUserSessions(userId: string): Promise<Response<never>> {
 	try {
 		// Perform invalidation
 		await db
 			.update(table.session)
 			.set({ invalidatedAt: new Date() })
 			.where(and(eq(table.session.userId, userId), isNull(table.session.invalidatedAt)))
+
 		// Verify no active session remains
 		const [activeSession] = await db
 			.select()
 			.from(table.session)
 			.where(and(eq(table.session.userId, userId), isNull(table.session.invalidatedAt)))
 			.limit(1)
-		if (activeSession) {
-			return {
-				success: false,
-				error: 'Failed to invalidate all sessions'
-			}
-		}
-		return { success: true }
+
+		if (activeSession) return Response.fail('Failed to invalidate all sessions')
+
+		return Response.succeed()
 	} catch (error) {
-		return {
-			success: false,
-			error:
-				error instanceof Error ? error.message : 'Failed to invalidate all sessions. Unknown error.'
-		}
+		return Response.fail('Failed to invalidate all sessions')
 	}
 }
 
-export async function listAllUserSessions(userId: string): Promise<Session[] | Result> {
+export async function listAllUserSessions(userId: string): Promise<Response<Session[]>> {
 	try {
 		const allSessions = await db
 			.select()
 			.from(table.session)
 			.where(eq(table.session.userId, userId))
-		return allSessions
+
+		return Response.succeed(allSessions)
 	} catch (error) {
-		return {
-			success: false,
-			error:
-				error instanceof Error ? error.message : 'Failed to invalidate all sessions. Unknown error.'
-		}
+		return Response.fail('Failed to get all sessions')
 	}
 }
 
@@ -234,7 +213,3 @@ export async function cleanupOldInvalidSessions(): Promise<Response<never>> {
 		return Response.fail()
 	}
 }
-
-export type Result = { success: boolean; error?: string }
-
-export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>

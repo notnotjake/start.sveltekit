@@ -70,7 +70,7 @@
 
 	{#if elementRight}
 		{@render elementRight?.()}
-	{:else}
+	{:else if withButton}
 		<button
 			type={submits ? 'submit' : 'button'}
 			disabled={buttonDisabled}

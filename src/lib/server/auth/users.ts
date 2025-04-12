@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db'
 import { eq, and, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import type { User, NewUser } from '$lib/server/db/schema/auth'
+import { type User, type NewUser, lower } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
@@ -42,7 +42,7 @@ export async function getUserByIdentifier(
 	const [userFound] = await db
 		.select()
 		.from(table.user)
-		.where(eq(table.user.identifier, identifier.toLowerCase()))
+		.where(eq(lower(table.user.identifier), identifier.toLowerCase()))
 		.limit(1)
 
 	if (userFound) {

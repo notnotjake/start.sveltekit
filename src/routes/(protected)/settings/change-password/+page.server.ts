@@ -5,40 +5,56 @@ import { message } from 'sveltekit-superforms'
 import { fail, redirect } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
-import { passwordSchema } from './schema'
-import { setDelay, withDelay } from '$lib/server/auth/utils'
+import { changePasswordSchema as schema } from './schema'
 
 export const load: ServerLoad = async (event) => {
 	const user = await Auth.protect.requireAuthenticatedUser(event)
 
 	await Auth.protect.requireRecentAuth(event)
 
-	const addPasswordForm = await superValidate(zod(passwordSchema))
+	// If user has no password, redirect to add-password
+	const userKeys = await Auth.getUserKeysAvailable(user.id)
+	if (!userKeys.success || !userKeys.data) return fail(400)
 
-	return { addPasswordForm, email: user.identifier }
+	if (!userKeys.data.has('password')) {
+		redirect(303, '/settings/add-password')
+	}
+
+	const changePasswordForm = await superValidate(zod(schema))
+
+	return { changePasswordForm, email: user.identifier }
 }
 
 export const actions: Actions = {
-	addPassword: async (event) => {
+	changePassword: async (event) => {
 		// validate form data
-		const addPasswordForm = await superValidate(event.request, zod(passwordSchema))
-		if (!addPasswordForm.valid) return fail(400, { addPasswordForm })
+		const changePasswordForm = await superValidate(event.request, zod(schema))
+		if (!changePasswordForm.valid) return fail(400, { changePasswordForm })
 
-		// ensure there is a valid session
-		if (!event.locals.session || !event.locals.user?.identifier)
-			return fail(400, { addPasswordForm })
+		const user = await Auth.protect.requireAuthenticatedUser(event)
 
-		const result = await Auth.addPassword({
-			identifier: event.locals.user.identifier,
-			password: addPasswordForm.data.password
+		const result = await Auth.updatePassword({
+			identifier: user.identifier,
+			currentPassword: changePasswordForm.data.currentPassword,
+			newPassword: changePasswordForm.data.newPassword
 		})
 
-		if (!result.success) return fail(400, { addPasswordForm })
+		console.log(result)
+
+		if (!result.success) {
+			if (result?.error === 'No current password found') {
+				redirect(303, 'add-password')
+			} else if (result?.error === 'Password not accepted') {
+				return setError(changePasswordForm, 'currentPassword', 'Incorrect')
+			} else {
+				return setError(changePasswordForm, 'Failed to update password')
+			}
+		}
 
 		const response = {
 			success: true
 		}
 
-		return message(addPasswordForm, response)
+		return message(changePasswordForm, response)
 	}
 }

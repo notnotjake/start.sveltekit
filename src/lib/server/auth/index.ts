@@ -2,12 +2,14 @@ import {
 	setSessionTokenCookie,
 	getSessionTokenCookie,
 	deleteSessionTokenCookie,
-	setRedirectUrl,
-	getRedirectUrl,
+	setRedirectUrlCookie,
+	getRedirectUrlCookie,
+	clearRedirectUrlCookie,
 	setStepUpReauthCookie,
 	getStepUpReauthCookie,
 	clearStepUpReauthCookie
 } from './cookie'
+
 import {
 	createUnauthenticatedSession,
 	createAuthenticatedSession,
@@ -16,10 +18,15 @@ import {
 	validateSessionToken,
 	listAllUserSessions
 } from './session'
+
 import { generateToken } from './utils'
+
 import { getUserByIdentifier, getUserKeysAvailable } from './users'
+
 import { createAuthAttempt, getAuthAttempt } from './auth-attempt'
-import { verifyPassword, addPassword } from './password'
+
+import { verifyPassword, addPassword, updatePassword } from './password'
+
 import { addPasskey, getPasskeyCredential, getPasskeyUser } from './key'
 
 import { verifyLoginWithEmail } from './verify-login'
@@ -47,8 +54,10 @@ const Auth = {
 	createAuthAttempt,
 	verifyPassword,
 	addPassword,
-	setRedirectUrl,
-	getRedirectUrl,
+	clearRedirectUrlCookie,
+	setRedirectUrlCookie,
+	getRedirectUrlCookie,
+	updatePassword,
 	addPasskey,
 	getPasskeyCredential,
 	getPasskeyUser,

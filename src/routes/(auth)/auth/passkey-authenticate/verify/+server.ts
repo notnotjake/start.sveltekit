@@ -43,7 +43,7 @@ export const POST: RequestHandler = async (event) => {
 
 		// authenticate
 		await Auth.authenticateSession({ event, userId })
-		const redirectUrl = Auth.getRedirectUrl(event)
+		const redirectUrl = Auth.getRedirectUrlCookie(event)
 		return json({ success: true, redirect: redirectUrl })
 	}
 	return fail(400)

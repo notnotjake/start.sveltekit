@@ -26,7 +26,7 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 	})
 }
 
-export function setRedirectUrl(event: RequestEvent) {
+export function setRedirectUrlCookie(event: RequestEvent) {
 	event.cookies.set(redirectCookieName, event.url.pathname, {
 		httpOnly: true,
 		sameSite: 'lax',
@@ -35,8 +35,17 @@ export function setRedirectUrl(event: RequestEvent) {
 	})
 }
 
-export function getRedirectUrl(event: RequestEvent): string {
+export function getRedirectUrlCookie(event: RequestEvent): string {
 	return event.cookies.get(redirectCookieName) ?? '/protected'
+}
+
+export function clearRedirectUrlCookie(event: RequestEvent) {
+	event.cookies.set(redirectCookieName, '', {
+		httpOnly: true,
+		sameSite: 'lax',
+		maxAge: 0,
+		path: '/'
+	})
 }
 
 export function setStepUpReauthCookie(event: RequestEvent) {

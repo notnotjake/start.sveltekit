@@ -15,7 +15,7 @@ export const load: ServerLoad = async (event) => {
 
 	// If the user is logged in, redirect to protected route
 	if (event.locals.user && !(reauthTitle || reauthMessage || stepUpReauth)) {
-		const redirectUrl = Auth.getRedirectUrl(event)
+		const redirectUrl = Auth.getRedirectUrlCookie(event)
 		redirect(303, redirectUrl)
 	}
 
@@ -43,7 +43,7 @@ export const load: ServerLoad = async (event) => {
 			}
 		} else if (result.data && result.data.user) {
 			await Auth.authenticateSession({ event, userId: result.data.user.id })
-			const redirectUrl = Auth.getRedirectUrl(event)
+			const redirectUrl = Auth.getRedirectUrlCookie(event)
 			redirect(303, redirectUrl)
 		} else if (result.data && result.data.code) {
 			// TODO: need to show the code on the page with UI
@@ -156,7 +156,7 @@ export const actions: Actions = {
 		if (result.success && result.data) {
 			await Auth.authenticateSession({ event, userId: result.data.id })
 
-			const redirectUrl = Auth.getRedirectUrl(event) // Get redirect path
+			const redirectUrl = Auth.getRedirectUrlCookie(event) // Get redirect path
 
 			redirect(307, redirectUrl)
 		}

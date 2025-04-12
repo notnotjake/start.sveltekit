@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { superForm } from 'sveltekit-superforms'
-	import { zodClient } from 'sveltekit-superforms/adapters'
-	import { passwordSchema } from './schema.ts'
 	import { goto } from '$app/navigation'
 	import { onDestroy } from 'svelte'
+	import { superForm } from 'sveltekit-superforms'
+	import { zodClient } from 'sveltekit-superforms/adapters'
+	import { changePasswordSchema as schema } from './schema.ts'
 
 	import PasskeyIcon from '$ui/icons/passkey.svelte'
 	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
@@ -26,9 +26,9 @@
 		validateForm,
 		delayed,
 		timeout
-	} = superForm(data.addPasswordForm, {
+	} = superForm(data.changePasswordForm, {
 		resetForm: false,
-		validators: zodClient(passwordSchema),
+		validators: zodClient(schema),
 		validatorMethod: 'auto',
 		delayMs: 300,
 		timeoutMs: 1000,
@@ -57,7 +57,7 @@
 <div class="mx-auto mt-30 flex max-w-90 flex-col items-center justify-center">
 	<div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
 		<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
-			Add a Password
+			Change Password
 		</h2>
 
 		{#if submitSuccess === true}
@@ -76,17 +76,38 @@
 		{/if}
 	</div>
 
-	<form method="POST" class="w-full" action="?/addPassword" use:enhance autocomplete="new-password">
+	<form
+		method="POST"
+		class="flex w-full flex-col gap-4"
+		action="?/changePassword"
+		use:enhance
+		autocomplete="update-password"
+	>
 		<TextInput
-			bind:value={$form.password}
-			{...$constraints.password}
+			bind:value={$form.currentPassword}
+			{...$constraints.currentPassword}
+			type="password"
+			autocomplete="current-password"
+			name="currentPassword"
+			id="currentPassword"
+			placeholder="Current password"
+			withButton={false}
+			error={$errors.currentPassword}
+		/>
+
+		<TextInput
+			bind:value={$form.newPassword}
+			{...$constraints.newPassword}
+			type="password"
 			autocomplete="new-password"
-			name="password"
-			id="password"
-			placeholder="Enter new password"
+			name="newPassword"
+			id="newPassword"
+			placeholder="New password"
 			submits
-			buttonDisabled={$allErrors.length > 0 || $form.password.length < 4}
-			error={$errors.password}
+			buttonDisabled={$allErrors.length > 0 ||
+				$form.newPassword.length < 4 ||
+				$form.currentPassword.length < 8}
+			error={$errors.newPassword}
 			delayed={$delayed}
 			timeout={$timeout}
 		/>
@@ -101,13 +122,17 @@
 		/>
 	</form>
 
+	{#each $allErrors as error}
+		<p>{error.message}</p>
+	{/each}
+
 	<div class="py-5">
 		<ToastInline
 			bind:trigger={triggerToast}
 			class="flex items-center gap-[0.2rem] rounded-full bg-green-100 p-[2px]"
 		>
 			<CheckmarkIcon size="20px" class="text-green-400" />
-			<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">Password Saved</p>
+			<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">New Password Saved</p>
 		</ToastInline>
 	</div>
 </div>

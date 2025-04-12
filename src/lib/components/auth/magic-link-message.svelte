@@ -10,7 +10,7 @@
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import CodeInput from '$ui/auth/code-input.svelte'
 
-	let { email, triggerAttention, automaticMethod } = $props()
+	let { email, triggerAttention, emailSent: initEmailSent } = $props()
 
 	const COOLDOWN_TIME = 20 * 1000 // ms
 	const SUCCESS_MESSAGE_DURATION = 4000 // ms
@@ -20,13 +20,13 @@
 
 	let triesAttempted = $state(1)
 
-	let initiated = $state(automaticMethod)
+	let initiated = $state(initEmailSent)
 
 	type ButtonState = 'enabled' | 'disabled' | 'success' | 'error'
 	let buttonState: ButtonState = $state('enabled')
 
 	onMount(() => {
-		if (automaticMethod) {
+		if (initEmailSent) {
 			buttonState = 'disabled'
 			setTimeout(() => {
 				buttonState = 'enabled'
