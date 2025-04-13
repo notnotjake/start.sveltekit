@@ -5,9 +5,8 @@
 
 	let metaTags = $state(page.data.metaTags)
 
-	console.log('PAGE', page)
-
 	afterNavigate(() => {
+		console.log('ARRIVED', page)
 		metaTags = page.data.metaTags
 	})
 

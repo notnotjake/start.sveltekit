@@ -1,6 +1,8 @@
 import type { Metadata, ParentMetadata } from './properties'
 import type { App, Load } from '@sveltejs/kit'
 
+const DEBUG = true
+
 /**
  * Parse and merge metadata from parent and current tags
  * @param parentTags Metadata from parent layout (optional)
@@ -8,10 +10,10 @@ import type { App, Load } from '@sveltejs/kit'
  * @returns Object with merged metaTags
  */
 export function parseMeta(parentTags: ParentMetadata | null, setTags: Metadata): { metaTags: any } {
-	console.log('parse start', performance.now())
+	if (DEBUG) console.log('parse start', performance.now())
 
-	console.log('Parent', parentTags)
-	console.log('SET', setTags)
+	if (DEBUG) console.log('Parent', parentTags)
+	if (DEBUG) console.log('SET', setTags)
 
 	// Handle character limit on title
 	if (setTags.title && setTags.title.length > 70) {
@@ -38,18 +40,17 @@ export function parseMeta(parentTags: ParentMetadata | null, setTags: Metadata):
 	}
 
 	// Handle titles and title templates
-	if (parentTags) {
-		// if we set a titleTemplate, then pass that through, if we inherit a titleTemplate, make that the parentTitleTemplate
-		if (parentTags.titleTemplate) {
-			parentTags.parentTitleTemplate = parentTags.titleTemplate
-			parentTags.titleTemplate = undefined
-		}
+	let safeParentTags: Partial<ParentMetadata> = parentTags ? { ...parentTags } : {}
+	// if we set a titleTemplate, then pass that through, if we inherit a titleTemplate, make that the parentTitleTemplate
+	if (safeParentTags.titleTemplate) {
+		safeParentTags.parentTitleTemplate = safeParentTags.titleTemplate
+		delete safeParentTags?.titleTemplate
 	}
 
-	console.log('parse returning', performance.now())
+	if (DEBUG) console.log('parse returning', performance.now())
 
 	return {
-		metaTags: { ...parentTags, ...setTags }
+		metaTags: { ...safeParentTags, ...setTags }
 	}
 }
 
@@ -59,7 +60,7 @@ export function parseMeta(parentTags: ParentMetadata | null, setTags: Metadata):
  * @returns SvelteKit load function
  */
 export function baseMetaLoad(metaTags: Metadata): Load {
-	console.log('base meta load', performance.now())
+	if (DEBUG) console.log('base meta load', performance.now())
 	return async ({ parent, data }) => {
 		const parentData = await parent()
 		const { parentMetaTags, ...parentRest } = parentData
@@ -78,7 +79,7 @@ export function baseMetaLoad(metaTags: Metadata): Load {
  * @returns SvelteKit load function
  */
 export function layoutMetaLoad(metaTags: Metadata): Load {
-	console.log('layout meta load', performance.now())
+	if (DEBUG) console.log('layout meta load', performance.now())
 	return async ({ parent, data }) => {
 		const parentData = await parent()
 		const parentTags = parentData.metaTags as ParentMetadata
@@ -96,7 +97,7 @@ export function layoutMetaLoad(metaTags: Metadata): Load {
  * @returns SvelteKit load function
  */
 export function pageMetaLoad(metaTags: Metadata): Load {
-	console.log('page meta load', performance.now())
+	if (DEBUG) console.log('page meta load', performance.now())
 	return async ({ parent, data }) => {
 		const parentData = await parent()
 		const parentTags = parentData.metaTags as ParentMetadata
