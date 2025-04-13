@@ -1,29 +1,14 @@
-import type { LayoutLoad } from './$types'
-import { createMeta } from '$utils/Meta'
+import { layoutMetaLoad } from '$utils/meta-tags'
 
-export const load: LayoutLoad = async ({ parent }) => {
-	const Meta = await createMeta(parent)
-
-	// Full Options
-	Meta.set({
-		icon: {
-			url: 'favicon.png',
-			size: 180,
-			type: 'png'
-		},
-		maskIcon: {
-			url: 'mask-icon.svg',
-			color: '#000000'
-		},
-		theme: '#020202',
-		colorScheme: 'light dark',
-		sitename: 'SvelteKit Starter',
-		title: 'Meta Utility',
-		twitterSite: '@sveltejs',
-		twitterCreator: '@notnotjake'
-	})
-
-	return {
-		...Meta.getData()
-	}
-}
+export const load = layoutMetaLoad({
+	maskIcon: {
+		url: 'mask-icon.svg',
+		color: '#000000'
+	},
+	theme: '#020202',
+	colorScheme: 'light dark',
+	sitename: 'SvelteKit Starter',
+	title: 'Meta Layout',
+	twitterSite: '@sveltejs',
+	twitterCreator: '@notnotjake'
+})

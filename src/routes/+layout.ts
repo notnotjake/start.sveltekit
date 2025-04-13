@@ -1,19 +1,11 @@
-import type { LayoutLoad } from './$types'
-import { createMeta } from '$utils/Meta'
+import MetaTags from '$utils/meta-tags'
 import { assetUrl } from '$utils/asset-url'
 
-export const load: LayoutLoad = async () => {
-	const Meta = await createMeta()
-	Meta.set({
-		sitename: 'SvelteKit Starter',
-		icon: './favicon.png',
-		title: 'SvelteKit Starter',
-		titleTemplate: 'SvelteKit Starter - {page}',
-		description: 'A great example SvelteKit site to start new projects from',
-		image: 'https://assets.foo.com/images/og-image.jpg'
-	})
-
-	return {
-		...Meta.getData()
-	}
-}
+export const load = MetaTags.baseMetaLoad({
+	sitename: 'SvelteKit Starter',
+	icon: './favicon.png',
+	title: 'Root Layout',
+	titleTemplate: 'Luxo - {page}',
+	description: 'A great example SvelteKit site to start new projects from',
+	image: assetUrl('/images/og-image.jpg')
+})
