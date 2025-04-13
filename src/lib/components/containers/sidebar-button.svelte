@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { getContext } from 'svelte'
-	let sidebar = getContext('sidebar')
 
 	let { children, whenOpen, whenClosed } = $props()
+
+	let sidebar = getContext('sidebar')
 
 	function toggle() {
 		sidebar.isShown = !sidebar.isShown

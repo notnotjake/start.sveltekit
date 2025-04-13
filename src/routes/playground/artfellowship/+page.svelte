@@ -6,7 +6,7 @@
 	const Fonts = createFonts()
 
 	Fonts.Face('Source Serif', {
-		src: url(assetUrl('fonts/source-serif/small-text/Light.woff2')).format('woff2'),
+		src: url(assetUrl('/fonts/source-serif/small-text/Light.woff2')).format('woff2'),
 		// weight: 'light',
 		preload: true
 	})
