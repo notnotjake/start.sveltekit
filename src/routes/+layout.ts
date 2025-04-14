@@ -1,7 +1,7 @@
-import MetaTags from '$utils/meta-tags'
+import { baseMetaLoad } from 'sveltekit-meta'
 import { assetUrl } from '$utils/asset-url'
 
-export const load = MetaTags.baseMetaLoad({
+export const load = baseMetaLoad({
 	sitename: 'SvelteKit Starter',
 	icon: './favicon.png',
 	title: 'Root Layout',

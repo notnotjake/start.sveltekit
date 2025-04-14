@@ -1,5 +1,5 @@
 import { pageMetaLoad } from 'sveltekit-meta'
 
 export const load = pageMetaLoad({
-	title: 'Login'
+	title: 'Invoices'
 })

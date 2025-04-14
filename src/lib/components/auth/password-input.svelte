@@ -31,7 +31,7 @@
 			formData.set('email', email)
 		},
 		validators: zodClient(schema),
-		delayMs: 800,
+		delayMs: 50,
 		timeoutMs: 9000
 	})
 

@@ -2,7 +2,7 @@
 	import '$tailwind'
 	import '@fontsource-variable/inter/index.css'
 
-	import { MetaTags } from '$utils/meta-tags'
+	import { MetaTags } from 'sveltekit-meta'
 
 	// import { createFonts, LoadFonts, url } from '$utils/Fonts'
 
