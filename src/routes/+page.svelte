@@ -6,15 +6,14 @@
 	<h1 class="text-lg font-medium">SvelteKit Starter</h1>
 	<p>A headstart for SvelteKit projects</p>
 	<p>
-		Is setup using tailwind (v4), prettier & eslint, drizzle setup with sqlite, typescript, zod, and
-		superforms
+		Setup with Typescript, Tailwind 4, Prettier, Drizzle + SQLite (easily swapped for Turso), Zod,
+		SuperForms, and my package SvelteKit-Meta.
 	</p>
 	<p>
-		The project also includes code for managing self-hosted fonts, managing seo/meta tags, a 'cn'
-		function (called createClass), env validation and env syncing (with env.vault), as well as
-		authentication code setup. Each with good documenation.
+		The project also includes code for managing self-hosted fonts, a createClass function, env
+		validation, plus a script for resetting the database in development. And I am working on an
+		amazing auth experience and a component library.
 	</p>
-	<p>Drizzle Reset script in <code>/db</code></p>
 
 	<p>Go to <a class="text-blue-500" href="/login">login</a></p>
 </div>
