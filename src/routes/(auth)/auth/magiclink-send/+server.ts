@@ -14,8 +14,6 @@ const requestSchema = z.object({
 type Data = z.infer<typeof requestSchema>
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-	const delay = setDelay(3000) // normalize response times
-
 	try {
 		const requestData = await request.json()
 		const validatedData = requestSchema.safeParse(requestData)
@@ -46,7 +44,6 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		})
 
 		if (response.success) {
-			await withDelay(delay, '')
 			return json(Response.succeed())
 		} else {
 			return json(Response.fail('Failed to send email'), { status: 500 })

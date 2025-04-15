@@ -10,8 +10,8 @@ import { setDelay, withDelay } from '$lib/server/auth/utils'
 
 export const load: ServerLoad = async (event) => {
 	const stepUpReauth = Auth.getStepUpReauthCookie(event)
-	const reauthTitle = event.url.searchParams.get('reauth-title')
-	const reauthMessage = event.url.searchParams.get('reauth-message')
+	let authTitle = event.url.searchParams.get('reauth-title')
+	let authMessage = event.url.searchParams.get('reauth-message')
 
 	// If the user is logged in, redirect to protected route
 	if (event.locals.user && !stepUpReauth) {
@@ -26,7 +26,15 @@ export const load: ServerLoad = async (event) => {
 
 	// Validate magic link
 	const token = event.url.searchParams.get('magic')
-	let magicStatus = ''
+	let magicStatus: {
+		invalid: boolean
+		error: boolean
+		code: string | null
+	} = {
+		invalid: false,
+		error: false,
+		code: null
+	}
 	if (token && sessionId) {
 		automaticPasskeyEnabled = false
 
@@ -35,11 +43,11 @@ export const load: ServerLoad = async (event) => {
 		if (!result.success) {
 			if (result.error === 'invalid token') {
 				// TODO: display message to user that token has expired
-				magicStatus = 'invalid token'
+				magicStatus.invalid = true
 			} else {
 				// TODO: display error message
 				console.log(result.error)
-				magicStatus = 'error'
+				magicStatus.error = true
 			}
 		} else if (result.data && result.data.user) {
 			await Auth.authenticateSession({ event, userId: result.data.user.id })
@@ -47,7 +55,9 @@ export const load: ServerLoad = async (event) => {
 			redirect(303, redirectUrl)
 		} else if (result.data && result.data.code) {
 			// TODO: need to show the code on the page with UI
-			magicStatus = result.data.code
+			magicStatus.code = result.data.code
+			authTitle = 'Use code to continue'
+			authMessage = 'Enter this code where you started sign in'
 		}
 	}
 
@@ -60,8 +70,8 @@ export const load: ServerLoad = async (event) => {
 		passwordLoginForm,
 		magicStatus,
 		automaticPasskeyEnabled,
-		reauthTitle,
-		reauthMessage
+		authTitle,
+		authMessage
 	}
 }
 
