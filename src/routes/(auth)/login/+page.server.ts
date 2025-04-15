@@ -148,10 +148,10 @@ export const actions: Actions = {
 		if (!event.locals.session) return fail(400, { passwordLoginForm })
 
 		// verify email and password
-		const result = await Auth.verifyPassword(
-			passwordLoginForm.data.email,
-			passwordLoginForm.data.password
-		)
+		const result = await Auth.verify.withPassword({
+			identifier: passwordLoginForm.data.email,
+			providedPassword: passwordLoginForm.data.password
+		})
 
 		if (result.success && result.data) {
 			await Auth.authenticateSession({ event, userId: result.data.id })

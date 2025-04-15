@@ -1,10 +1,11 @@
 import { db } from '$lib/server/db'
 import { eq, lt, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import type { AuthAttempt, User } from '$lib/server/db/schema/auth'
+import { type AuthAttempt, type User, lower } from '$lib/server/db/schema/auth'
 import { createUser, getUserByIdentifier } from './users'
 import { generateRandomName, generateShortCode } from './utils'
 import { getAuthAttempt, createAuthAttempt, cleanupAttempts } from './auth-attempt'
+import { verifyPassword } from './password'
 
 import { hash, verify } from '@node-rs/argon2'
 import { randomUUID } from 'crypto'
@@ -69,8 +70,37 @@ export async function verifyLoginWithCode({}): Promise<Response<User>> {
 	return Response.fail()
 }
 
-export async function verifyLoginWithPassword({}): Promise<Response<User>> {
-	return Response.fail()
+export async function verifyLoginWithPassword({
+	identifier,
+	providedPassword
+}: {
+	identifier: string
+	providedPassword: string
+}): Promise<Response<User>> {
+	const [{ user, storedPassword }] = await db
+		.select({
+			user: table.user,
+			storedPassword: table.key.credential
+		})
+		.from(table.user)
+		.innerJoin(table.key, eq(table.key.userId, table.user.id))
+		.where(
+			and(
+				eq(lower(table.user.identifier), identifier.toLowerCase()),
+				eq(table.key.type, 'password')
+			)
+		)
+		.limit(1)
+
+	if (!user || !storedPassword) return Response.fail('no user or no password')
+
+	const passwordValid = await verifyPassword({ storedPassword, providedPassword })
+
+	if (passwordValid) {
+		return Response.succeed(user)
+	} else {
+		return Response.fail('Password not accepted')
+	}
 }
 
 export async function verifyLoginWithPasskey({}): Promise<Response<User>> {

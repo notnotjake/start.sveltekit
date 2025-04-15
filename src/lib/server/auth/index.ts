@@ -29,7 +29,7 @@ import { verifyPassword, addPassword, updatePassword } from './password'
 
 import { addPasskey, getPasskeyCredential, getPasskeyUser } from './key'
 
-import { verifyLoginWithEmail } from './verify-login'
+import { verifyLoginWithEmail, verifyLoginWithPassword } from './verify-login'
 
 import { sendMagiclink } from './magiclink'
 
@@ -64,7 +64,8 @@ const Auth = {
 	sendMagiclink,
 	clearStepUpReauthCookie,
 	verify: {
-		withEmail: verifyLoginWithEmail
+		withEmail: verifyLoginWithEmail,
+		withPassword: verifyLoginWithPassword
 	},
 	protect: {
 		requireRecentAuth,

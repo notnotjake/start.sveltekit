@@ -39,8 +39,6 @@ export const actions: Actions = {
 			newPassword: changePasswordForm.data.newPassword
 		})
 
-		console.log(result)
-
 		if (!result.success) {
 			if (result?.error === 'No current password found') {
 				redirect(303, 'add-password')

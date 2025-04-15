@@ -16,36 +16,18 @@ const hashingOptions = {
 	parallelism: 1
 }
 
-export async function verifyPassword(
-	identifier: string,
-	password: string
-): Promise<Response<User | null>> {
-	// first get the user by identifier
-	const user = await getUserByIdentifier(identifier)
-
-	if (!user.success) return Response.fail('Failed to complete request')
-
-	const userId = user.data?.user?.id
-
-	if (!user.data?.exists || !userId) return Response.fail('User not found')
-
-	// second find the users password key
-	const [{ credential: storedPassword }] = await db
-		.select({
-			credential: table.key.credential
-		})
-		.from(table.key)
-		.where(eq(table.key.userId, userId))
-		.limit(1)
-
-	if (!storedPassword) return Response.fail('No password found')
-
-	// verify that password
-	const passwordValid = await verify(storedPassword, password, hashingOptions)
-	if (passwordValid) {
-		return Response.succeed(user.data.user)
-	} else {
-		return Response.fail('Password not accepted')
+export async function verifyPassword({
+	storedPassword,
+	providedPassword
+}: {
+	storedPassword: string
+	providedPassword: string
+}): Promise<Response<boolean>> {
+	try {
+		const passwordValid = await verify(storedPassword, providedPassword, hashingOptions)
+		return Response.succeed(passwordValid)
+	} catch (e) {
+		return Response.fail()
 	}
 }
 
