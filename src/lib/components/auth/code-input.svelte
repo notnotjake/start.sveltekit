@@ -41,14 +41,39 @@
 		const input = event.target
 		const value = input.value
 		const currentStart = input.selectionStart || 0
+		const currentEnd = input.selectionEnd || 0
+		const isPaste = value.length > pin.length + 1 || currentEnd - currentStart > 1
 
-		// This is what we type
-		const lastTypedChar = value.charAt(currentStart - 1)
+		// Handle paste operation
+		if (isPaste) {
+			// Take only numeric values and limit to pinLength
+			const numericValue = value.replace(/[^0-9]/g, '').substring(0, pinLength)
 
-		// For a fresh digit input, we want to replace instead of insert
-		if (value.length <= pinLength) {
+			// Set the new value
+			pin = numericValue
+
+			// Update the input field
+			input.value = numericValue
+
+			// Move cursor to the end or to the pinLength
+			const newCursorPos = Math.min(numericValue.length, pinLength)
+			await tick()
+			input.setSelectionRange(newCursorPos, newCursorPos)
+
+			// Update selection tracking
+			selectionStart = newCursorPos
+			selectionEnd = newCursorPos
+
+			// Prevent default input behavior
+			event.preventDefault()
+		}
+		// Handle single character input as before
+		else if (value.length <= pinLength) {
 			// If we're typing a new character (not deletion)
 			if (value.length > pin.length) {
+				// This is what we type
+				const lastTypedChar = value.charAt(currentStart - 1)
+
 				// Create a new pin value that replaces the character at cursor position
 				let newPin = pin
 
