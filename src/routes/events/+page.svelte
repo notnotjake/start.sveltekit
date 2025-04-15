@@ -6,7 +6,7 @@
 
 	onMount(() => {
 		// Create EventSource connection to our endpoint
-		eventSource = new EventSource('/auth/magiclink-subscribe')
+		eventSource = new EventSource('/auth/magiclink/code-subscribe')
 
 		// Listen for the "message" event type
 		eventSource.addEventListener('message', (event) => {

@@ -32,7 +32,7 @@
 		try {
 			submitSuccess = 'pending'
 
-			const response = await fetch('/auth/magiclink-code-verify', {
+			const response = await fetch('/auth/magiclink/code-verify', {
 				method: 'POST',
 				body: JSON.stringify({
 					email: email,

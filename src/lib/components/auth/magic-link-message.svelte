@@ -22,10 +22,7 @@
 	const RESENDS_BEFORE_ALERT = 2
 	let resendCount = $state(initialEmailSent ? 1 : 0)
 
-	// Pin code state
 	let showCodeInput = $state(true)
-	let pinCode = $state('')
-	let submitPinResult = $state(null)
 
 	let toastConfirmSent = $state(null)
 
@@ -36,14 +33,14 @@
 		}
 	})
 
-	function resendButtonClickHandler() {
-		sendEmail()
-	}
-
 	function showSendSuccessToast() {
 		if (toastConfirmSent) {
 			toastConfirmSent(3500, 'success')
 		}
+	}
+
+	function resendButtonClickHandler() {
+		sendEmail()
 	}
 
 	// Request email resend
@@ -52,7 +49,7 @@
 		sendStatus = 'sending'
 
 		try {
-			const response = await fetch('/auth/magiclink-send', {
+			const response = await fetch('/auth/magiclink/send', {
 				method: 'POST',
 				body: JSON.stringify({
 					email,
@@ -78,6 +75,8 @@
 			sendStatus = 'error'
 		}
 	}
+
+	// Start listening for SSE
 </script>
 
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
