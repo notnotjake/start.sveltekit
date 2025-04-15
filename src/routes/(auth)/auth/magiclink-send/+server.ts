@@ -1,10 +1,9 @@
 import type { RequestHandler } from './$types'
-import { json, fail, redirect } from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
 
 import { z } from 'zod'
 import Auth from '$lib/server/auth'
 import { StructuredResponse as Response } from '$utils/structured-response'
-import { setDelay, withDelay } from '$lib/server/auth/utils'
 
 const requestSchema = z.object({
 	email: z.string().email(),

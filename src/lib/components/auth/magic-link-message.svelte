@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte'
+	import { goto } from '$app/navigation'
 	import { scale } from 'svelte/transition'
 	import { wipeVertical, wipeHorizontal } from '$ui/motion/transitions'
 
@@ -22,7 +23,7 @@
 	let resendCount = $state(initialEmailSent ? 1 : 0)
 
 	// Pin code state
-	let showCodeInput = $state(false)
+	let showCodeInput = $state(true)
 	let pinCode = $state('')
 	let submitPinResult = $state(null)
 
@@ -79,8 +80,28 @@
 	}
 
 	// Handle pin code completion
-	function onComplete() {
+	async function onComplete() {
 		console.log('submitting ', pinCode)
+
+		try {
+			const response = await fetch('/auth/magiclink-code-verify', {
+				method: 'POST',
+				body: JSON.stringify({
+					email: email,
+					code: pinCode
+				})
+			})
+
+			const result = await response.json()
+
+			if (result.success && result.data) {
+				goto(result.data)
+			} else {
+				pinCode = ''
+			}
+		} catch (e) {
+			pinCode = ''
+		}
 	}
 </script>
 

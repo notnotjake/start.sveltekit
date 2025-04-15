@@ -149,7 +149,7 @@ export const actions: Actions = {
 	},
 	passwordLogin: async (event) => {
 		// normalize response times
-		const delay = setDelay(750)
+		const delay = setDelay(500)
 
 		const passwordLoginForm = await superValidate(event.request, zod(passwordLoginSchema))
 		if (!passwordLoginForm.valid) return fail(400, { passwordLoginForm })

@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import { type User, type NewKey } from '$lib/server/db/schema'
+import { type User, type NewKey, lower } from '$lib/server/db/schema'
 
 import { hash, verify } from '@node-rs/argon2'
 import { randomUUID } from 'crypto'
@@ -9,14 +9,21 @@ import { randomUUID } from 'crypto'
 import { StructuredResponse as Response } from '$utils/structured-response'
 import { getUserByIdentifier } from './users'
 
-const hashingOptions = {
+const passwordHashingOptions = {
 	memoryCost: 19456,
 	timeCost: 2,
 	outputLen: 32,
 	parallelism: 1
 }
 
-export async function verifyPassword({
+const shortCodeHashingOptions = {
+	memoryCost: 4096,
+	timeCost: 1,
+	outputLen: 32,
+	parallelism: 1
+}
+
+export async function verifyPasswordsMatch({
 	storedPassword,
 	providedPassword
 }: {
@@ -24,10 +31,39 @@ export async function verifyPassword({
 	providedPassword: string
 }): Promise<Response<boolean>> {
 	try {
-		const passwordValid = await verify(storedPassword, providedPassword, hashingOptions)
+		const passwordValid = await verify(storedPassword, providedPassword, passwordHashingOptions)
 		return Response.succeed(passwordValid)
 	} catch (e) {
 		return Response.fail()
+	}
+}
+
+export async function getUserAndStoredPassword({
+	identifier
+}: {
+	identifier: string
+}): Promise<Response<{ user: User; storedPassword: string }>> {
+	try {
+		const [{ user, storedPassword }] = await db
+			.select({
+				user: table.user,
+				storedPassword: table.key.credential
+			})
+			.from(table.user)
+			.innerJoin(table.key, eq(table.key.userId, table.user.id))
+			.where(
+				and(
+					eq(lower(table.user.identifier), identifier.toLowerCase()),
+					eq(table.key.type, 'password')
+				)
+			)
+			.limit(1)
+
+		if (!user || !storedPassword) return Response.fail('no user or no password')
+
+		return Response.succeed({ user, storedPassword })
+	} catch (e) {
+		return Response.fail('Unexpected error')
 	}
 }
 
@@ -72,7 +108,7 @@ export async function addPassword({
 	if (key?.credential) return Response.fail('Password already set')
 
 	// Hash and salt password
-	const passwordHash = await hash(password, hashingOptions)
+	const passwordHash = await hash(password, passwordHashingOptions)
 
 	// Create new object
 	const newPassword: NewKey = {
@@ -124,13 +160,13 @@ export async function updatePassword({
 	if (!storedPassword) return Response.fail('No current password found')
 
 	// verify that password
-	const passwordValid = await verify(storedPassword, currentPassword, hashingOptions)
+	const passwordValid = await verify(storedPassword, currentPassword, passwordHashingOptions)
 
 	if (passwordValid) {
 		// update to new password
 		try {
 			// Hash and salt password
-			const passwordHash = await hash(newPassword, hashingOptions)
+			const passwordHash = await hash(newPassword, passwordHashingOptions)
 
 			await db
 				.update(table.key)
@@ -143,5 +179,29 @@ export async function updatePassword({
 		}
 	} else {
 		return Response.fail('Password not accepted')
+	}
+}
+
+export async function hashShortCode(code: string): Promise<Response<string>> {
+	try {
+		const hashedCode = await hash(code, shortCodeHashingOptions)
+		return Response.succeed(hashedCode)
+	} catch (e) {
+		return Response.fail('failed to hash')
+	}
+}
+
+export async function verifyShortCodesMatch({
+	storedCode,
+	providedCode
+}: {
+	storedCode: string
+	providedCode: string
+}): Promise<Response<boolean>> {
+	try {
+		const codeValid = await verify(storedCode, providedCode, shortCodeHashingOptions)
+		return Response.succeed(codeValid)
+	} catch (e) {
+		return Response.fail()
 	}
 }

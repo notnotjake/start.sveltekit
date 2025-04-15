@@ -3,7 +3,7 @@ import { eq, lt, and, or } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import type { AuthAttempt } from '$lib/server/db/schema/auth'
 
-import { hash } from '@node-rs/argon2'
+import { hashShortCode } from './password'
 import { randomUUID } from 'crypto'
 import { hashToken } from './utils'
 
@@ -32,13 +32,13 @@ export async function createAuthAttempt({
 		await cleanupAttempts({ identifier, sessionId })
 	} else if (type === 'code') {
 		// For 6 digit codes, because there is less entropy, we salt and hash
-		const argon2HashingOptions = {
-			memoryCost: 4096,
-			timeCost: 1,
-			outputLen: 32,
-			parallelism: 1
+		const hashedResult = await hashShortCode(token)
+
+		if (!hashedResult.success || !hashedResult.data) {
+			return Response.fail('Failed saving short code')
 		}
-		credential = await hash(token, argon2HashingOptions)
+
+		credential = hashedResult.data
 
 		await cleanupAttemptsByType({ type: 'code', sessionId, identifier })
 	} else if (type === 'passkey_login' || type === 'passkey_register') {

@@ -5,7 +5,7 @@ import { type AuthAttempt, type User, lower } from '$lib/server/db/schema/auth'
 import { createUser, getUserByIdentifier } from './users'
 import { generateRandomName, generateShortCode } from './utils'
 import { getAuthAttempt, createAuthAttempt, cleanupAttempts } from './auth-attempt'
-import { verifyPassword } from './password'
+import { verifyPasswordsMatch, getUserAndStoredPassword, verifyShortCodesMatch } from './password'
 
 import { hash, verify } from '@node-rs/argon2'
 import { randomUUID } from 'crypto'
@@ -64,10 +64,46 @@ export async function verifyLoginWithEmail({
 	}
 }
 
-export async function verifyLoginWithCode({}): Promise<Response<User>> {
-	// will need to invalidate (cleanup) codes when validating
+export async function verifyLoginWithCode({
+	identifier,
+	sessionId,
+	providedCode
+}: {
+	identifier: string
+	sessionId: string
+	providedCode: string
+}): Promise<Response<User>> {
+	const result = await getAuthAttempt({ sessionId, type: 'code' })
 
-	return Response.fail()
+	if (!result.success || !result.data) {
+		return Response.fail('no attempt found')
+	}
+
+	const authAttempt = result.data
+
+	if (authAttempt.credential === null) {
+		return Response.fail('no attempt found')
+	}
+	const storedCode = authAttempt.credential
+
+	if (authAttempt.identifier !== identifier) return Response.fail('identifiers do not match')
+
+	const codeValid = await verifyShortCodesMatch({
+		storedCode,
+		providedCode
+	})
+
+	if (!codeValid.success || !codeValid.data) {
+		return Response.fail('Failed to validate code')
+	}
+
+	const userResult = await getUserByIdentifier(identifier)
+
+	if (!userResult.success || !userResult.data?.exists || !userResult.data.user) {
+		return Response.fail('Failed to get user')
+	}
+
+	return Response.succeed(userResult.data.user)
 }
 
 export async function verifyLoginWithPassword({
@@ -77,26 +113,17 @@ export async function verifyLoginWithPassword({
 	identifier: string
 	providedPassword: string
 }): Promise<Response<User>> {
-	const [{ user, storedPassword }] = await db
-		.select({
-			user: table.user,
-			storedPassword: table.key.credential
-		})
-		.from(table.user)
-		.innerJoin(table.key, eq(table.key.userId, table.user.id))
-		.where(
-			and(
-				eq(lower(table.user.identifier), identifier.toLowerCase()),
-				eq(table.key.type, 'password')
-			)
-		)
-		.limit(1)
+	const result = await getUserAndStoredPassword({ identifier })
 
-	if (!user || !storedPassword) return Response.fail('no user or no password')
+	if (!result || !result.data?.user || !result.data?.storedPassword) {
+		return Response.fail('no password found for user')
+	}
 
-	const passwordValid = await verifyPassword({ storedPassword, providedPassword })
+	const { user, storedPassword } = result.data
 
-	if (passwordValid) {
+	const passwordValid = await verifyPasswordsMatch({ storedPassword, providedPassword })
+
+	if (passwordValid.success && passwordValid.data) {
 		return Response.succeed(user)
 	} else {
 		return Response.fail('Password not accepted')

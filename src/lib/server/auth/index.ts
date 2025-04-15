@@ -25,11 +25,11 @@ import { getUserByIdentifier, getUserKeysAvailable } from './users'
 
 import { createAuthAttempt, getAuthAttempt } from './auth-attempt'
 
-import { verifyPassword, addPassword, updatePassword } from './password'
+import { verifyPasswordsMatch, addPassword, updatePassword } from './password'
 
 import { addPasskey, getPasskeyCredential, getPasskeyUser } from './key'
 
-import { verifyLoginWithEmail, verifyLoginWithPassword } from './verify-login'
+import { verifyLoginWithEmail, verifyLoginWithPassword, verifyLoginWithCode } from './verify-login'
 
 import { sendMagiclink } from './magiclink'
 
@@ -52,7 +52,7 @@ const Auth = {
 	generateToken,
 	getUserByIdentifier,
 	createAuthAttempt,
-	verifyPassword,
+	verifyPasswordsMatch,
 	addPassword,
 	clearRedirectUrlCookie,
 	setRedirectUrlCookie,
@@ -65,7 +65,8 @@ const Auth = {
 	clearStepUpReauthCookie,
 	verify: {
 		withEmail: verifyLoginWithEmail,
-		withPassword: verifyLoginWithPassword
+		withPassword: verifyLoginWithPassword,
+		withCode: verifyLoginWithCode
 	},
 	protect: {
 		requireRecentAuth,
