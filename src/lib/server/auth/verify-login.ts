@@ -97,6 +97,9 @@ export async function verifyLoginWithCode({
 		return Response.fail('Failed to validate code')
 	}
 
+	// Remove all attempts associated with identifier or session
+	await cleanupAttempts({ identifier: authAttempt.identifier, sessionId: authAttempt.sessionId })
+
 	const userResult = await getUserByIdentifier(identifier)
 
 	if (!userResult.success || !userResult.data?.exists || !userResult.data.user) {

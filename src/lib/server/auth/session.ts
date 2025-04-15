@@ -2,12 +2,13 @@ import { db } from '$lib/server/db'
 import type { RequestEvent } from '@sveltejs/kit'
 import { eq, and, lt, isNull } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import type { Session } from '$lib/server/db/schema/auth'
+import type { User, Session } from '$lib/server/db/schema/auth'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 import { clearStepUpReauthCookie } from './cookie'
 
 import { generateToken, hashToken } from './utils'
+import { cleanupAttempts } from './auth-attempt'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
 
@@ -54,10 +55,10 @@ export async function createUnauthenticatedSession(
  */
 export async function authenticateSession({
 	event,
-	userId
+	user
 }: {
 	event: RequestEvent
-	userId: string
+	user: User
 }): Promise<Response<never>> {
 	try {
 		if (!event.locals.session?.id) {
@@ -66,11 +67,17 @@ export async function authenticateSession({
 
 		await db
 			.update(table.session)
-			.set({ userId, lastAuthAt: new Date() })
+			.set({ userId: user.id, lastAuthAt: new Date() })
 			.where(eq(table.session.id, event.locals.session?.id))
 
 		clearStepUpReauthCookie(event)
+
 		await cleanupOldInvalidSessions()
+
+		await cleanupAttempts({
+			identifier: user.identifier,
+			sessionId: event.locals.session.id
+		})
 
 		return Response.succeed()
 	} catch (error) {

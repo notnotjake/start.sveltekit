@@ -1,34 +1,59 @@
 <script lang="ts">
 	import { tick } from 'svelte'
+	import { goto } from '$app/navigation'
 	import { createClass } from '$utils/create-class'
 	import PinCell from '$ui/auth/code-input-pin.svelte'
 	import { SuspenseText } from '$ui/feedback'
 
-	let {
-		code: pin = $bindable(),
-		onComplete,
-		submitSuccess = null
-	}: {
-		code: string
-		onComplete: () => void
-		submitSuccess: boolean | null
-	} = $props()
+	let { email }: { email: string } = $props()
 
+	let enteredCode = $state('')
 	let pinLength = $state(6) // Default number of pin cells
 
 	let inputElement: HTMLInputElement = $state()
 	let selectionStart = $state(0)
 	let selectionEnd = $state(0)
 
+	let submitSuccess: null | 'pending' | boolean = $state(null)
+
 	let isComplete = $derived.by(() => {
-		return pin.length === pinLength
+		return enteredCode.length === pinLength
 	})
-	$effect(() => {
+
+	$effect(async () => {
 		if (isComplete) {
 			inputElement.blur()
-			onComplete()
+			await trySubmit()
 		}
 	})
+
+	// Handle pin code completion
+	async function trySubmit() {
+		try {
+			submitSuccess = 'pending'
+
+			const response = await fetch('/auth/magiclink-code-verify', {
+				method: 'POST',
+				body: JSON.stringify({
+					email: email,
+					code: enteredCode
+				})
+			})
+
+			const result = await response.json()
+
+			if (result.success && result.data) {
+				goto(result.data)
+			} else {
+				submitSuccess = false
+				enteredCode = ''
+			}
+		} catch (e) {
+			console.log(e)
+			submitSuccess = false
+			enteredCode = ''
+		}
+	}
 
 	function updateSelection() {
 		if (inputElement) {
@@ -38,11 +63,15 @@
 	}
 
 	async function handleInput(event) {
+		if (submitSuccess === false) {
+			submitSuccess = null
+		}
+
 		const input = event.target
 		const value = input.value
 		const currentStart = input.selectionStart || 0
 		const currentEnd = input.selectionEnd || 0
-		const isPaste = value.length > pin.length + 1 || currentEnd - currentStart > 1
+		const isPaste = value.length > enteredCode.length + 1 || currentEnd - currentStart > 1
 
 		// Handle paste operation
 		if (isPaste) {
@@ -50,7 +79,7 @@
 			const numericValue = value.replace(/[^0-9]/g, '').substring(0, pinLength)
 
 			// Set the new value
-			pin = numericValue
+			enteredCode = numericValue
 
 			// Update the input field
 			input.value = numericValue
@@ -70,27 +99,29 @@
 		// Handle single character input as before
 		else if (value.length <= pinLength) {
 			// If we're typing a new character (not deletion)
-			if (value.length > pin.length) {
+			if (value.length > enteredCode.length) {
 				// This is what we type
 				const lastTypedChar = value.charAt(currentStart - 1)
 
 				// Create a new pin value that replaces the character at cursor position
-				let newPin = pin
+				let newPin = enteredCode
 
 				// If we're at the end, just append
-				if (selectionStart >= pin.length) {
-					newPin = pin + lastTypedChar
+				if (selectionStart >= enteredCode.length) {
+					newPin = enteredCode + lastTypedChar
 				} else {
 					// Otherwise replace the character at cursor position
 					newPin =
-						pin.substring(0, selectionStart) + lastTypedChar + pin.substring(selectionStart + 1)
+						enteredCode.substring(0, selectionStart) +
+						lastTypedChar +
+						enteredCode.substring(selectionStart + 1)
 				}
 
 				// Limit to pinLength
 				newPin = newPin.substring(0, pinLength)
 
 				// Set the new value
-				pin = newPin
+				enteredCode = newPin
 
 				// Manually update the input value
 				input.value = newPin
@@ -108,7 +139,7 @@
 				event.preventDefault()
 			} else {
 				// For deletion, let the browser handle it naturally
-				pin = value.substring(0, pinLength)
+				enteredCode = value.substring(0, pinLength)
 			}
 		}
 
@@ -131,7 +162,7 @@
 	function handleFocus() {
 		if (inputElement) {
 			// Place cursor at the end or at first empty position
-			const pos = pin.length
+			const pos = enteredCode.length
 			setTimeout(() => {
 				inputElement.setSelectionRange(pos, pos)
 				updateSelection()
@@ -159,16 +190,16 @@
 		</p>
 		<div
 			class={createClass(
-				'group relative my-2 inline-block h-[2.8rem] rounded-[0.9rem] shadow-xs focus-within:ring-blue-500',
+				'group relative my-2 inline-block h-[2.8rem] rounded-[0.9rem] shadow-xs ring-[1px] ring-neutral-200/30 focus-within:ring-blue-500',
 				isComplete && submitSuccess !== false
-					? 'focus-within:ring-none bg-blue-200'
+					? 'focus-within:ring-none bg-blue-100'
 					: 'bg-white focus-within:ring-2'
 			)}
 		>
 			<input
 				type="text"
 				bind:this={inputElement}
-				value={pin}
+				value={enteredCode}
 				oninput={handleInput}
 				onkeydown={handleKeydown}
 				onselect={handleSelect}
@@ -197,7 +228,7 @@
 						<p class="h-fit w-4 text-[1.15rem]">&nbsp;</p>
 					{/if}
 					<PinCell
-						value={pin[i] ?? ''}
+						value={enteredCode[i] ?? ''}
 						active={i === selectionStart && selectionStart === selectionEnd && !isComplete}
 						selected={i >= selectionStart && i < selectionEnd}
 					/>

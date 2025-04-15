@@ -5,6 +5,8 @@ import LoginEmail from './templates/login-email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
+const CONSOLE_ONLY = true
+
 export async function login({
 	email,
 	token,
@@ -50,19 +52,21 @@ export async function login({
 		expiresAtString: formattedExpirationTime
 	}
 
-	// 	const { error } = await resend.emails.send({
-	// 		from: 'LightDance <accounts@resend.notnotjake.com>',
-	// 		to: email,
-	// 		subject: newAccount ? 'Verify Email' : 'Login Link',
-	// 		react: LoginEmail(options)
-	// 	})
-	//
-	// 	if (error) {
-	// 		console.log(error)
-	// 		return Response.fail()
-	// 	}
+	if (CONSOLE_ONLY) {
+		console.log('Simulated email. Magic Link: ', url)
+	} else {
+		const { error } = await resend.emails.send({
+			from: 'LightDance <accounts@resend.notnotjake.com>',
+			to: email,
+			subject: newAccount ? 'Verify Email' : 'Login Link',
+			react: LoginEmail(options)
+		})
 
-	console.log('Simulated email. Magic Link: ', url)
+		if (error) {
+			console.log(error)
+			return Response.fail()
+		}
+	}
 
 	return Response.succeed()
 }

@@ -50,7 +50,7 @@ export const load: ServerLoad = async (event) => {
 				magicStatus.error = true
 			}
 		} else if (result.data && result.data.user) {
-			await Auth.authenticateSession({ event, userId: result.data.user.id })
+			await Auth.authenticateSession({ event, user: result.data.user })
 			const redirectUrl = Auth.getRedirectUrlCookie(event)
 			redirect(303, redirectUrl)
 		} else if (result.data && result.data.code) {
@@ -164,10 +164,8 @@ export const actions: Actions = {
 		})
 
 		if (result.success && result.data) {
-			await Auth.authenticateSession({ event, userId: result.data.id })
-
+			await Auth.authenticateSession({ event, user: result.data })
 			const redirectUrl = Auth.getRedirectUrlCookie(event) // Get redirect path
-
 			redirect(307, redirectUrl)
 		}
 

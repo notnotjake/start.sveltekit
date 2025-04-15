@@ -78,37 +78,12 @@
 			sendStatus = 'error'
 		}
 	}
-
-	// Handle pin code completion
-	async function onComplete() {
-		console.log('submitting ', pinCode)
-
-		try {
-			const response = await fetch('/auth/magiclink-code-verify', {
-				method: 'POST',
-				body: JSON.stringify({
-					email: email,
-					code: pinCode
-				})
-			})
-
-			const result = await response.json()
-
-			if (result.success && result.data) {
-				goto(result.data)
-			} else {
-				pinCode = ''
-			}
-		} catch (e) {
-			pinCode = ''
-		}
-	}
 </script>
 
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
 	{#if showCodeInput}
-		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100 py-5">
-			<CodeInput bind:code={pinCode} {onComplete} submitSuccess={submitPinResult} />
+		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-50 py-5">
+			<CodeInput {email} />
 		</div>
 	{:else if sendStatus === 'error'}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">

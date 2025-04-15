@@ -20,13 +20,16 @@ export const POST: RequestHandler = async (event) => {
 	const requestData = await event.request.json()
 	const validatedData = requestSchema.safeParse(requestData)
 
-	if (!validatedData.success) return withDelay(delay, Response.fail('Request object invalid - zod'))
+	if (!validatedData.success) {
+		return withDelay(delay, json(Response.fail('Request invalid')))
+	}
 
 	const data: Data = validatedData.data
 
 	if (!event.locals?.session?.id) {
-		return withDelay(delay, (Response.fail('No session found'), { status: 500 }))
+		return withDelay(delay, json(Response.fail('No session found')))
 	}
+
 	const sessionId = event.locals.session.id
 
 	const result = await Auth.verify.withCode({
@@ -36,8 +39,7 @@ export const POST: RequestHandler = async (event) => {
 	})
 
 	if (result.success && result.data) {
-		await Auth.authenticateSession({ event, userId: result.data.id })
-
+		await Auth.authenticateSession({ event, user: result.data })
 		const redirectUrl = Auth.getRedirectUrlCookie(event) // Get redirect path
 
 		return withDelay(delay, json(Response.succeed(redirectUrl)))

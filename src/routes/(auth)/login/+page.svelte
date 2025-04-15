@@ -115,7 +115,9 @@
 		<h2
 			class="text-3xl font-semibold text-neutral-200 transition-colors duration-100 group-hover:text-white"
 		>
-			{data.magicStatus.code}
+			{data.magicStatus.code.slice(0, 3)}
+			<span class="w-1"></span>
+			{data.magicStatus.code.slice(3, 6)}
 		</h2>
 
 		<ToastSwap bind:trigger={toastConfirmCopied}>
@@ -134,11 +136,11 @@
 		</ToastSwap>
 	</button>
 {:else}
-	{#if data.magicStatus.invalid}
+	{#if data.magicStatus.invalid && !$emailMessage}
 		<div class="mb-3 w-full rounded-full bg-gradient-to-t from-rose-200/50 to-rose-300/50 py-3">
 			<p class="text-center font-medium text-rose-600">Email link expired or invalid</p>
 		</div>
-	{:else if data.magicStatus.error}
+	{:else if data.magicStatus.error && !$emailMessage}
 		<div class="mb-3 w-full rounded-full bg-gradient-to-t from-rose-200/50 to-rose-300/50 py-3">
 			<p class="text-center font-medium text-rose-600">
 				Something went wrong trying to redeem email link
