@@ -1,6 +1,9 @@
 import type { RequestHandler } from '@sveltejs/kit'
+import { appEventEmitter } from '$lib/server/auth/event'
 
-export const GET: RequestHandler = async ({ setHeaders }) => {
+export const GET: RequestHandler = async ({ setHeaders, locals }) => {
+	console.log('sse triggered')
+
 	// Set required headers for SSE
 	setHeaders({
 		'Content-Type': 'text/event-stream',
@@ -11,13 +14,29 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 	let intervalId: NodeJS.Timeout
 	let timeoutId: NodeJS.Timeout
 	let isControllerClosed = false // Add a flag to track controller state
-	const MAX_ALIVE_MS = 10 * 1000 // 5 mins max duration
+	const MAX_ALIVE_MS = 2 * 60 * 1000 // 2 mins max duration
 
 	// Create a readable stream
 	const stream = new ReadableStream({
 		start(controller) {
 			// Send an initial message
 			controller.enqueue('event: message\ndata: {"message": "Connected to SSE"}\n\n')
+
+			const notifyCodeAvailable = () => {
+				console.log('code is available')
+				if (!isControllerClosed) {
+					try {
+						const data = JSON.stringify({ time: new Date().toISOString() })
+						controller.enqueue(`event: update\ndata: ${data}\n\n`)
+					} catch (err) {
+						// Handle any errors during enqueue
+						console.error('Error sending SSE update:', err)
+						clearInterval(intervalId)
+					}
+				}
+			}
+
+			appEventEmitter.on(locals.session.id, notifyCodeAvailable)
 
 			// Example: Send a message every 5 seconds
 			intervalId = setInterval(() => {
@@ -60,6 +79,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 		},
 		cancel() {
 			// This is called when the client closes the connection
+			appEventEmitter.off(locals.session.id, notifyCodeAvailable)
 			clearInterval(intervalId)
 			clearTimeout(timeoutId)
 			isControllerClosed = true

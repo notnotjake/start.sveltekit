@@ -22,7 +22,7 @@
 	const RESENDS_BEFORE_ALERT = 2
 	let resendCount = $state(initialEmailSent ? 1 : 0)
 
-	let showCodeInput = $state(true)
+	let showCodeInput = $state(false)
 
 	let toastConfirmSent = $state(null)
 
@@ -76,8 +76,75 @@
 		}
 	}
 
+	let messages: string[] = $state([])
+	let eventSource: EventSource | null = $state(null)
+	let listeningForCodeAvailable = $state(false)
+
+	$effect(async () => {
+		if (sendStatus === 'success' && listeningForCodeAvailable === false) {
+			await subscribeCodeAvailable()
+		}
+	})
+
 	// Start listening for SSE
+	async function subscribeCodeAvailable() {
+		console.log('subsribing...')
+		listeningForCodeAvailable = true
+
+		// Create EventSource connection to our endpoint
+		eventSource = new EventSource('/auth/magiclink/code-subscribe')
+
+		// Listen for the "message" event type
+		eventSource.addEventListener('message', (event) => {
+			const data = JSON.parse(event.data)
+			console.log('A message')
+			messages = [...messages, `Message: ${data.message}`]
+		})
+
+		// Listen for the "update" event type
+		eventSource.addEventListener('update', (event) => {
+			const data = JSON.parse(event.data)
+			console.log('U message')
+			messages = [...messages, `Update at: ${data.time}`]
+		})
+
+		// Listen for the "timeout" event
+		eventSource.addEventListener('timeout', (event) => {
+			const data = JSON.parse(event.data)
+			console.log('T message')
+			messages = [...messages, `Timeout: ${data.message}`]
+			stopSSE()
+		})
+
+		// Handle connection errors
+		eventSource.onerror = (error) => {
+			console.error('SSE Error:', error)
+			// Optionally try to reconnect
+		}
+	}
+
+	function stopSSE() {
+		if (eventSource) {
+			eventSource.close()
+			eventSource = null
+			console.log('SSE connection closed')
+		}
+	}
+
+	onDestroy(() => {
+		// Clean up the connection when component unmounts
+		if (eventSource) {
+			stopSSE()
+		}
+	})
 </script>
+
+<div class="messages">
+	<p>Messages</p>
+	{#each messages as message}
+		<div class="message">{message}</div>
+	{/each}
+</div>
 
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
 	{#if showCodeInput}

@@ -3,6 +3,7 @@ import { createUser, getUserByIdentifier } from './users'
 import { generateRandomName, generateShortCode } from './utils'
 import { getAuthAttempt, createAuthAttempt, cleanupAttempts } from './auth-attempt'
 import { verifyPasswordsMatch, getUserAndStoredPassword, verifyShortCodesMatch } from './password'
+import { appEventEmitter } from './event'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -52,6 +53,10 @@ export async function verifyLoginWithEmail({
 			type: 'code',
 			maxAgeMins: 2
 		})
+
+		// emit event to notify original session using code
+		console.log('emitting code available')
+		appEventEmitter.emit(authAttempt.sessionId)
 
 		if (!newAuthAttemptResult.success) return Response.fail()
 
