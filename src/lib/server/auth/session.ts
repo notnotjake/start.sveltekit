@@ -9,6 +9,7 @@ import { clearStepUpReauthCookie } from './cookie'
 
 import { generateToken, hashToken } from './utils'
 import { cleanupAttempts } from './auth-attempt'
+import { appEventEmitter } from './event'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
 
@@ -73,6 +74,8 @@ export async function authenticateSession({
 		clearStepUpReauthCookie(event)
 
 		await cleanupOldInvalidSessions()
+
+		appEventEmitter.removeAllListeners(event.locals.session.id)
 
 		await cleanupAttempts({
 			identifier: user.identifier,

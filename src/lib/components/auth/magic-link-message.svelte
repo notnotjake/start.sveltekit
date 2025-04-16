@@ -22,14 +22,19 @@
 	const RESENDS_BEFORE_ALERT = 2
 	let resendCount = $state(initialEmailSent ? 1 : 0)
 
+	// Start with code input hidden until we receive the code-available event
 	let showCodeInput = $state(false)
 
 	let toastConfirmSent = $state(null)
+	let connectionError = $state(false)
+	let reconnectAttempts = $state(0)
+	const MAX_RECONNECT_ATTEMPTS = 3
 
 	// Setup timers when component mounts
 	onMount(() => {
 		if (initialEmailSent) {
 			showSendSuccessToast()
+			subscribeCodeAvailable()
 		}
 	})
 
@@ -47,6 +52,7 @@
 	async function sendEmail() {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		sendStatus = 'sending'
+		connectionError = false
 
 		try {
 			const response = await fetch('/auth/magiclink/send', {
@@ -81,45 +87,74 @@
 	let listeningForCodeAvailable = $state(false)
 
 	$effect(async () => {
-		if (sendStatus === 'success' && listeningForCodeAvailable === false) {
+		if (sendStatus === 'success' && eventSource === null) {
 			await subscribeCodeAvailable()
 		}
 	})
 
 	// Start listening for SSE
 	async function subscribeCodeAvailable() {
-		console.log('subsribing...')
-		listeningForCodeAvailable = true
+		console.log('subscribing to SSE...')
 
-		// Create EventSource connection to our endpoint
-		eventSource = new EventSource('/auth/magiclink/code-subscribe')
-
-		// Listen for the "message" event type
-		eventSource.addEventListener('message', (event) => {
-			const data = JSON.parse(event.data)
-			console.log('A message')
-			messages = [...messages, `Message: ${data.message}`]
-		})
-
-		// Listen for the "update" event type
-		eventSource.addEventListener('update', (event) => {
-			const data = JSON.parse(event.data)
-			console.log('U message')
-			messages = [...messages, `Update at: ${data.time}`]
-		})
-
-		// Listen for the "timeout" event
-		eventSource.addEventListener('timeout', (event) => {
-			const data = JSON.parse(event.data)
-			console.log('T message')
-			messages = [...messages, `Timeout: ${data.message}`]
+		// Close any existing connection first
+		if (eventSource) {
 			stopSSE()
-		})
+		}
 
-		// Handle connection errors
-		eventSource.onerror = (error) => {
-			console.error('SSE Error:', error)
-			// Optionally try to reconnect
+		listeningForCodeAvailable = true
+		connectionError = false
+
+		try {
+			// Create EventSource connection to our endpoint
+			eventSource = new EventSource('/auth/magiclink/code-subscribe')
+
+			// Listen for the "message" event type (connection established)
+			eventSource.addEventListener('message', (event) => {
+				const data = JSON.parse(event.data)
+				console.log('Connection established:', data.message)
+				messages = [...messages, `Message: ${data.message}`]
+			})
+
+			// Listen for the "code-available" event type
+			eventSource.addEventListener('code-available', (event) => {
+				const data = JSON.parse(event.data)
+				console.log('Code available:', data)
+				messages = [...messages, `Code available at: ${data.time}`]
+
+				// Show the code input when the code is available
+				showCodeInput = true
+
+				// We can stop listening now as we've received what we needed
+				stopSSE()
+			})
+
+			// Listen for the "timeout" event
+			eventSource.addEventListener('timeout', (event) => {
+				const data = JSON.parse(event.data)
+				console.log('Connection timeout:', data.message)
+				messages = [...messages, `Timeout: ${data.message}`]
+				stopSSE()
+			})
+
+			// Handle connection errors
+			eventSource.onerror = (error) => {
+				console.error('SSE Error:', error)
+				connectionError = true
+				stopSSE()
+
+				// Try to reconnect if under max attempts
+				if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+					reconnectAttempts++
+					console.log(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`)
+					setTimeout(() => {
+						subscribeCodeAvailable()
+					}, 2000) // Wait 2 seconds before reconnecting
+				}
+			}
+		} catch (error) {
+			console.error('Failed to establish SSE connection:', error)
+			connectionError = true
+			listeningForCodeAvailable = false
 		}
 	}
 
@@ -127,6 +162,7 @@
 		if (eventSource) {
 			eventSource.close()
 			eventSource = null
+			listeningForCodeAvailable = false
 			console.log('SSE connection closed')
 		}
 	}
@@ -139,18 +175,17 @@
 	})
 </script>
 
-<div class="messages">
-	<p>Messages</p>
-	{#each messages as message}
-		<div class="message">{message}</div>
-	{/each}
-</div>
-
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
 	{#if showCodeInput}
 		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-50 py-5">
 			<CodeInput {email} />
 		</div>
+	{:else if connectionError}
+		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-amber-600">
+			Connection issue. {reconnectAttempts < MAX_RECONNECT_ATTEMPTS
+				? 'Reconnecting...'
+				: 'Please try again.'}
+		</p>
 	{:else if sendStatus === 'error'}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again

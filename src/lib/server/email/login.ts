@@ -5,7 +5,7 @@ import LoginEmail from './templates/login-email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
-const CONSOLE_ONLY = true
+const CONSOLE_ONLY = false
 
 export async function login({
 	email,
