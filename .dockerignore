@@ -1,5 +1,9 @@
 bun.lockb
 
+# Ignore secrets
+.env*
+!.env.example
+
 # Ignore Git history and configuration
 .git
 .gitignore
