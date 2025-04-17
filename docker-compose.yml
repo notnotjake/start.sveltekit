@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        PORT: 3000
+    image: sveltekit-start-prod
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
