@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { RESEND_API } from '$env/static/private'
+import { RESEND_AUTH } from '$env/static/private'
 import { PUBLIC_URL_BASE } from '$env/static/public'
 import LoginEmail from './templates/login-email'
 
@@ -20,9 +20,9 @@ export async function login({
 	timezone: string
 	maxAgeMins?: number
 }): Promise<Response<never>> {
-	const resend = new Resend(RESEND_API)
+	const resend = new Resend(RESEND_AUTH)
 
-	const url = `${PUBLIC_URL_BASE}/login?magic=${token}`
+	let url = `${PUBLIC_URL_BASE}/login?magic=${token}`
 
 	// Calculate expiration time based on maxAgeMins
 	const expiresAt = new Date(Date.now() + maxAgeMins * 60 * 1000)
