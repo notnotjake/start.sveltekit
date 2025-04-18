@@ -1,11 +1,15 @@
-import { Resend } from 'resend'
-import { RESEND_AUTH } from '$env/static/private'
+// import { env } from '$utils/env/server'
+import { PUBLIC_NODE_ENV } from '$env/static/public'
 import { PUBLIC_URL_BASE } from '$env/static/public'
-import LoginEmail from './templates/login-email'
+import { env } from '$env/dynamic/private'
 
+const RESEND_AUTH = env.RESEND_AUTH
+
+import { Resend } from 'resend'
+import LoginEmail from './templates/login-email'
 import { StructuredResponse as Response } from '$utils/structured-response'
 
-const CONSOLE_ONLY = false
+const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development' ? true : false
 
 export async function login({
 	email,
@@ -22,7 +26,7 @@ export async function login({
 }): Promise<Response<never>> {
 	const resend = new Resend(RESEND_AUTH)
 
-	let url = `${PUBLIC_URL_BASE}/login?magic=${token}`
+	const url = `${PUBLIC_URL_BASE}/login?magic=${token}`
 
 	// Calculate expiration time based on maxAgeMins
 	const expiresAt = new Date(Date.now() + maxAgeMins * 60 * 1000)

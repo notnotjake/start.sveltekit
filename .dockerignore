@@ -1,8 +1,11 @@
 bun.lockb
 
+db
+
 # Ignore secrets
 .env*
 !.env.example
+!.env.public
 
 # Ignore Git history and configuration
 .git

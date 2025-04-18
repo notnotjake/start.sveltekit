@@ -1,3 +1,4 @@
+// import { env } from '$utils/env/client'
 import { PUBLIC_URL_ASSETS } from '$env/static/public'
 
 /**
