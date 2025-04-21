@@ -7,9 +7,3 @@ services:
     image: sveltekit-start-prod
     ports:
       - '3000:3000'
-    environment:
-      - NODE_ENV=production
-      - PUBLIC_NODE_ENV=production
-      - PUBLIC_URL_BASE="https://sveltekit-app.fly.dev"
-      - PUBLIC_URL_ASSETS="https://assets.lightdance.design"
-      - PUBLIC_ANALYTICS=FALSE

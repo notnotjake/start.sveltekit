@@ -7,9 +7,6 @@ const config = {
 		adapter: adapter({
 			precompress: true
 		}),
-		paths: {
-			base: process.env.PUBLIC_URL_BASE || ''
-		},
 		files: {
 			appTemplate: 'src/app.html',
 			errorTemplate: 'src/error.html',
