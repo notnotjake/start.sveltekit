@@ -21,5 +21,5 @@ RUN npm run build
 
 EXPOSE 3000
 #CMD ["node", "./build/index.js"]
-CMD npm run db:migrate && node ./build/index.js
+CMD npm run db:gen && npm run db:migrate && node ./build/index.js
 # CMD ["/bin/bash"]
