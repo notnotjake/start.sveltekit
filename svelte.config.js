@@ -4,9 +4,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		adapter: adapter({
-			precompress: true
-		}),
+		adapter: adapter(),
 		files: {
 			appTemplate: 'src/app.html',
 			errorTemplate: 'src/error.html',

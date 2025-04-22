@@ -1,6 +1,4 @@
-// import { env } from '$utils/env/client'
 const PUBLIC_URL_ASSETS = process.env.PUBLIC_URL_ASSETS
-
 /**
  * Constructs a full URL for an asset based on the public asset base URL.
  *

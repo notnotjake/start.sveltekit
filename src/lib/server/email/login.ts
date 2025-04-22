@@ -1,17 +1,13 @@
-// import { env } from '$utils/env/server'
-// import { PUBLIC_NODE_ENV } from '$env/static/public'
-// import { PUBLIC_URL_BASE } from '$env/static/public'
+import { PUBLIC_URL_BASE, PUBLIC_NODE_ENV } from '$env/static/public'
 import { env } from '$env/dynamic/private'
-
-const RESEND_AUTH = env.RESEND_AUTH
-const PUBLIC_NODE_ENV = env.PUBLIC_NODE_ENV
-const PUBLIC_URL_BASE = env.PUBLIC_URL_BASE
-
 import { Resend } from 'resend'
 import LoginEmail from './templates/login-email'
+
+const RESEND_AUTH = env.RESEND_AUTH
+
 import { StructuredResponse as Response } from '$utils/structured-response'
 
-const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development' ? true : false
+const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development'
 
 export async function login({
 	email,

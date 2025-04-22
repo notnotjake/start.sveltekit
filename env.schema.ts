@@ -2,9 +2,8 @@ import { z } from 'zod'
 
 export const privateSchema = z.object({
 	NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
-	// Email with Resend
+
 	RESEND_AUTH: z.string(),
-	// Database
 	DB_URL: z.string()
 })
 
