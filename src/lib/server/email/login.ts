@@ -1,7 +1,9 @@
 import { Resend } from 'resend'
-import { RESEND_API } from '$env/static/private'
-import { PUBLIC_URL_BASE } from '$env/static/public'
+import { env } from '$env/dyanmic/private'
 import LoginEmail from './templates/login-email'
+
+const RESEND_AUTH = env.RESEND_AUTH
+const PUBLIC_URL_BASE = env.PUBLIC_URL_BASE
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -20,7 +22,7 @@ export async function login({
 	timezone: string
 	maxAgeMins?: number
 }): Promise<Response<never>> {
-	const resend = new Resend(RESEND_API)
+	const resend = new Resend(RESEND_AUTH)
 
 	const url = `${PUBLIC_URL_BASE}/login?magic=${token}`
 
