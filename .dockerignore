@@ -1,0 +1,34 @@
+bun.lockb
+
+db/dev*
+db/seeds
+
+# Ignore secrets
+.env*
+!.env.example
+
+# Ignore Git history and configuration
+.git
+.gitignore
+
+# Ignore Node dependencies (they should be installed INSIDE the container)
+node_modules
+
+# Ignore SvelteKit build outputs and cache
+.svelte-kit
+build
+
+# Ignore IDE/Editor specific files
+.nova/
+.vscode/
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore test reports, logs, etc.
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tests
