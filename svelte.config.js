@@ -5,9 +5,6 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 const config = {
 	kit: {
 		adapter: adapter(),
-		paths: {
-			base: process.env.PUBLIC_URL_BASE || ''
-		},
 		files: {
 			appTemplate: 'src/app.html',
 			errorTemplate: 'src/error.html',
