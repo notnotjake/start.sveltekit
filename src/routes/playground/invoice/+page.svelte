@@ -10,7 +10,7 @@
 	const address = '1 MegaCorp Plaza'
 	const city = 'Sellington'
 	const state = 'NY'
-	const zip = 99942
+	const zip = 92553
 	const phone = '(555) 925 5533'
 
 	const summary = 'Photography and SEO'

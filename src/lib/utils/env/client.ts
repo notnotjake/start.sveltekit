@@ -1,5 +1,5 @@
 import { publicSchema } from '../../../../env.schema'
-import * as public_env from '$env/static/public'
+import * as public_env from '$env/dynamic/public'
 import { filterEnv } from './filter'
 import { validateEnv } from './validate'
 

@@ -42,10 +42,8 @@ export const load: ServerLoad = async (event) => {
 
 		if (!result.success) {
 			if (result.error === 'invalid token') {
-				// TODO: display message to user that token has expired
 				magicStatus.invalid = true
 			} else {
-				// TODO: display error message
 				console.log(result.error)
 				magicStatus.error = true
 			}
@@ -54,7 +52,6 @@ export const load: ServerLoad = async (event) => {
 			const redirectUrl = Auth.getRedirectUrlCookie(event)
 			redirect(303, redirectUrl)
 		} else if (result.data && result.data.code) {
-			// TODO: need to show the code on the page with UI
 			magicStatus.code = result.data.code
 			authTitle = 'Use code to continue'
 			authMessage = 'Enter this code where you started sign in'
