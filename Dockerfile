@@ -16,7 +16,7 @@ ENV PUBLIC_URL_ASSETS="https://assets.lightdance.design"
 ENV PUBLIC_ANALYTICS=FALSE
 ENV DB_URL="/app/db/prod.db"
 
-RUN npm run db:gen
+# RUN npm run db:gen
 RUN npm run build
 
 EXPOSE 3000
