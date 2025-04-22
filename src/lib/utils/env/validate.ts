@@ -20,8 +20,6 @@ export function validateEnv<T extends z.ZodTypeAny>(
 			const missingVars = error.errors.map((err) => err.path.join('.'))
 			console.error('[$lib/env] ⚠️ Invalid environment variables:', error.errors)
 			console.error('[$lib/env] ⚠️ Missing or invalid variables:', missingVars.join(', '))
-			throw new Error('[$lib/env] ⚠️ Invalid environment configuration')
 		}
-		throw error
 	}
 }
