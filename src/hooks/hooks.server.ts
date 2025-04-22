@@ -43,10 +43,11 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event)
 }
 
-const handleSecureHeaders: Handle = async ({ event, resolve }) => {
-	const response = await resolve(event)
+// const handleSecureHeaders: Handle = async ({ event, resolve }) => {
+// 	const response = await resolve(event)
+//
+// 	return response
+// }
 
-	return response
-}
-
-export const handle: Handle = sequence(handleAuth, handleSecureHeaders)
+// export const handle: Handle = sequence(handleAuth, handleSecureHeaders)
+export const handle: Handle = sequence(handleAuth)

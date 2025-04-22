@@ -20,13 +20,13 @@ export const load: ServerLoad = async (event) => {
 	}
 
 	// Ensure there is an unauthenticated session created
-	let { id: sessionId } = await Auth.protect.requireSession(event)
+	const { id: sessionId } = await Auth.protect.requireSession(event)
 
 	let automaticPasskeyEnabled = true
 
 	// Validate magic link
 	const token = event.url.searchParams.get('magic')
-	let magicStatus: {
+	const magicStatus: {
 		invalid: boolean
 		error: boolean
 		code: string | null

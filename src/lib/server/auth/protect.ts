@@ -70,7 +70,7 @@ export async function requireSession(event: RequestEvent): Promise<Session> {
 			throw Error
 		}
 
-		const { rawSessionToken, session } = createSessionResult?.data
+		const { rawSessionToken, session } = createSessionResult.data
 
 		Auth.setSessionTokenCookie(event, rawSessionToken, session.expiresAt)
 		return session

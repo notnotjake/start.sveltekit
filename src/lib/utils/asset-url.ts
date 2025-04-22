@@ -1,4 +1,5 @@
-const PUBLIC_URL_ASSETS = process.env.PUBLIC_URL_ASSETS
+import { PUBLIC_URL_ASSETS } from '$env/static/public'
+
 /**
  * Constructs a full URL for an asset based on the public asset base URL.
  *
