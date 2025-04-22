@@ -1,5 +1,4 @@
-import { env } from '$env/dynamic/public'
-const PUBLIC_URL_ASSETS = env.PUBLIC_URL_ASSETS
+const PUBLIC_URL_ASSETS = process.env.PUBLIC_URL_ASSETS
 /**
  * Constructs a full URL for an asset based on the public asset base URL.
  *
