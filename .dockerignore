@@ -1,7 +1,6 @@
 bun.lockb
 
-db/dev*
-db/seeds
+db
 
 # Ignore secrets
 .env*

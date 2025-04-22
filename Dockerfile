@@ -14,8 +14,9 @@ ENV PUBLIC_NODE_ENV=production
 ENV PUBLIC_URL_BASE="bountiful-kindness-production.up.railway.app"
 ENV PUBLIC_URL_ASSETS="https://assets.lightdance.design"
 ENV PUBLIC_ANALYTICS=FALSE
-ENV DB_URL="/db/prod.db"
+ENV DB_URL="./db/prod.db"
 
+RUN npm run db:gen && npm run db:migrate
 RUN npm run build
 
 EXPOSE 3000

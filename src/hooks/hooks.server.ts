@@ -1,20 +1,20 @@
 import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import { building } from '$app/environment'
-import { env } from '$utils/env/server'
-import { applySecurityHeaders } from '$utils/security-headers'
+// import { building } from '$app/environment'
+// import { env } from '$utils/env/server'
+// import { applySecurityHeaders } from '$utils/security-headers'
 import Auth from '$lib/server/auth'
 
-if (!building) {
-	try {
-		const validatedEnv = env
-		console.log('✅ Startup - Environment variables validated')
-	} catch (error) {
-		console.error('⚠️ Startup - Environment validation failed:', error)
-		// Exit if validation fails during server startup
-		process.exit(1)
-	}
-}
+// if (!building) {
+// 	try {
+// 		const validatedEnv = env
+// 		console.log('✅ Startup - Environment variables validated')
+// 	} catch (error) {
+// 		console.error('⚠️ Startup - Environment validation failed:', error)
+// 		// Exit if validation fails during server startup
+// 		process.exit(1)
+// 	}
+// }
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = Auth.getSessionTokenCookie(event)
