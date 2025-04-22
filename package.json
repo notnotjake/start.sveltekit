@@ -61,6 +61,7 @@
 		"@simplewebauthn/server": "^13.1.1",
 		"@tailwindcss/postcss": "^4.1.4",
 		"@tailwindcss/vite": "^4.1.4",
+		"better-sqlite3": "^11.9.1",
 		"clsx": "^2.1.1",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.42.0",

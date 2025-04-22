@@ -1,16 +1,15 @@
-import { env } from './src/lib/utils/env'
+// import { env } from './src/lib/utils/env'
+import { config } from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
 
-console.log(env.DB_TURSO_SYNC_URL)
-console.log(env.DB_TURSO_AUTH)
+config()
 
 export default defineConfig({
 	schema: './src/lib/server/db/schema/index.ts',
-	out: './migrations',
-	dialect: 'turso',
+	out: './db/migrations',
+	dialect: 'sqlite',
 	dbCredentials: {
-		url: `${env.DB_TURSO_SYNC_URL}`,
-		authToken: `${env.DB_TURSO_AUTH}`
+		url: `file:${process.env.DB_URL}`
 	},
 	casing: 'snake_case'
 })

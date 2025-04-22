@@ -5,9 +5,7 @@ export const privateSchema = z.object({
 	// Email with Resend
 	RESEND_AUTH: z.string(),
 	// Database
-	DB_URL: z.string(),
-	DB_TURSO_SYNC_URL: z.string().optional(),
-	DB_TURSO_AUTH: z.string().optional()
+	DB_URL: z.string()
 })
 
 export const publicSchema = z.object({
