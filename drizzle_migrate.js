@@ -1,7 +1,7 @@
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import Database from 'better-sqlite3'
-import * as schema from './src/lib/server/db/schema/'
+import * as schema from './src/lib/server/db/schema/index.ts'
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'

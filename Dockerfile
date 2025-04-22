@@ -21,5 +21,5 @@ RUN npm run build
 
 EXPOSE 3000
 #CMD ["node", "./build/index.js"]
-CMD node migrate.js && node ./build/index.js
+CMD node drizzle_migrate.js && node ./build/index.js
 # CMD ["/bin/bash"]
