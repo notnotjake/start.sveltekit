@@ -1,7 +1,11 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { appEventEmitter } from '$lib/server/auth/event'
+import { requireSession } from '$lib/server/auth/protect'
 
-export const GET: RequestHandler = async ({ setHeaders, locals }) => {
+export const GET: RequestHandler = async (event) => {
+	// Ensure session exists (creates unauthenticated session if absent)
+	await requireSession(event)
+	const { setHeaders, locals } = event
 	console.log('SSE connection initialized')
 
 	// Set required headers for SSE
