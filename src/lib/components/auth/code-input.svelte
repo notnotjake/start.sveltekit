@@ -213,7 +213,11 @@
 
 			{#if isComplete && submitSuccess !== false}
 				<div class="pointer-events-none flex h-full w-full items-center justify-center">
-					<SuspenseText speed={0.4} class="font-medium">Trying Code</SuspenseText>
+					<SuspenseText
+						colorBase="var(--color-blue-500)"
+						colorHighlight="var(--color-blue-300)"
+						class="font-medium">Trying Code</SuspenseText
+					>
 				</div>
 			{/if}
 

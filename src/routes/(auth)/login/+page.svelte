@@ -52,7 +52,7 @@
 	let buttonWidth = $state(0)
 
 	// Set user's timezone on component mount
-	onMount(async () => {
+	onMount(() => {
 		$emailForm.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	})
 
@@ -135,6 +135,8 @@
 			</p>
 		</ToastSwap>
 	</button>
+
+	<a class="py-2 font-medium text-neutral-500 underline" href="/login">Login on this device</a>
 {:else}
 	{#if data.magicStatus.invalid && !$emailMessage}
 		<div class="mb-3 w-full rounded-full bg-gradient-to-t from-rose-200/50 to-rose-300/50 py-3">
@@ -151,7 +153,7 @@
 	<form method="POST" action="?/startLogin" use:emailEnhance class="w-full">
 		<div
 			class={createClass(
-				'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
+				'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] border-2 border-neutral-100 focus-within:border-2 focus-within:border-blue-500',
 				$emailMessage ? 'bg-neutral-50' : 'bg-neutral-100'
 			)}
 		>
