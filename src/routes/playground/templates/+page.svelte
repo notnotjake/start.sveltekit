@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
-
 	let size = $state(1)
 
 	let title = $state('We Make Yard Good')

@@ -9,14 +9,23 @@ import { emailSchema, passwordLoginSchema } from './schema'
 import { setDelay, withDelay } from '$lib/server/auth/utils'
 
 export const load: ServerLoad = async (event) => {
-	const stepUpReauth = Auth.getStepUpReauthCookie(event)
 	let authTitle = event.url.searchParams.get('reauth-title')
 	let authMessage = event.url.searchParams.get('reauth-message')
 
+	const token = event.url.searchParams.get('magic')
+	const stepUpReauth = Auth.getStepUpReauthCookie(event)
+
 	// If the user is logged in, redirect to protected route
-	if (event.locals.user && !stepUpReauth) {
+	// Unless it is a step up re-auth
+	// Or unless they are redeeming a magic link token
+	if (event.locals.user && !stepUpReauth && !token) {
 		const redirectUrl = Auth.getRedirectUrlCookie(event)
 		redirect(303, redirectUrl)
+	}
+
+	let reauthUserIdentifier = null
+	if (event.locals.user && stepUpReauth) {
+		reauthUserIdentifier = event.locals.user.identifier
 	}
 
 	// Ensure there is an unauthenticated session created
@@ -25,7 +34,6 @@ export const load: ServerLoad = async (event) => {
 	let automaticPasskeyEnabled = true
 
 	// Validate magic link
-	const token = event.url.searchParams.get('magic')
 	const magicStatus: {
 		invalid: boolean
 		error: boolean
@@ -35,6 +43,7 @@ export const load: ServerLoad = async (event) => {
 		error: false,
 		code: null
 	}
+
 	if (token && sessionId) {
 		automaticPasskeyEnabled = false
 
@@ -59,7 +68,11 @@ export const load: ServerLoad = async (event) => {
 	}
 
 	// Instantiate the forms
-	const emailForm = await superValidate(zod(emailSchema))
+	const emailForm = await superValidate(
+		reauthUserIdentifier ? { email: reauthUserIdentifier } : null,
+		zod(emailSchema)
+	)
+
 	const passwordLoginForm = await superValidate(zod(passwordLoginSchema))
 
 	return {
