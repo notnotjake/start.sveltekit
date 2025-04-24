@@ -4,37 +4,51 @@
 	import { Spring } from 'svelte/motion'
 	import { elasticOut } from 'svelte/easing'
 
-	type Props = {
-		children?: Snippet
-		class?: string
-		startingSize?: number
-		stiffness?: number
-		damping?: number
-	}
 	let {
 		children,
 		class: classProp,
-		startingSize = 150,
+		startingHeight = 150,
+		startingWidth = 100,
 		stiffness = 0.05,
 		damping = 0.33
-	}: Props = $props()
+	}: {
+		children?: Snippet
+		class?: string
+		startingHeight?: number
+		startingWidth?: number
+		stiffness?: number
+		damping?: number
+	} = $props()
 
 	let innerHeight = $state(0)
-	let containerHeight = new Spring(startingSize, {
+	let innerWidth = $state(0)
+
+	let containerHeight = new Spring(startingHeight, {
+		stiffness: stiffness,
+		damping: damping
+	})
+
+	let containerWidth = new Spring(startingWidth, {
 		stiffness: stiffness,
 		damping: damping
 	})
 
 	$effect(() => {
 		containerHeight.target = innerHeight
+		containerWidth.target = innerWidth
 	})
 </script>
 
 <div
 	style:height={`${containerHeight.current}px`}
+	style:width={`${containerWidth.current}px`}
 	class={createClass(classProp, 'relative overflow-hidden')}
 >
-	<div class="absolute inset-0 h-fit w-full" bind:offsetHeight={innerHeight}>
+	<div
+		class="absolute inset-0 h-fit w-fit"
+		bind:offsetHeight={innerHeight}
+		bind:offsetWidth={innerWidth}
+	>
 		{@render children()}
 	</div>
 </div>

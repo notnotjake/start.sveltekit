@@ -8,11 +8,11 @@
 		children,
 		swapContent,
 		durationMs = 4000,
-		trigger = $bindable()
+		trigger = $bindable(),
+		isSwapActive = $bindable(false)
 	} = $props()
 
 	let timer = $state(null)
-	let activeMessage = $state(null)
 	let messageData = $state(null)
 
 	trigger = (duration: number = durationMs, data) => {
@@ -23,12 +23,12 @@
 		}
 
 		// Set active message
-		activeMessage = true
+		isSwapActive = true
 		messageData = data
 
 		// Set timer to clear message
 		timer = setTimeout(() => {
-			activeMessage = null
+			isSwapActive = null
 			messageData = null
 			timer = null
 		}, duration)
@@ -39,12 +39,14 @@
 	})
 </script>
 
-{#if activeMessage}
-	<div>
-		{@render swapContent(messageData)}
-	</div>
-{:else}
-	<div>
-		{@render children?.()}
-	</div>
-{/if}
+<div class="relative">
+	{#if isSwapActive}
+		<div>
+			{@render swapContent(messageData)}
+		</div>
+	{:else}
+		<div>
+			{@render children?.()}
+		</div>
+	{/if}
+</div>

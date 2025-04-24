@@ -3,10 +3,16 @@
 	--color-vibrant-blue: color(display-p3 0.11 0.467 0.948);
 
 	--shadow-inner-xs: inset 0 0 0 1px hsl(0, 0%, 88%);
-	--shadow-input-pop: inset 0 0 0 2px hsla(207, 100%, 50%, 0.8),
-		inset 0 -2px 0 0 hsla(0, 0%, 0%, 0.2), 0 1.5px 3px 1px hsla(274, 100%, 64%, 0.1),
-		0 0 0 3px hsla(211, 100%, 60%, 0.2);
-	--shadow-box: rgba(0, 0, 0, 0.07) 0px 0.602187px 0.602187px -1.166667px,
+	--shadow-input-pop:
+		inset 0 0 0 2px hsla(207, 100%, 50%, 0.8), inset 0 -2px 0 0 hsla(0, 0%, 0%, 0.2),
+		0 1.5px 3px 1px hsla(274, 100%, 64%, 0.1), 0 0 0 3px hsla(211, 100%, 60%, 0.2);
+	--shadow-box:
+		rgba(0, 0, 0, 0.07) 0px 0.602187px 0.602187px -1.166667px,
+		rgba(0, 0, 0, 0.063) 0px 2.288533px 2.288533px -2.333333px,
+		rgba(0, 0, 0, 0.03) 0px 10px 10px -3.5px;
+
+	--shadow-card:
+		rgba(0, 0, 0, 0.07) 0px 0.602187px 0.602187px -1.166667px,
 		rgba(0, 0, 0, 0.063) 0px 2.288533px 2.288533px -2.333333px,
 		rgba(0, 0, 0, 0.03) 0px 10px 10px -3.5px;
 
