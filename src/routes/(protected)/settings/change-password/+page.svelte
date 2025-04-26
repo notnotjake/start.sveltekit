@@ -117,7 +117,7 @@
 			id="username"
 			name="username"
 			autocomplete="username"
-			value="{data.email}disabled"
+			value={data.email}
 			class="hidden"
 		/>
 	</form>
@@ -132,7 +132,7 @@
 			class="flex items-center gap-[0.2rem] rounded-full bg-green-100 p-[2px]"
 		>
 			<CheckmarkIcon size="20px" class="text-green-400" />
-			<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">New Password Saved</p>
+			<p class="pr-2 text-[0.9rem]/1 font-medium text-green-500">Email Updated</p>
 		</ToastInline>
 	</div>
 </div>

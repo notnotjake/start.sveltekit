@@ -96,7 +96,7 @@
 			id="username"
 			name="username"
 			autocomplete="username"
-			value="{data.email}disabled"
+			value={data.email}
 			class="hidden"
 		/>
 	</form>

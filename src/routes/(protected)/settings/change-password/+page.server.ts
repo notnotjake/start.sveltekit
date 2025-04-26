@@ -31,6 +31,7 @@ export const actions: Actions = {
 		const changePasswordForm = await superValidate(event.request, zod(schema))
 		if (!changePasswordForm.valid) return fail(400, { changePasswordForm })
 
+		await Auth.protect.requireRecentAuth(event)
 		const user = await Auth.protect.requireAuthenticatedUser(event)
 
 		const result = await Auth.updatePassword({
