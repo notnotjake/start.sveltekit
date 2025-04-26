@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import Button from '$ui/input/button.svelte'
 
 	let { onClick: protectedOnClick, type: protectedType, ...restProps } = $props()
 
@@ -22,4 +23,4 @@
 	}
 </script>
 
-<button type="button" onclick={handleClick} {...restProps}>Logout</button>
+<Button variant="primary" onClick={handleClick} class="w-full" {...restProps}>Logout</Button>
