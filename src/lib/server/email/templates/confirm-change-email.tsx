@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {
 	Body,
-	Button,
 	Preview,
 	Container,
 	Head,
@@ -17,7 +16,7 @@ type Options = {
 	maxAgeMins: string | number
 	expiresAtString: string
 }
-const MagicLinkEmail = ({ code, maxAgeMins, expiresAtString }: Options) => {
+const ConfirmChangeEmail = ({ code, maxAgeMins, expiresAtString }: Options) => {
 	return (
 		<Html>
 			<Preview>To update your email, confirm with the code {code}</Preview>
@@ -43,7 +42,7 @@ const MagicLinkEmail = ({ code, maxAgeMins, expiresAtString }: Options) => {
 						</Section>
 
 						<Text className="m-0 text-left text-[14px] leading-1 text-neutral-700 dark:text-neutral-200">
-							This login will be available for {maxAgeMins} minutes
+							This code will be available for {maxAgeMins} minutes
 						</Text>
 
 						<Text className="m-0 text-left text-[14px] text-neutral-500 dark:text-neutral-400">
@@ -56,4 +55,4 @@ const MagicLinkEmail = ({ code, maxAgeMins, expiresAtString }: Options) => {
 	)
 }
 
-export default MagicLinkEmail
+export default ConfirmChangeEmail

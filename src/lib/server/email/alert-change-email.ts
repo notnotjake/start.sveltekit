@@ -3,39 +3,30 @@ import { CONSOLE_ONLY } from '.'
 import { Resend } from 'resend'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
-import { expirationString } from './exp-string'
 
-import ConfirmChangeEmail from './templates/confirm-change-email'
+import AlertChangeEmail from './templates/alert-change-email'
 const RESEND_AUTH = env.RESEND_AUTH
 
-export async function confirmChangeEmail({
+export async function alertChangeEmail({
 	email,
-	code,
-	timezone = 'UTC',
-	maxAgeMins = 5
+	newEmail
 }: {
 	email: string
-	code: string
-	timezone?: string
-	maxAgeMins?: number
+	newEmail: string
 }): Promise<Response<never>> {
 	const resend = new Resend(RESEND_AUTH)
 
-	const expiresAtString = expirationString(maxAgeMins, timezone)
-
 	if (CONSOLE_ONLY) {
-		console.log('Simulated Email - Confirmation Code:', code)
+		console.log('Simulated Email - Email Updated')
 		return Response.succeed()
 	}
 
 	const { error } = await resend.emails.send({
 		from: 'LightDance <accounts@resend.notnotjake.com>',
 		to: email,
-		subject: 'Confirm New Email',
-		react: ConfirmChangeEmail({
-			code,
-			maxAgeMins,
-			expiresAtString
+		subject: 'Email Updated',
+		react: AlertChangeEmail({
+			newEmail
 		})
 	})
 

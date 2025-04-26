@@ -47,13 +47,15 @@ export const actions: Actions = {
 
 		if (!form.valid) return fail(400, { form })
 
+		await Auth.protect.requireRecentAuth(event)
+
 		if (!event.locals.session?.id || !event.locals.user?.id) {
 			return setError(form, '', 'Session expired, please try again')
 		}
 
 		// we want to check the code with auth attempt
 		const result = await Auth.confirmUpdateUserIdentifier({
-			userId: event.locals.user.id,
+			user: event.locals.user,
 			sessionId: event.locals.session.id,
 			code: form.data.code
 		})

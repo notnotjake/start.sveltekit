@@ -7,6 +7,7 @@ import { generateShortCode } from './utils'
 import { verifyShortCodesMatch } from './password'
 import { createAuthAttempt, getAuthAttempt, cleanupAttempts } from './auth-attempt'
 import { confirmChangeEmail } from '$lib/server/email/confirm-change-email'
+import { alertChangeEmail } from '$lib/server/email/alert-change-email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -154,17 +155,19 @@ export async function requestUpdateUserIdentifier({
 }
 
 export async function confirmUpdateUserIdentifier({
-	userId,
+	user,
 	sessionId,
 	code
 }: {
-	userId: string
+	user: User
 	sessionId: string
 	code: string
 }): Promise<Response<never>> {
-	try {// First find the auth attempt with session id
+	try {
+		// First find the auth attempt with session id
 		const result = await getAuthAttempt({ sessionId, type: 'code' })
-		if (!result.success || !result.data || !result.data.credential) return Response.fail('Failed getting auth attempt')
+		if (!result.success || !result.data || !result.data.credential)
+			return Response.fail('Failed getting auth attempt')
 
 		// Then check the code matches
 		const codeValid = await verifyShortCodesMatch({
@@ -176,6 +179,8 @@ export async function confirmUpdateUserIdentifier({
 			return Response.fail('Failed to validate code')
 		}
 
+		const userId = user.id
+
 		// Then get the identifier and update the user email
 		const newIdentifier = result.data.identifier
 
@@ -185,6 +190,12 @@ export async function confirmUpdateUserIdentifier({
 
 		// Delete code after success
 		await cleanupAttempts({ identifier: result.data.identifier, sessionId: sessionId })
+
+		// Notify user that email was updated
+		await alertChangeEmail({
+			email: user.identifier,
+			newEmail: newIdentifier
+		})
 
 		return Response.succeed()
 	} catch (e) {
