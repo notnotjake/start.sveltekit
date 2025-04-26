@@ -8,7 +8,7 @@ import Auth from '$lib/server/auth'
  * If it hasn't, redirect user to redirects them to step up auth
  */
 export async function requireRecentAuth(event: RequestEvent) {
-	const AUTH_WINDOW = 0.5 * 60 * 1000 // 15 mins
+	const AUTH_WINDOW = 15 * 60 * 1000 // 15 mins
 
 	let session: Session | null = null
 	if (event.locals.session) {
