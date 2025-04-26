@@ -3,6 +3,10 @@ import { eq, and, lt } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import { type User, type NewUser, lower } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
+import { generateShortCode } from './utils'
+import { verifyShortCodesMatch } from './password'
+import { createAuthAttempt, getAuthAttempt, cleanupAttempts } from './auth-attempt'
+import { confirmChangeEmail } from '$lib/server/email/confirm-change-email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -78,8 +82,8 @@ export async function deleteUser(userId: string): Promise<Response<never>> {
 			return Response.succeed()
 		}
 		return Response.fail('User deletion failed')
-	} catch (error) {
-		console.log(error)
+	} catch (e) {
+		console.error(e)
 		return Response.fail('User deletion failed')
 	}
 }
@@ -89,7 +93,8 @@ export async function updateUserName(userId: string, newValue: string): Promise<
 		await db.update(table.user).set({ name: newValue }).where(eq(table.user.id, userId))
 
 		return Response.succeed()
-	} catch (error) {
+	} catch (e) {
+		console.error(e)
 		return Response.fail()
 	}
 }
@@ -102,7 +107,88 @@ export async function updateUserIdentifier(
 		await db.update(table.user).set({ identifier: newValue }).where(eq(table.user.id, userId))
 
 		return Response.succeed()
-	} catch (error) {
+	} catch (e) {
+		console.error(e)
 		return Response.fail()
+	}
+}
+
+export async function requestUpdateUserIdentifier({
+	sessionId,
+	newIdentifier,
+	timezone
+}: {
+	sessionId: string
+	newIdentifier: string
+	timezone?: string
+}): Promise<Response<never>> {
+	const existingUser = await getUserByIdentifier(newIdentifier)
+	if (!existingUser.success) return Response.fail('Something went wrong')
+	if (existingUser.data?.exists) return Response.fail('User already exists')
+
+	try {
+		// generate code
+		const code = generateShortCode()
+
+		// email the code
+		await confirmChangeEmail({
+			email: newIdentifier,
+			code,
+			timezone,
+			maxAgeMins: 5
+		})
+
+		// store the code
+		await createAuthAttempt({
+			identifier: newIdentifier,
+			sessionId,
+			token: code,
+			type: 'code',
+			maxAgeMins: 5
+		})
+		return Response.succeed()
+	} catch (e) {
+		console.error(e)
+		return Response.fail('Failed to start update user identifier')
+	}
+}
+
+export async function confirmUpdateUserIdentifier({
+	userId,
+	sessionId,
+	code
+}: {
+	userId: string
+	sessionId: string
+	code: string
+}): Promise<Response<never>> {
+	try {// First find the auth attempt with session id
+		const result = await getAuthAttempt({ sessionId, type: 'code' })
+		if (!result.success || !result.data || !result.data.credential) return Response.fail('Failed getting auth attempt')
+
+		// Then check the code matches
+		const codeValid = await verifyShortCodesMatch({
+			storedCode: result.data.credential,
+			providedCode: code
+		})
+
+		if (!codeValid.success || !codeValid.data) {
+			return Response.fail('Failed to validate code')
+		}
+
+		// Then get the identifier and update the user email
+		const newIdentifier = result.data.identifier
+
+		const updateResult = await updateUserIdentifier(userId, newIdentifier)
+
+		if (!updateResult.success) return Response.fail('Failed to update user identifier')
+
+		// Delete code after success
+		await cleanupAttempts({ identifier: result.data.identifier, sessionId: sessionId })
+
+		return Response.succeed()
+	} catch (e) {
+		console.error(e)
+		return Response.fail('Failed to update user identifier')
 	}
 }

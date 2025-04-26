@@ -2,43 +2,72 @@ import type { Actions, ServerLoad } from '@sveltejs/kit'
 import { superValidate, setError } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { message } from 'sveltekit-superforms'
-import { fail, redirect } from '@sveltejs/kit'
+import { fail, json } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
-import { passwordSchema } from './schema'
-import { setDelay, withDelay } from '$lib/server/auth/utils'
+import { changeEmailSchema, confirmEmailCodeSchema } from './schema'
 
 export const load: ServerLoad = async (event) => {
 	const user = await Auth.protect.requireAuthenticatedUser(event)
 
 	await Auth.protect.requireRecentAuth(event)
 
-	const addPasswordForm = await superValidate(zod(passwordSchema))
+	const changeEmailForm = await superValidate(zod(changeEmailSchema))
+	const confirmCodeForm = await superValidate(zod(confirmEmailCodeSchema))
 
-	return { addPasswordForm, email: user.identifier }
+	return { changeEmailForm, confirmCodeForm, currentEmail: user.identifier }
 }
 
 export const actions: Actions = {
-	addPassword: async (event) => {
-		// validate form data
-		const addPasswordForm = await superValidate(event.request, zod(passwordSchema))
-		if (!addPasswordForm.valid) return fail(400, { addPasswordForm })
+	changeEmail: async (event) => {
+		const form = await superValidate(event.request, zod(changeEmailSchema))
 
-		// ensure there is a valid session
-		if (!event.locals.session || !event.locals.user?.identifier)
-			return fail(400, { addPasswordForm })
+		if (!form.valid) return fail(400, { form })
 
-		const result = await Auth.addPassword({
-			identifier: event.locals.user.identifier,
-			password: addPasswordForm.data.password
+		await Auth.protect.requireRecentAuth(event)
+
+		if (!event.locals.session.id) return fail(400, { form })
+
+		const result = await Auth.requestUpdateUserIdentifier({
+			sessionId: event.locals.session.id,
+			newIdentifier: form.data.newEmail as string,
+			timezone: (form.data.timezone as string) || 'UTC'
 		})
 
-		if (!result.success) return fail(400, { addPasswordForm })
+		if (!result.success) return setError(form, 'newEmail', 'Email Not Available')
 
 		const response = {
 			success: true
 		}
 
-		return message(addPasswordForm, response)
+		return message(form, response)
+	},
+	confirmNewEmail: async (event) => {
+		const form = await superValidate(event.request, zod(confirmEmailCodeSchema))
+
+		if (!form.valid) return fail(400, { form })
+
+		if (!event.locals.session?.id || !event.locals.user?.id) {
+			return setError(form, '', 'Session expired, please try again')
+		}
+
+		// we want to check the code with auth attempt
+		const result = await Auth.confirmUpdateUserIdentifier({
+			userId: event.locals.user.id,
+			sessionId: event.locals.session.id,
+			code: form.data.code
+		})
+
+		console.log(result)
+
+		if (!result.success) {
+			return setError(form, 'code', 'Invalid code or code expired')
+		}
+
+		const response = {
+			success: true
+		}
+
+		return message(form, response)
 	}
 }

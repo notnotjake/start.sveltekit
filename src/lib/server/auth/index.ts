@@ -19,9 +19,14 @@ import {
 	listAllUserSessions
 } from './session'
 
-import { generateToken } from './utils'
+import { generateToken, generateShortCode } from './utils'
 
-import { getUserByIdentifier, getUserKeysAvailable } from './users'
+import {
+	getUserByIdentifier,
+	getUserKeysAvailable,
+	requestUpdateUserIdentifier,
+	confirmUpdateUserIdentifier
+} from './users'
 
 import { createAuthAttempt, getAuthAttempt } from './auth-attempt'
 
@@ -37,6 +42,9 @@ import { requireRecentAuth, requireAuthenticatedUser, requireSession } from './p
 
 const Auth = {
 	getAuthAttempt,
+	requestUpdateUserIdentifier,
+	generateShortCode,
+	confirmUpdateUserIdentifier,
 	getSessionTokenCookie,
 	setStepUpReauthCookie,
 	getStepUpReauthCookie,
