@@ -50,7 +50,7 @@
 
 <div
 	class={createClass(
-		'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] bg-neutral-100 ring-1 ring-neutral-100 focus-within:ring-2 focus-within:ring-blue-500',
+		'group relative flex h-12 w-full items-center overflow-hidden rounded-[0.9rem] border-2 border-neutral-100 bg-neutral-100 focus-within:border-blue-500',
 		containerClass
 	)}
 >
