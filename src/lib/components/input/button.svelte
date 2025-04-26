@@ -27,7 +27,7 @@
 
 	const variants = createVariants(
 		{
-			base: 'font-medium text-[0.95rem] px-3.5 py-1.5 transition-all duration-100 flex items-center justify-center',
+			base: 'font-medium text-[0.95rem] px-3.5 py-1.5 transition-all duration-100 flex items-center justify-center whitespace-nowrap relative',
 			variant: {
 				primary: 'bg-neutral-700 font-medium text-white hover:bg-neutral-800 hover:shadow-sm',
 				secondary: 'bg-neutral-150 box-content font-medium text-neutral-800 hover:bg-neutral-200',
@@ -45,8 +45,8 @@
 				_default: 'full'
 			},
 			size: {
-				sm: 'text-[0.9rem] px-3.5 py-1.5',
-				md: 'text-[0.95rem] px-3.5 py-1.5',
+				sm: 'text-[0.87rem] px-3.5 py-1.5',
+				md: 'text-[0.91rem] px-3.5 py-1.5',
 				lg: 'text-[1.05rem] px-4 py-1.5',
 				xl: 'text-[1.15rem] px-7 py-3',
 				_default: 'md'
@@ -82,35 +82,33 @@
 	)
 </script>
 
-<div class="relative w-fit shrink-1 basis-1">
-	{#if href}
-		<a
-			{href}
-			{disabled}
-			onclick={(e) => {
-				onClick(e)
-			}}
-			class={createClass(variants.classes, classProp)}>{@render children?.()}</a
-		>
-	{:else}
-		<button
-			{type}
-			{disabled}
-			onclick={(e) => {
-				onClick(e)
-			}}
-			class={createClass(variants.classes, classProp)}
-		>
-			{#if suspense}
-				<div class="flex h-full items-center pr-1">
-					<Suspense.Spinner size={16} />
-				</div>
-			{:else if Icon}
-				<div class="flex h-full items-center pr-1">
-					<Icon />
-				</div>
-			{/if}
-			{@render children?.()}
-		</button>
-	{/if}
-</div>
+{#if href}
+	<a
+		{href}
+		{disabled}
+		onclick={(e) => {
+			onClick(e)
+		}}
+		class={createClass(variants.classes, classProp)}>{@render children?.()}</a
+	>
+{:else}
+	<button
+		{type}
+		{disabled}
+		onclick={(e) => {
+			onClick(e)
+		}}
+		class={createClass(variants.classes, classProp)}
+	>
+		{#if suspense}
+			<div class="flex h-full items-center pr-1">
+				<Suspense.Spinner size={16} />
+			</div>
+		{:else if Icon}
+			<div class="flex h-full items-center pr-1">
+				<Icon />
+			</div>
+		{/if}
+		{@render children?.()}
+	</button>
+{/if}
