@@ -12,11 +12,13 @@ import { getUserByIdentifier } from './users'
 export async function addPasskey({
 	userId,
 	passkeyId,
-	credential
+	credential,
+	name
 }: {
 	userId: string
 	passkeyId: string
 	credential: Uint8Array
+	name?: string
 }): Promise<Response<Key | null>> {
 	const credentialEncoded = encodeBase64(credential)
 
@@ -24,6 +26,7 @@ export async function addPasskey({
 		id: passkeyId,
 		userId: userId,
 		type: 'passkey',
+		name: name || null,
 		credential: credentialEncoded,
 		createdAt: new Date()
 	}

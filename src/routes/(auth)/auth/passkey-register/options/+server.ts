@@ -1,26 +1,26 @@
 import type { RequestHandler } from './$types'
-import { json, fail, redirect } from '@sveltejs/kit'
+import { json, fail } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
 import { generateRegistrationOptions } from '@simplewebauthn/server'
 
 export const POST: RequestHandler = async (event) => {
-	if (!event.locals.session) return fail(400)
-	if (!event.locals.user) return fail(400)
+	await Auth.protect.requireRecentAuth(event)
 
-	if (!event.locals.user.name || !event.locals.user.identifier) return fail(400)
+	const session = await Auth.protect.requireSession(event)
+	const user = await Auth.protect.requireAuthenticatedUser(event)
 
 	const options = await generateRegistrationOptions({
 		rpName: 'Luxo',
 		rpID: 'localhost',
 		timeout: 60000,
-		userName: event.locals.user.identifier,
-		userDisplayName: event.locals.user.name
+		userName: user.identifier,
+		userDisplayName: user.name || ''
 	})
 
 	await Auth.createAuthAttempt({
-		identifier: event.locals.user.identifier,
-		sessionId: event.locals.session.id,
+		identifier: user.identifier,
+		sessionId: session.id,
 		token: options.challenge,
 		type: 'passkey_register',
 		maxAgeMins: 2

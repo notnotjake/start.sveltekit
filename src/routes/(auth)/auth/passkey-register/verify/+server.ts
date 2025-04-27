@@ -9,15 +9,21 @@ export const POST: RequestHandler = async (event) => {
 
 	const body = await event.request.json()
 
-	const challenge = await Auth.getAuthAttempt({
+	const { registrationResponse, name } = body
+
+	const authAttemptResult = await Auth.getAuthAttempt({
 		sessionId: event.locals.session.id,
 		type: 'passkey_register'
 	})
 
-	if (!challenge) return fail(400)
+	if (!authAttemptResult.success || !authAttemptResult.data?.credential) {
+		return json({ success: false, message: 'PVerification failed' })
+	}
+
+	const { credential: challenge } = authAttemptResult.data
 
 	const attempt = await verifyRegistrationResponse({
-		response: body,
+		response: registrationResponse,
 		expectedChallenge: challenge,
 		expectedOrigin: 'http://localhost:5173',
 		expectedRPID: 'localhost',
@@ -36,7 +42,8 @@ export const POST: RequestHandler = async (event) => {
 		Auth.addPasskey({
 			userId,
 			passkeyId,
-			credential
+			credential,
+			name
 		})
 
 		return json({ success: true, message: 'Passkey registered successfully' })

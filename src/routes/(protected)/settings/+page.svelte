@@ -183,7 +183,7 @@
 								<p class="text-neutral-700">None Setup</p>
 							</div>
 
-							<Button variant="outline">Add Passkey</Button>
+							<Button variant="outline" href="/settings/add-passkey">Add Passkey</Button>
 						</div>
 
 						<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>

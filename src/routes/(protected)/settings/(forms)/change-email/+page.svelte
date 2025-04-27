@@ -153,7 +153,7 @@
 			<TextInput
 				bind:value={$form.newEmail}
 				{...$constraints.newEmail}
-				autocomplete="new-email"
+				autocomplete="username"
 				name="newEmail"
 				id="newEmail"
 				placeholder="Enter new email address"

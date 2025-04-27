@@ -87,16 +87,27 @@
 		{href}
 		{disabled}
 		onclick={(e) => {
-			onClick(e)
+			if (onClick) {
+				onClick(e)
+			}
 		}}
-		class={createClass(variants.classes, classProp)}>{@render children?.()}</a
+		class={createClass(variants.classes, classProp)}
+	>
+		{#if Icon}
+			<div class="flex h-full items-center pr-1">
+				<Icon />
+			</div>
+		{/if}
+		{@render children?.()}</a
 	>
 {:else}
 	<button
 		{type}
 		{disabled}
 		onclick={(e) => {
-			onClick(e)
+			if (onClick) {
+				onClick(e)
+			}
 		}}
 		class={createClass(variants.classes, classProp)}
 	>

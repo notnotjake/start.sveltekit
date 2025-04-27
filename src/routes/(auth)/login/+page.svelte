@@ -168,7 +168,7 @@
 			<input
 				type="email"
 				name="email"
-				autocomplete="webauthn"
+				autocomplete="username webauthn"
 				id="email"
 				placeholder="Continue with email"
 				aria-label="Enter your email"

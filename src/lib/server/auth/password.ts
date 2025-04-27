@@ -34,6 +34,7 @@ export async function verifyPasswordsMatch({
 		const passwordValid = await verify(storedPassword, providedPassword, passwordHashingOptions)
 		return Response.succeed(passwordValid)
 	} catch (e) {
+		console.error(e)
 		return Response.fail()
 	}
 }
@@ -63,6 +64,7 @@ export async function getUserAndStoredPassword({
 
 		return Response.succeed({ user, storedPassword })
 	} catch (e) {
+		console.error(e)
 		return Response.fail('Unexpected error')
 	}
 }
@@ -175,6 +177,7 @@ export async function updatePassword({
 				.returning()
 			return Response.succeed()
 		} catch (e) {
+			console.error(e)
 			return Response.fail('Failed to update in database')
 		}
 	} else {
@@ -187,6 +190,7 @@ export async function hashShortCode(code: string): Promise<Response<string>> {
 		const hashedCode = await hash(code, shortCodeHashingOptions)
 		return Response.succeed(hashedCode)
 	} catch (e) {
+		console.error(e)
 		return Response.fail('failed to hash')
 	}
 }
@@ -202,6 +206,7 @@ export async function verifyShortCodesMatch({
 		const codeValid = await verify(storedCode, providedCode, shortCodeHashingOptions)
 		return Response.succeed(codeValid)
 	} catch (e) {
+		console.error(e)
 		return Response.fail()
 	}
 }
