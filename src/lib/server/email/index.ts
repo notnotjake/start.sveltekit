@@ -8,5 +8,5 @@ const Email = {
 
 export default Email
 
-// export const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development'
-export const CONSOLE_ONLY = false
+export const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development'
+// export const CONSOLE_ONLY = false

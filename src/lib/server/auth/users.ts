@@ -75,6 +75,37 @@ export async function getUserKeysAvailable(userId: string): Promise<Response<Set
 	}
 }
 
+export async function getUserKeysOfType({
+	userId,
+	keyType
+}: {
+	userId: string
+	keyType?: 'password' | 'passkey'
+}): Promise<Response<Set<string>>> {
+	try {
+		let keys = null
+
+		if (keyType) {
+			keys = await db
+				.select({ type: table.key.type, name: table.key.name, createdAt: table.key.createdAt })
+				.from(table.key)
+				.where(and(eq(table.key.userId, userId), eq(table.key.type, keyType)))
+		} else {
+			keys = await db
+				.select({ type: table.key.type, name: table.key.name, createdAt: table.key.createdAt })
+				.from(table.key)
+				.where(eq(table.key.userId, userId))
+		}
+
+		if (!keys) return Response.fail()
+
+		return Response.succeed(keys)
+	} catch (e) {
+		console.log(e)
+		return Response.fail()
+	}
+}
+
 export async function deleteUser(userId: string): Promise<Response<never>> {
 	try {
 		const result = await db.delete(table.user).where(eq(table.user.id, userId)).returning()

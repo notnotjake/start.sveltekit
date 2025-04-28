@@ -70,6 +70,10 @@ export async function getPasskeys(identifier: string): Promise<Response<Key[] | 
 	return Response.fail()
 }
 
+export async function updatePasskeyName(identifier: string): Promise<Response<Key[] | null>> {
+	return Response.fail()
+}
+
 export async function removePasskey(identifier: string, keyId: string): Promise<Response<never>> {
 	return Response.fail()
 }
