@@ -80,7 +80,7 @@
 	}
 </script>
 
-{#if data.passkeyAuto}
+{#if data.automaticPasskeyEnabled}
 	<PasskeyAuto />
 {/if}
 
@@ -221,7 +221,7 @@
 	{#if $emailMessage}
 		<div transition:wipeVertical class="flex w-full flex-col gap-2 pt-5">
 			{#if $emailMessage?.passkeyAvailable}
-				<PasskeyButton />
+				<PasskeyButton identifier={$emailForm.email} />
 			{/if}
 
 			{#if $emailMessage?.passwordAvailable}

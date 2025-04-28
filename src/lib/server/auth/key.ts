@@ -1,13 +1,10 @@
 import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import { type Key, type NewKey } from '$lib/server/db/schema'
+import { type Key, type NewKey, type User } from '$lib/server/db/schema'
 import { encodeBase64, decodeBase64 } from '@oslojs/encoding'
 
-import { generateAuthenticationOptions } from '@simplewebauthn/server'
-
 import { StructuredResponse as Response } from '$utils/structured-response'
-import { getUserByIdentifier } from './users'
 
 export async function addPasskey({
 	userId,
@@ -56,14 +53,21 @@ export async function getPasskeyCredential(keyId: string): Promise<Uint8Array | 
 	return null
 }
 
-export async function getPasskeyUser(keyId: string): Promise<string | null> {
+export async function getPasskeyUser(keyId: string): Promise<User | null> {
 	const [result] = await db
-		.select({ userId: table.key.userId })
+		.select({
+			id: table.user.id,
+			name: table.user.name,
+			identifier: table.user.identifier,
+			lastSeenAt: table.user.lastSeenAt,
+			createdAt: table.user.createdAt
+		})
 		.from(table.key)
+		.innerJoin(table.user, eq(table.key.userId, table.user.id))
 		.where(eq(table.key.id, keyId))
 		.limit(1)
 
-	return result.userId
+	return result || null
 }
 
 export async function getPasskeys(identifier: string): Promise<Response<Key[] | null>> {

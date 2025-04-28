@@ -1,30 +1,69 @@
 import type { RequestHandler } from './$types'
-import { json, fail, redirect } from '@sveltejs/kit'
+import { json, fail } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
-import { generateRegistrationOptions } from '@simplewebauthn/server'
+import { generateAuthenticationOptions } from '@simplewebauthn/server'
+
+type KeyReturn = {
+	id: string
+	name: string | null
+	type: string
+	createdAt: Date
+}
 
 export const POST: RequestHandler = async (event) => {
-	if (!event.locals.session) return fail(400)
-	if (!event.locals.user) return fail(400)
+	const session = await Auth.protect.requireSession(event)
 
-	if (!event.locals.user.name || !event.locals.user.identifier) return fail(400)
+	const data = await event.request.json()
 
-	const options = await generateRegistrationOptions({
-		rpName: 'Luxo',
-		rpID: 'localhost',
+	console.log(data.identifier)
+
+	if (!data.identifier) {
+		return json({ success: false, data: null })
+	}
+
+	const userId = await Auth.getUserByIdentifier(data.identifier)
+	if (!userId.success || !userId.data?.user?.id) {
+		return json({ success: false, data: null })
+	}
+
+	const passkeysReturn = await Auth.getUserKeysOfType({
+		userId: userId.data?.user?.id,
+		keyType: 'passkey'
+	})
+
+	if (!passkeysReturn.success || !passkeysReturn.data) {
+		return json({ success: false, data: null })
+	}
+
+	let passkeys: KeyReturn[] = []
+
+	if (passkeysReturn.success && passkeysReturn.data && Array.isArray(passkeysReturn.data)) {
+		passkeys = passkeysReturn.data
+	}
+
+	// If we have no passkeys, return early
+	if (passkeys.length === 0) {
+		return json({ success: false, data: null })
+	}
+
+	const options = await generateAuthenticationOptions({
+		allowCredentials: passkeys.map((passkey) => ({
+			id: passkey.id,
+			type: 'public-key'
+		})),
+		userVerification: 'preferred',
 		timeout: 60000,
-		userName: event.locals.user.identifier,
-		userDisplayName: event.locals.user.name
+		rpID: 'localhost'
 	})
 
 	await Auth.createAuthAttempt({
-		identifier: event.locals.user.identifier,
-		sessionId: event.locals.session.id,
+		identifier: data.identifier,
+		sessionId: session.id,
 		token: options.challenge,
-		type: 'passkey_register',
+		type: 'passkey_login',
 		maxAgeMins: 2
 	})
 
-	return json({ success: true, data: { options } })
+	return json({ success: true, data: { optionsJSON: options } })
 }
