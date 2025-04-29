@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db'
-import { eq, and, lt } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import { type User, type NewUser, lower } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
@@ -75,24 +75,41 @@ export async function getUserKeysAvailable(userId: string): Promise<Response<Set
 	}
 }
 
+type KeyReturn = {
+	id: string
+	name: string | null
+	type: string
+	createdAt: Date
+}
+
 export async function getUserKeysOfType({
 	userId,
 	keyType
 }: {
 	userId: string
 	keyType?: 'password' | 'passkey'
-}): Promise<Response<Set<string>>> {
+}): Promise<Response<KeyReturn[]>> {
 	try {
-		let keys = null
+		let keys: KeyReturn[] | null = null
 
 		if (keyType) {
 			keys = await db
-				.select({ type: table.key.type, name: table.key.name, createdAt: table.key.createdAt })
+				.select({
+					id: table.key.id,
+					name: table.key.name,
+					type: table.key.type,
+					createdAt: table.key.createdAt
+				})
 				.from(table.key)
 				.where(and(eq(table.key.userId, userId), eq(table.key.type, keyType)))
 		} else {
 			keys = await db
-				.select({ type: table.key.type, name: table.key.name, createdAt: table.key.createdAt })
+				.select({
+					id: table.key.id,
+					type: table.key.type,
+					name: table.key.name,
+					createdAt: table.key.createdAt
+				})
 				.from(table.key)
 				.where(eq(table.key.userId, userId))
 		}

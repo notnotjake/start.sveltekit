@@ -204,7 +204,7 @@
 								<p class="font-medium">Sessions</p>
 								<p class="text-neutral-700">2 Active</p>
 							</div>
-							<Button variant="secondary">Manage</Button>
+							<Button href="settings/sessions/" variant="secondary">Manage</Button>
 						</div>
 					</div>
 
@@ -224,7 +224,9 @@
 
 					<div class="flex items-center justify-between py-2">
 						<p class="">Delete Account</p>
-						<Button role="destructive" variant="primary">Delete Account</Button>
+						<Button href="/settings/delete-account" role="destructive" variant="primary"
+							>Delete Account</Button
+						>
 					</div>
 				</div>
 			</Sidebar>

@@ -25,7 +25,8 @@ import {
 	getUserByIdentifier,
 	getUserKeysAvailable,
 	requestUpdateUserIdentifier,
-	confirmUpdateUserIdentifier
+	confirmUpdateUserIdentifier,
+	getUserKeysOfType
 } from './users'
 
 import { createAuthAttempt, getAuthAttempt } from './auth-attempt'
@@ -42,6 +43,7 @@ import { requireRecentAuth, requireAuthenticatedUser, requireSession } from './p
 
 const Auth = {
 	getAuthAttempt,
+	getUserKeysOfType,
 	requestUpdateUserIdentifier,
 	generateShortCode,
 	confirmUpdateUserIdentifier,

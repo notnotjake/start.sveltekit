@@ -38,9 +38,7 @@
 	})
 </script>
 
-<div
-	class="mx-auto mt-30 flex max-w-90 flex-col items-center justify-center border-1 border-red-500"
->
+<div class="mx-auto mt-30 flex max-w-90 flex-col items-center justify-center">
 	<div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
 		<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
 			Add a Passkey
