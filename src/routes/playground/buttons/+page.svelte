@@ -6,20 +6,20 @@
 </script>
 
 <Button
-	variant="ghost"
+	style="ghost"
 	onClick={(e) => {
 		console.log('Clicked', e)
 	}}>Edit</Button
 >
 
-<Button variant="secondary" size="sm">Change Email</Button>
+<Button style="secondary" size="sm">Change Email</Button>
 
-<Button variant="outline" icon={MultiDeviceIcon}>Change Password</Button>
+<Button style="outline" icon={MultiDeviceIcon}>Change Password</Button>
 
-<Button variant="primary">Logout</Button>
+<Button style="primary">Logout</Button>
 
-<Button variant="primary" role="destructive">Delete Account</Button>
+<Button style="primary" role="destructive">Delete Account</Button>
 
-<Button variant="link" class="font-normal" href="/login">Terms and Conditions</Button>
+<Button style="link" class="font-normal" href="/login">Terms and Conditions</Button>
 
-<Button variant="primary" class="bg-blue-500 hover:bg-blue-600" size="xl">Go to Checkout</Button>
+<Button style="primary" class="bg-blue-500 hover:bg-blue-600" size="xl">Go to Checkout</Button>

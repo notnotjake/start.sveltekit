@@ -70,7 +70,7 @@
 			disabled={submitSuccess !== null}
 		/>
 
-		<Button variant="primary" size="md" class="text-md h-12 bg-neutral-800" rounded="lg">
+		<Button style="primary" size="md" class="text-md h-12 bg-neutral-800" rounded="lg">
 			<RegisterPasskey name={passkeyName} bind:submitSuccess />
 		</Button>
 	</div>

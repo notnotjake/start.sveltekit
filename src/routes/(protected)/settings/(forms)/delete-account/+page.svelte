@@ -68,8 +68,7 @@
 			<p class="text-red-600">Deleting your account is permanent and you will lose all your data</p>
 		</div>
 
-		<Button variant="primary" class="min-h-11 w-full" rounded="md" role="destructive"
-			>Continue</Button
+		<Button style="primary" class="min-h-11 w-full" rounded="md" role="destructive">Continue</Button
 		>
 
 		{#if submitSuccess === true}

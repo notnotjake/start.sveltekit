@@ -28,7 +28,8 @@
 	const variants = createVariants(
 		{
 			base: 'font-medium text-[0.95rem] px-3.5 py-1.5 transition-all duration-100 flex items-center justify-center whitespace-nowrap relative',
-			variant: {
+			reset: '',
+			style: {
 				primary: 'bg-neutral-700 font-medium text-white hover:bg-neutral-800 hover:shadow-sm',
 				secondary: 'bg-neutral-150 box-content font-medium text-neutral-800 hover:bg-neutral-200',
 				outline:
@@ -56,22 +57,22 @@
 			},
 			compound: [
 				{
-					variant: 'primary',
+					style: 'primary',
 					role: 'destructive',
 					classes: 'bg-red-500 text-rose-50 bg-red-500 hover:text-rose-50 hover:bg-red-600'
 				},
 				{
-					variant: 'secondary',
+					style: 'secondary',
 					role: 'destructive',
 					classes: 'bg-red-100 text-rose-500 hover:bg-red-200 hover:text-rose-600'
 				},
 				{
-					variant: 'ghost',
+					style: 'ghost',
 					role: 'destructive',
 					classes: 'bg-transparent text-rose-500 hover:bg-red-100'
 				},
 				{
-					variant: 'outline',
+					style: 'outline',
 					role: 'destructive',
 					classes:
 						'hover:border-red-300 bg-transparent text-rose-500 hover:bg-red-100 hover:border-red-200'

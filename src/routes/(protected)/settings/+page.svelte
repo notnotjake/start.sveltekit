@@ -133,7 +133,7 @@
 							</div>
 						</div>
 
-						<Button variant="ghost" href="/settings/change-email">Edit</Button>
+						<Button style="ghost" href="/settings/change-email">Edit</Button>
 					</div>
 
 					<div
@@ -144,7 +144,7 @@
 								<p class="font-medium">Notifications</p>
 								<p class="text-neutral-700"></p>
 							</div>
-							<Button variant="secondary">Manage</Button>
+							<Button style="secondary">Manage</Button>
 						</div>
 					</div>
 
@@ -183,7 +183,7 @@
 								<p class="text-neutral-700">None Setup</p>
 							</div>
 
-							<Button variant="outline" href="/settings/add-passkey">Add Passkey</Button>
+							<Button style="outline" href="/settings/add-passkey">Add Passkey</Button>
 						</div>
 
 						<div class="bg-neutral-150 my-1.5 h-[1px] rounded-full"></div>
@@ -194,7 +194,7 @@
 								<p class="text-neutral-700">Set 2 weeks ago</p>
 							</div>
 
-							<Button variant="outline" href="/settings/change-password">Change Password</Button>
+							<Button style="outline" href="/settings/change-password">Change Password</Button>
 						</div>
 					</section>
 
@@ -204,7 +204,7 @@
 								<p class="font-medium">Sessions</p>
 								<p class="text-neutral-700">2 Active</p>
 							</div>
-							<Button href="settings/sessions/" variant="secondary">Manage</Button>
+							<Button href="settings/sessions/" style="secondary">Manage</Button>
 						</div>
 					</div>
 
@@ -224,7 +224,7 @@
 
 					<div class="flex items-center justify-between py-2">
 						<p class="">Delete Account</p>
-						<Button href="/settings/delete-account" role="destructive" variant="primary"
+						<Button href="/settings/delete-account" role="destructive" style="primary"
 							>Delete Account</Button
 						>
 					</div>

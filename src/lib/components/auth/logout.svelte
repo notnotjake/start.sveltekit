@@ -23,4 +23,4 @@
 	}
 </script>
 
-<Button variant="primary" onClick={handleClick} class="w-full" {...restProps}>Logout</Button>
+<Button style="primary" onClick={handleClick} class="w-full" {...restProps}>Logout</Button>

@@ -38,7 +38,7 @@
 		<div class="col flex flex w-full flex-wrap gap-3">
 			<Button
 				href="settings/add-passkey"
-				variant="primary"
+				style="primary"
 				class="text-md flex h-12 w-full gap-2 bg-neutral-800 hover:shadow-none"
 				rounded="lg"
 			>
@@ -47,7 +47,7 @@
 
 			<Button
 				href="settings/add-password"
-				variant="primary"
+				style="primary"
 				class="text-md flex h-12 w-full gap-2 bg-neutral-300 text-black hover:bg-neutral-300 hover:shadow-none"
 				rounded="lg"
 			>
@@ -58,7 +58,7 @@
 		<div class="flex w-full justify-center">
 			<Button
 				href="/dashboard"
-				variant="ghost"
+				resetStyles
 				class="w-fit py-4 text-neutral-600 hover:bg-transparent hover:text-neutral-900">Skip</Button
 			>
 		</div>

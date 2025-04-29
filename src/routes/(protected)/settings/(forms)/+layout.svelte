@@ -7,7 +7,7 @@
 
 <div class="">
 	<div class="flex w-full items-center justify-center py-4">
-		<Button variant="secondary" class="w-fit pl-2" href="/settings"><Chevron />Settings</Button>
+		<Button style="secondary" class="w-fit pl-2" href="/settings"><Chevron />Settings</Button>
 	</div>
 
 	{@render children()}
