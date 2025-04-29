@@ -1,6 +1,9 @@
 <script lang="ts">
 	import PasskeyIcon from '$ui/icons/passkey.svelte'
 	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+
+	import Button from '$ui/input/button.svelte'
+	import TextInput from '$ui/input/text-input.svelte'
 </script>
 
 <div class="mx-auto mt-30 flex max-w-90 flex-col items-center justify-center">
@@ -20,12 +23,7 @@
 		<label for="name" class="mb-1 px-2 text-[0.95rem] font-medium tracking-tight text-neutral-500"
 			>What can we call you?</label
 		>
-		<input
-			type="text"
-			id="name"
-			placeholder="Johnny Applessed"
-			class="h-12 w-full rounded-[0.9rem] bg-neutral-100 px-4 ring-1 ring-neutral-100 outline-none focus:ring-2 focus:ring-blue-500"
-		/>
+		<TextInput id="name" placeholder="Johnny Appleseed" />
 	</div>
 
 	<div class="my-5 flex w-full flex-col">
@@ -38,18 +36,31 @@
 		</p>
 
 		<div class="col flex flex w-full flex-wrap gap-3">
-			<button
-				class="flex h-12 w-full items-center justify-center gap-2 rounded-[0.9rem] bg-neutral-800 font-medium text-white"
+			<Button
+				href="settings/add-passkey"
+				variant="primary"
+				class="text-md flex h-12 w-full gap-2 bg-neutral-800 hover:shadow-none"
+				rounded="lg"
 			>
-				<PasskeyIcon />
-				Add Passkey</button
-			>
+				<PasskeyIcon />Add Passkey
+			</Button>
 
-			<button class="h-12 w-full rounded-[0.9rem] bg-neutral-300 font-medium text-black"
-				>Add Password</button
+			<Button
+				href="settings/add-password"
+				variant="primary"
+				class="text-md flex h-12 w-full gap-2 bg-neutral-300 text-black hover:bg-neutral-300 hover:shadow-none"
+				rounded="lg"
 			>
+				Add Password
+			</Button>
 		</div>
 
-		<button class="py-4 font-medium text-neutral-600">Skip</button>
+		<div class="flex w-full justify-center">
+			<Button
+				href="/dashboard"
+				variant="ghost"
+				class="w-fit py-4 text-neutral-600 hover:bg-transparent hover:text-neutral-900">Skip</Button
+			>
+		</div>
 	</div>
 </div>

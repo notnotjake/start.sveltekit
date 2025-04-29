@@ -149,14 +149,30 @@ export async function validateSessionToken(token: string) {
 		return { session: null, user: null }
 	}
 
+	// Update times
+
+	let needsUpdate = false
+	const updateData: { lastSeenAt?: Date; expiresAt?: Date } = {}
+
 	// If all is well, then renew session
-	const renewSession = Date.now() >= session.expiresAt.getTime() - DAY_IN_MS * 20
+	const renewSession = Date.now() >= session.expiresAt.getTime() - DAY_IN_MS * 20 // 20 days
 	if (renewSession) {
-		session.expiresAt = new Date(Date.now() + DAY_IN_MS * 30)
-		await db
-			.update(table.session)
-			.set({ expiresAt: session.expiresAt })
-			.where(eq(table.session.id, session.id))
+		needsUpdate = true
+		const newExpiresAt = new Date(Date.now() + DAY_IN_MS * 30)
+		updateData.expiresAt = newExpiresAt
+		session.expiresAt = newExpiresAt
+	}
+
+	const updateLastSeen = Date.now() >= session.lastSeenAt.getTime() + 5 * 60 * 1000 // 5 mins
+	if (updateLastSeen) {
+		needsUpdate = true
+		const newLastSeenAt = new Date()
+		updateData.lastSeenAt = newLastSeenAt
+		session.lastSeenAt = newLastSeenAt
+	}
+
+	if (needsUpdate) {
+		await db.update(table.session).set(updateData).where(eq(table.session.id, session.id))
 	}
 
 	return { session, user }

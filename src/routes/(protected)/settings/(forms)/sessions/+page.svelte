@@ -27,36 +27,44 @@
 		}
 		return 'Just now'
 	}
-
-	let passkeysFormatted = null
-	if (data.passkeys) {
-		passkeysFormatted = data.passkeys.map((item) => {
-			return {
-				...item,
-				relativeTime: relativeTimeString(item.createdAt)
-			}
-		})
-	}
 </script>
 
-<div class="mx-auto mt-30 flex max-w-90 flex-col items-center justify-center">
+<div class="mx-auto mt-30 flex max-w-120 flex-col items-center justify-center">
 	<div class=" w-full flex-col items-center justify-center px-7 py-5 text-center">
 		<h2 class="tracking-tight-md animate-fade-in-scale text-[1.33rem] leading-loose font-[550]">
-			Passkeys
+			Sessions
 		</h2>
 	</div>
 
 	<div class="flex w-full flex-col gap-4">
-		{#if data.passkeys.length > 0}
-			{#each passkeysFormatted as passkey}
+		<p class="text-[0.95rem] font-medium">{data.activeSessions.length} Sessions</p>
+		{#if data.activeSessions.length > 0}
+			{#each data.activeSessions as session}
 				<div class="flex justify-between">
-					<h1 class="font-medium">{passkey.name}</h1>
-					<p class="text-neutral-600">Added {passkey.relativeTime}</p>
+					<h1 class="font-medium">{session.ipAddress}</h1>
+					<p class="text-neutral-600">Last seen {relativeTimeString(session.lastSeenAt)}</p>
 				</div>
 			{/each}
 		{:else}
 			<div class="flex justify-between">
-				<h1 class="font-medium">No Passkeys Found</h1>
+				<h1 class="font-medium">No Sessions Found</h1>
+			</div>
+		{/if}
+	</div>
+
+	<div class="mt-15 flex w-full flex-col gap-4">
+		<h3 class="text-lg leading-1 font-medium">Past Sessions</h3>
+		<p class="text-[0.95rem] font-medium">{data.invalidatedSessions.length} Sessions</p>
+		{#if data.invalidatedSessions.length > 0}
+			{#each data.invalidatedSessions as session}
+				<div class="flex justify-between">
+					<h1 class="font-medium">{session.ipAddress}</h1>
+					<p class="text-neutral-600">Removed {relativeTimeString(session.invalidatedAt)}</p>
+				</div>
+			{/each}
+		{:else}
+			<div class="flex justify-between">
+				<h1 class="font-medium">No Sessions Found</h1>
 			</div>
 		{/if}
 	</div>

@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db'
-import { eq, and, lt } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
 import { type User, type NewUser, lower } from '$lib/server/db/schema/auth'
 import { randomUUID } from 'crypto'
