@@ -8,35 +8,54 @@
 		class: classProp,
 		children,
 		swapContent,
+		isOpen = $bindable(false),
+		swapData,
+		trigger = $bindable(null),
 		durationMs = 4000,
-		trigger = $bindable(),
-		isSwapActive = $bindable(false)
+		isSwapActive = $bindable(false),
+		open = $bindable(null),
+		close = $bindable(null),
+		adaptSize = false
 	} = $props()
 
 	let timer = $state(null)
-	let messageData = $state(null)
 
 	trigger = (duration: number = durationMs, data) => {
 		// Clear any existing timer
-		if (timer) {
-			clearTimeout(timer)
-			timer = null
-		}
+		clearTimer()
 
-		// Set active message
-		isSwapActive = true
-		messageData = data
+		// Set active state
+		isOpen = true
+		swapData = data
 
 		// Set timer to clear message
 		timer = setTimeout(() => {
-			isSwapActive = null
-			messageData = null
+			isOpen = null
+			data = null
 			timer = null
 		}, duration)
 	}
 
+	open = (data) => {
+		clearTimer()
+		isOpen = true
+		swapData = data
+	}
+
+	close = () => {
+		isOpen = false
+		swapData = null
+	}
+
+	function clearTimer() {
+		if (timer) {
+			clearTimeout(timer)
+			timer = null
+		}
+	}
+
 	onDestroy(() => {
-		clearTimeout(timer)
+		clearTimer()
 	})
 
 	let containerWidth = new Spring(50, {
@@ -50,7 +69,7 @@
 	})
 
 	$effect(() => {
-		if (isSwapActive) {
+		if (isOpen) {
 			containerWidth.target = swappedContentWidth
 			containerHeight.target = swappedContentHeight
 		} else {
@@ -71,13 +90,13 @@
 	style:width={`${containerWidth.current}px`}
 	style:height={`${containerHeight.current}px`}
 >
-	{#if isSwapActive}
+	{#if isOpen}
 		<div
 			class="absolute inset-0 h-fit w-fit whitespace-nowrap"
 			bind:offsetWidth={swappedContentWidth}
 			bind:offsetHeight={swappedContentHeight}
 		>
-			{@render swapContent(messageData)}
+			{@render swapContent(swapData)}
 		</div>
 	{:else}
 		<div

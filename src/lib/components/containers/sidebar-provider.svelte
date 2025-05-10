@@ -4,7 +4,6 @@
 	import { Tween } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
 
-	// Component Props
 	type Props = {
 		isShown?: boolean
 		onChange?: () => void
@@ -90,8 +89,6 @@
 			sidebar.isShown = false
 		}
 	})
-
-	$inspect(sidebar.isShown)
 </script>
 
 <svelte:window on:mouseup={stopResize} />

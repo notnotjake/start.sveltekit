@@ -46,8 +46,6 @@
 			}
 		}
 	}
-
-	$inspect(buttonState)
 </script>
 
 <button

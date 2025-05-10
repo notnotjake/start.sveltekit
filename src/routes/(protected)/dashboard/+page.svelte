@@ -1,8 +1,12 @@
 <script lang="ts">
 	import LogoutButton from '$ui/auth/logout.svelte'
 
+	import AccountButton from '$ui/auth/account.svelte'
+
 	let { data } = $props()
 </script>
+
+<AccountButton user={data.user} />
 
 <div class="flex min-h-full w-full flex-col items-center justify-center">
 	<div class="mb-9 flex flex-col items-center">

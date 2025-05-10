@@ -14,8 +14,6 @@
 		else if (direction === 'up') return 90
 		else if (direction === 'down') return 270
 	})
-
-	$inspect(rotation)
 </script>
 
 <svg

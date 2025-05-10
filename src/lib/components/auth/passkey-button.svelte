@@ -7,7 +7,6 @@
 	import { startAuthentication } from '@simplewebauthn/browser'
 
 	let { identifier }: { identifier: string } = $props()
-	$inspect(identifier)
 
 	let isActivating = $state(false)
 

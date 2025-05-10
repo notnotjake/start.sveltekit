@@ -6,9 +6,6 @@ export const load: ServerLoad = async (event) => {
 	const user = await Auth.protect.requireAuthenticatedUser(event)
 
 	return {
-		sessionId: event.locals.session?.id,
-		userEmail: user.identifier,
-		userName: user.name,
 		user: {
 			name: user.name,
 			email: user.identifier
