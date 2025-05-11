@@ -42,6 +42,9 @@ const ConfirmChangeEmail = () => {
 								</Column>
 							</Row>
 						</Section>
+
+						<Section></Section>
+
 						<Section className="mb-16 w-full">
 							<Text className="my-1 text-[15px] tracking-[-0.01em] text-neutral-800 dark:text-neutral-200">
 								Your payment was received successfully
