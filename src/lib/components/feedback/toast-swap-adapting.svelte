@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { fade, scale } from 'svelte/transition'
-	import { createClass } from '$utils/create-class'
 	import { Spring } from 'svelte/motion'
+	import { createClass } from '$utils/styles'
 
 	let {
 		class: classProp,
@@ -83,10 +83,21 @@
 
 	let normalContentWidth = $state(0)
 	let normalContentHeight = $state(0)
+
+	let initialized = $derived.by(() => {
+		if (normalContentWidth === 0 && normalContentHeight === 0) {
+			return false
+		} else {
+			return true
+		}
+	})
 </script>
 
 <div
-	class="relative overflow-hidden"
+	class={createClass(
+		'duraiton-100 relative overflow-hidden transition-opacity',
+		initialized ? 'opacity-100' : 'opacity-0'
+	)}
 	style:width={`${containerWidth.current}px`}
 	style:height={`${containerHeight.current}px`}
 >
