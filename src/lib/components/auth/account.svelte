@@ -61,7 +61,7 @@
 </script>
 
 <DropdownMenu.Root bind:open={menuOpen}>
-	<DropdownMenu.Trigger>
+	<DropdownMenu.Trigger class="outline-none">
 		<div
 			class={createClass(
 				'flex items-center justify-center gap-2 rounded-[3rem] transition-all duration-200',
@@ -109,7 +109,7 @@
 		sideOffset={8}
 		collisionPadding={8}
 	>
-		<DropdownMenu.Item>
+		<DropdownMenu.Item class="outline-none">
 			<Button resetStyles href="/settings" class="w-full">
 				<div
 					class="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-neutral-600/80"
@@ -120,7 +120,7 @@
 			</Button>
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator class="bg-neutral-600" />
-		<DropdownMenu.Item>
+		<DropdownMenu.Item class="outline-none">
 			<button class="w-full">
 				<div
 					class="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-neutral-600/80"

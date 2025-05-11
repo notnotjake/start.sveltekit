@@ -88,18 +88,19 @@
 
 					<div class="w-fit shrink grow-0 items-center">
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="aspect-square rounded-md px-1 hover:bg-neutral-100">
+							<DropdownMenu.Trigger
+								class="aspect-square rounded-md px-1 outline-none hover:bg-neutral-100"
+							>
 								<IconDots size={18} color="var(--color-neutral-500)" />
 							</DropdownMenu.Trigger>
-
 							<DropdownMenu.Portal>
 								<DropdownMenu.Content
-									class="shadow-card rounded-xl bg-neutral-900 p-1.5"
+									class="shadow-card rounded-xl bg-neutral-900 p-1.5 outline-none"
 									sideOffset={8}
 									collisionPadding={8}
 									align="start"
 								>
-									<DropdownMenu.Item>
+									<DropdownMenu.Item class="outline-none">
 										<button class="w-full" on:click={() => renamePasskey(passkey.id, 'TestName')}>
 											<div
 												class="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-neutral-600/80"
@@ -109,7 +110,10 @@
 											</div>
 										</button>
 									</DropdownMenu.Item>
-									<DropdownMenu.Item onSelect={() => openRemoveDialog(passkey)}>
+									<DropdownMenu.Item
+										onSelect={() => openRemoveDialog(passkey)}
+										class="outline-none"
+									>
 										<div
 											class="group flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-rose-900/50"
 										>
