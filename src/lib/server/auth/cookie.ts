@@ -36,7 +36,7 @@ export function setRedirectUrlCookie(event: RequestEvent) {
 }
 
 export function getRedirectUrlCookie(event: RequestEvent): string {
-	return event.cookies.get(redirectCookieName) ?? '/dashboard'
+	return event.cookies.get(redirectCookieName) ?? '/app'
 }
 
 export function clearRedirectUrlCookie(event: RequestEvent) {
