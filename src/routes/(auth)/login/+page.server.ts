@@ -96,8 +96,6 @@ type FindUserMessage = {
 
 export const actions: Actions = {
 	startLogin: async (event) => {
-		console.log('A')
-
 		const delay = setDelay(500) // normalize response times
 
 		// validate form data

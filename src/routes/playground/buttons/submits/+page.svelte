@@ -5,7 +5,7 @@
 	let state: null | 'trying' | 'timeout' | 'success' | 'error' = $state(null)
 
 	function handleClick() {
-		console.log('A')
+		console.log('trying to submit')
 	}
 
 	// Another potential feature: countdown also confirm with second click
