@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte'
 	import { createClass } from '$utils/create-class'
 
-	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
+	import Arrow from '$ui/icon/arrow-circle-fill.svelte'
 	import { Suspense } from '$ui/feedback'
 
 	let errors = $state()

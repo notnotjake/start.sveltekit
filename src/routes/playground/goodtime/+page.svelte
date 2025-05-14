@@ -1,62 +1,84 @@
 <script lang="ts">
-	let clicks = $state(0)
-	function clickHandler() {
-		if (clicks < 2) {
-			clicks += 1
-		} else {
-			clicks = 0
-		}
-	}
-	let color = $derived.by(() => {
-		if (clicks === 0) {
-			return 'bg-neutral-200'
-		} else if (clicks === 1) {
-			return 'bg-green-400'
-		} else if (clicks > 1) {
-			return 'bg-yellow-300/80'
-		} else {
-			return 'bg-red-300'
-		}
-	})
-	let colorText = $derived.by(() => {
-		if (clicks === 0) {
-			return 'text-neutral-800'
-		} else if (clicks === 1) {
-			return 'text-green-900'
-		} else if (clicks > 1) {
-			return 'text-yellow-900'
-		} else {
-			return 'text-red-300'
-		}
-	})
+	import ToggleButton from './toggle-button.svelte'
+	import HelpTooltip from './help.svelte'
+	import Toolbar from './owner-menu.svelte'
+	import WeekGroup from './week-group.svelte'
+
+	import { IconSelector } from '@tabler/icons-svelte'
 </script>
 
-<p></p>
-
-<div class="flex flex-col gap-3">
-	{@render tooltip('bg-neutral-200', 'No.', 'Default')}
-	{@render tooltip('bg-green-400', 'Yes!', 'Click Once')}
-	{@render tooltip('bg-yellow-300/80', 'Maybe', 'Click Twice')}
-</div>
-
-<div class="shadow-box my-4 h-40 w-70 rounded-[1.1rem] bg-white ring-2 ring-neutral-200/70">
-	<h2 class="w-full pt-2 pb-4 text-center text-lg font-medium">Try It!</h2>
-
-	<button
-		class="mx-auto flex w-fit cursor-pointer flex-col items-center justify-center rounded-lg {color} px-4 py-2"
-		onclick={clickHandler}
+<div class="flex w-full items-center justify-center gap-3 pt-0.5">
+	<a class="text-[1.1rem] font-semibold text-green-600" href="/playground/goodtime"
+		>https://goodtime.meet/acorn-rino-tent</a
 	>
-		<p class="text-[1.05rem]/4 font-medium opacity-80 {colorText}">SAT</p>
-		<p class="text-[1.6rem]/7 font-bold {colorText}">12</p>
-	</button>
+	<button class="text-[1.1rem] font-medium text-neutral-500 hover:text-neutral-700">copy</button>
 </div>
 
-{#snippet tooltip(color, primaryText, secondaryText)}
-	<div class="flex items-center gap-2">
-		<div class="h-8 w-8 rounded-lg {color}"></div>
-		<div>
-			<p class="text-[0.9rem]/4 font-medium">{primaryText}</p>
-			<p class="text-[0.75rem]/3 text-neutral-600">{secondaryText}</p>
+<div class="flex w-full flex-col items-center justify-center pt-14 pb-12">
+	<h3 class="text-[2.7rem] font-bold text-black/40">Meeting Name</h3>
+
+	<h2 class="text-[1.2rem] font-medium text-black/40">Description</h2>
+</div>
+
+<Toolbar />
+
+<div
+	class="shadow-box mx-auto my-4 h-fit min-h-40 w-2xl rounded-[1.1rem] bg-white px-4 py-5 ring-2 ring-neutral-200/70"
+>
+	<div class="mb-2 flex w-full justify-end">
+		<HelpTooltip />
+	</div>
+
+	<div class="flex gap-4 overflow-scroll pb-4">
+		<WeekGroup />
+
+		<div class="flex gap-[0.15rem]">
+			<div
+				class="flex w-fit flex-col items-center justify-center rounded-tl-lg rounded-bl-lg bg-neutral-200/90 py-1.5"
+			>
+				<IconSelector size={19} class="text-neutral-600" />
+			</div>
+
+			<div class="flex w-18 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Wed</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">31</p>
+			</div>
+
+			<div class="flex w-20 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-900 uppercase">June</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">1</p>
+			</div>
+
+			<div class="flex w-20 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Fri</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">2</p>
+			</div>
+
+			<div class="flex w-20 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Sat</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">3</p>
+			</div>
+
+			<div class="flex w-20 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Sun</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">4</p>
+			</div>
+
+			<div class="flex w-20 flex-col items-center justify-center bg-neutral-200/90 py-1.5">
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Mon</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">5</p>
+			</div>
+
+			<div
+				class="flex w-20 flex-col items-center justify-center rounded-tr-lg rounded-br-lg bg-neutral-200/90 py-1.5"
+			>
+				<h3 class="text-[1rem]/4 font-medium tracking-tight text-neutral-500">Tue</h3>
+				<p class="text-[1.3rem]/6 font-bold text-neutral-800">6</p>
+			</div>
 		</div>
 	</div>
-{/snippet}
+</div>
+
+<div class="shadow-card w-fit rounded-full bg-neutral-700 px-2.5 py-1">
+	<p class="text-[0.95rem] font-medium text-white">Add Comment</p>
+</div>

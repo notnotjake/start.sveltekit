@@ -1,7 +1,7 @@
 <script>
 	import Item from './item.svelte'
 	import Group from './group.svelte'
-	import FluidButton from '$ui/fluid-button.svelte'
+	import FluidButton from '$bits/fluid-button.svelte'
 	import { Suspense, Progress } from '$ui/feedback'
 </script>
 

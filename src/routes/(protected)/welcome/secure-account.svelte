@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PasskeyIcon from '$ui/icons/passkey.svelte'
+	import PasskeyIcon from '$ui/icon/passkey.svelte'
 
 	import Button from '$ui/input/button.svelte'
 </script>
@@ -35,7 +35,7 @@
 
 	<div class="flex w-full justify-center">
 		<Button
-			href="/dashboard"
+			href="/app"
 			resetStyles
 			class="w-fit py-4 text-neutral-600 hover:bg-transparent hover:text-neutral-900">Skip</Button
 		>

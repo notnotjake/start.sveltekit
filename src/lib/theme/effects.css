@@ -27,9 +27,20 @@
 	--animate-fade-in-scale: fade-in-scale 0.3s ease-out;
 	--animate-fade-in-scale-right: fade-in-scale-from-right 0.3s ease-out;
 
-	--animate-fade-in-delay: fade-in 0.45s 0.5s ease-out;
+	--animate-fade-in-delay: fade-in-from-bottom 0.45s 0.5s ease-out;
+
+	--animate-fade-in: fade-in 150ms 0s ease-out;
+	--animate-fade-scale-from-bottom: fade-in-scale-from-bottom 150ms 0s ease-in-out;
 }
 
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
 @keyframes fade-in-scale {
 	0% {
 		opacity: 0;
@@ -50,7 +61,7 @@
 		transform: scale(1) translateX(0%);
 	}
 }
-@keyframes fade-in {
+@keyframes fade-in-from-bottom {
 	0% {
 		opacity: 0;
 		transform: translateY(20%);
@@ -58,6 +69,18 @@
 	100% {
 		opacity: 1;
 		transform: translateY(0%);
+	}
+}
+@keyframes fade-in-scale-from-bottom {
+	0% {
+		opacity: 0;
+		transform: translateY(2rem);
+		scale: 0.97;
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0rem);
+		scale: 1;
 	}
 }
 @keyframes shimmer {

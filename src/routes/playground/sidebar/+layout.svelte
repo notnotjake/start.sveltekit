@@ -1,8 +1,8 @@
 <script lang="ts">
-	import SidebarProvider from '$ui/containers/sidebar-provider.svelte'
-	import SidebarButton from '$ui/containers/sidebar-button.svelte'
+	import SidebarProvider from '$ui/container/sidebar-provider.svelte'
+	import SidebarButton from '$ui/container/sidebar-button.svelte'
 
-	import AccountButton from '$ui/auth/account.svelte'
+	import AccountButton from '$bits/auth/account.svelte'
 
 	let { children } = $props()
 </script>

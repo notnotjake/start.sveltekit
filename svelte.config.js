@@ -5,6 +5,9 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 const config = {
 	kit: {
 		adapter: adapter(),
+		csrf: {
+			checkOrigin: true
+		},
 		files: {
 			appTemplate: 'src/app.html',
 			errorTemplate: 'src/error.html',
@@ -20,7 +23,8 @@ const config = {
 			serviceWorker: 'src/service-worker'
 		},
 		alias: {
-			$ui: 'src/lib/components',
+			$ui: 'src/lib/ui',
+			$bits: 'src/lib/components',
 			$utils: 'src/lib/utils',
 			$tailwind: 'src/lib/theme/app.css'
 		}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { assetUrl } from '$utils/asset-url'
+	import Button from '$ui/input/button.svelte'
 </script>
 
 <div class="mx-auto flex min-h-full max-w-160 flex-col gap-2 bg-neutral-50 px-6 py-8">
@@ -15,5 +16,12 @@
 		amazing auth experience and a component library.
 	</p>
 
-	<p>Go to <a class="text-blue-500" href="/login">login</a></p>
+	<Button href="/login" style="primary" rounded="md" class="w-fit">Login</Button>
+
+	<Button
+		href="/playground"
+		style="secondary"
+		rounded="full"
+		class="w-fit text-blue-500 hover:text-blue-600">Go to Playground</Button
+	>
 </div>

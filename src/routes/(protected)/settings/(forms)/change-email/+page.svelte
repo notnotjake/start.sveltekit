@@ -5,12 +5,12 @@
 	import { goto } from '$app/navigation'
 	import { onDestroy, onMount } from 'svelte'
 
-	import PasskeyIcon from '$ui/icons/passkey.svelte'
-	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import PasskeyIcon from '$ui/icon/passkey.svelte'
+	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
 	import TextInput from '$ui/input/text-input.svelte'
 	import { ToastInline } from '$ui/feedback'
-	import { wipeVertical } from '$ui/motion/transitions'
-	import CodeInput from '$ui/auth/code-input.svelte'
+	import { wipeVertical } from '$ui/transition'
+	import CodeInput from '$bits/auth/code-input.svelte'
 
 	let submitSuccess: boolean | null = $state(null)
 	let showCodeForm = $state(false)

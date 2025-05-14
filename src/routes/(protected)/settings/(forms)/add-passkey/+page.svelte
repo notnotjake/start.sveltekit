@@ -5,12 +5,12 @@
 	import { goto } from '$app/navigation'
 	import { onDestroy } from 'svelte'
 
-	import PasskeyIcon from '$ui/icons/passkey.svelte'
-	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import PasskeyIcon from '$ui/icon/passkey.svelte'
+	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
 	import TextInput from '$ui/input/text-input.svelte'
 	import { ToastInline } from '$ui/feedback'
-	import { wipeVertical } from '$ui/motion/transitions'
-	import RegisterPasskey from '$ui/auth/passkey-register.svelte'
+	import { wipeVertical } from '$ui/transition'
+	import RegisterPasskey from '$bits/auth/passkey-register.svelte'
 	import Button from '$ui/input/button.svelte'
 
 	let { data } = $props()

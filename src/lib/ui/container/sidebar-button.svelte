@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte'
-	import SidebarButton from '$ui/icons/sidebar-button.svelte'
+	import SidebarButton from '$ui/icon/sidebar-button.svelte'
 	import { Tooltip } from 'bits-ui'
 
 	let { children, whenOpen, whenClosed, useButton } = $props()
@@ -12,20 +12,24 @@
 	}
 </script>
 
-<button onclick={toggle} class="text-lg font-semibold text-neutral-300">
-	{#if whenOpen}
+{#if whenOpen}
+	<button onclick={toggle} class="text-lg font-semibold text-neutral-300">
 		{#if sidebar.isShown}
 			{@render whenOpen()}
 		{/if}
-	{/if}
+	</button>
+{/if}
 
-	{#if whenClosed}
+{#if whenClosed}
+	<button onclick={toggle} class="text-lg font-semibold text-neutral-300">
 		{#if !sidebar.isShown}
 			{@render whenClosed()}
 		{/if}
-	{/if}
+	</button>
+{/if}
 
-	{#if useButton}
+{#if useButton}
+	<div onclick={toggle} aria-role="button" class="text-lg font-semibold text-neutral-300">
 		<Tooltip.Provider>
 			<Tooltip.Root delayDuration={350}>
 				<Tooltip.Trigger>
@@ -35,14 +39,14 @@
 					<div
 						class="rounded-xl bg-neutral-900 px-3 py-2 text-[0.9rem] font-semibold text-neutral-50"
 					>
-						{sidebar.isOpen ? 'Close Sidebar' : 'Open Sidebar'}
+						{sidebar.isShown ? 'Close Sidebar' : 'Open Sidebar'}
 					</div>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>
-	{/if}
+	</div>
+{/if}
 
-	{#if children}
-		{@render children()}
-	{/if}
-</button>
+{#if children}
+	{@render children()}
+{/if}

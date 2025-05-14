@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { createClass } from '$utils/create-class'
-	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
-	import ErrorIcon from '$ui/icons/exclamation-circle-fill.svelte'
+	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
+	import ErrorIcon from '$ui/icon/exclamation-circle-fill.svelte'
 	import { Suspense } from '$ui/feedback'
-	import ResizableContainer from '$ui/resizable-container.svelte'
+	import ResizableContainer from '$bits/resizable-container.svelte'
 	import { fly, fade, scale, slide } from 'svelte/transition'
 	import { Spring } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'

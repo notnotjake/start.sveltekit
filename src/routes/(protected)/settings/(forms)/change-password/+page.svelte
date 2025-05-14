@@ -5,11 +5,11 @@
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { changePasswordSchema as schema } from './schema.ts'
 
-	import PasskeyIcon from '$ui/icons/passkey.svelte'
-	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import PasskeyIcon from '$ui/icon/passkey.svelte'
+	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
 	import TextInput from '$ui/input/text-input.svelte'
 	import { ToastInline } from '$ui/feedback'
-	import { wipeVertical } from '$ui/motion/transitions'
+	import { wipeVertical } from '$ui/transition'
 
 	let submitSuccess: boolean | null = $state(null)
 

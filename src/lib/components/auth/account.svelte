@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { createClass } from '$utils/create-class'
-	import { wipeHorizontal } from '$ui/motion/transitions'
+	import { wipeHorizontal } from '$ui/transition'
 	import { fade } from 'svelte/transition'
 	import ToastSwap from '$ui/feedback/toast-swap-adapting.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import { IconSettings, IconDots, IconLogout } from '@tabler/icons-svelte'
 	import Button from '$ui/input/button.svelte'
+	import { handleLogout } from '$bits/auth/logout'
 
 	let { user } = $props()
 
@@ -120,15 +121,13 @@
 			</Button>
 		</DropdownMenu.Item>
 		<DropdownMenu.Separator class="bg-neutral-600" />
-		<DropdownMenu.Item class="outline-none">
-			<button class="w-full">
-				<div
-					class="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-neutral-600/80"
-				>
-					<IconLogout color="var(--color-neutral-200)" />
-					<p class="px-1.5 font-medium text-neutral-200">Logout</p>
-				</div>
-			</button>
+		<DropdownMenu.Item onSelect={handleLogout} class="outline-none">
+			<div
+				class="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 pr-3 text-white hover:bg-neutral-600/80"
+			>
+				<IconLogout color="var(--color-neutral-200)" />
+				<p class="px-1.5 font-medium text-neutral-200">Logout</p>
+			</div>
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

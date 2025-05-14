@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly, scale } from 'svelte/transition'
 	import { onMount, onDestroy } from 'svelte'
-	import CheckmarkIcon from '$ui/icons/checkmark.svelte'
+	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
 
 	let animationPhase = $state('load')
 

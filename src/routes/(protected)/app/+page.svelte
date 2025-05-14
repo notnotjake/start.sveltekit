@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SidebarButton from '$ui/containers/sidebar-button.svelte'
-	import LogoutButton from '$ui/auth/logout.svelte'
+	import SidebarButton from '$ui/container/sidebar-button.svelte'
+	import LogoutButton from '$bits/auth/logout.svelte'
 	let { data } = $props()
 </script>
 

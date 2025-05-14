@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatInput, maskOnBlur } from '$lib/actions'
+	import { formatInput, maskOnBlur } from '$ui/action'
 	import { DateField } from 'bits-ui'
 
 	let date = $state()

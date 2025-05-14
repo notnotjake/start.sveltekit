@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Button from '$ui/input/button.svelte'
-	import Chevron from '$ui/icons/chevron.svelte'
+	import Chevron from '$ui/icon/chevron.svelte'
 
 	let { children } = $props()
 </script>

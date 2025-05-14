@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { SuspenseSpinner } from '$ui/feedback/'
-	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
+	import Arrow from '$ui/icon/arrow-circle-fill.svelte'
+	import { IconCircleArrowRightFilled } from '@tabler/icons-svelte'
 	import { createClass } from '$utils/create-class'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
@@ -95,8 +96,11 @@
 						<SuspenseSpinner size={18} thickness={7} />
 					</div>
 				{:else}
-					<Arrow
+					<!-- <Arrow
 						class="bi bi-arrow-right-circle-fill mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
+					/> -->
+					<IconCircleArrowRightFilled
+						class="mr-1 h-6 w-6 cursor-pointer p-[0.1rem] text-[#0E8CFF] transition-colors duration-300 ease-in-out group-disabled:text-neutral-500/80"
 					/>
 				{/if}
 			</button>

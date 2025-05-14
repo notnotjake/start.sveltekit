@@ -2,14 +2,14 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { scale } from 'svelte/transition'
-	import { wipeVertical, wipeHorizontal } from '$ui/motion/transitions'
+	import { wipeVertical, wipeHorizontal } from '$ui/transition'
 
 	import { createClass } from '$utils/create-class'
 	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import ToastSwap from '$ui/feedback/toast-swap.svelte'
-	import CodeInput from '$ui/auth/code-input.svelte'
-	import ResendButton from '$ui/auth/email-resend-button.svelte'
+	import CodeInput from '$bits/auth/code-input.svelte'
+	import ResendButton from '$bits/auth/email-resend-button.svelte'
 
 	// Initial props from parent
 	let { email, triggerAttention, emailSent: initialEmailSent } = $props()

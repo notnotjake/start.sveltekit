@@ -31,3 +31,7 @@ vite.config.ts.timestamp-*
 !.env.project
 !.env.vault
 /.nova/Configuration.json
+
+docker-compose.dev.yml
+Dockerfile.dev
+Makefile

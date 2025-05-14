@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createClass } from '$utils/create-class'
 	import { fade, scale } from 'svelte/transition'
-	import Checkmark from '$ui/icons/checkmark-nofill.svelte'
+	import Checkmark from '$ui/icon/checkmark-nofill.svelte'
 
 	type Props = {
 		checked?: boolean

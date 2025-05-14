@@ -1,7 +1,7 @@
 <script lang="ts">
-	import LogoutButton from '$ui/auth/logout.svelte'
+	import LogoutButton from '$bits/auth/logout.svelte'
 
-	import AccountButton from '$ui/auth/account.svelte'
+	import AccountButton from '$bits/auth/account.svelte'
 
 	let { data } = $props()
 </script>

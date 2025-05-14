@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MultiDevice from '$ui/icons/multi-device.svelte'
+	import MultiDevice from '$ui/icon/multi-device.svelte'
 
 	let name = ''
 </script>

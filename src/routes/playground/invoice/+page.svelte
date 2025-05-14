@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LineItem from '$ui/invoicing/invoice/line-item.svelte'
+	import LineItem from '$bits/invoice/line-item.svelte'
 
 	const customerId = 'LF'
 	const invoiceId = 'P6001'

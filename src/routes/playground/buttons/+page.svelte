@@ -2,7 +2,7 @@
 	import type { ComponentProps } from 'svelte'
 	import Button from '$ui/input/button.svelte'
 
-	import MultiDeviceIcon from '$ui/icons/multi-device.svelte'
+	import MultiDeviceIcon from '$ui/icon/multi-device.svelte'
 </script>
 
 <Button

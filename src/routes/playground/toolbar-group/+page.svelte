@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FluidButton from '$ui/fluid-button.svelte'
+	import FluidButton from '$bits/fluid-button.svelte'
 </script>
 
 <p></p>

@@ -2,7 +2,7 @@
 	import { tick } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { createClass } from '$utils/create-class'
-	import PinCell from '$ui/auth/code-input-pin.svelte'
+	import PinCell from '$bits/auth/code-input-pin.svelte'
 	import { SuspenseText } from '$ui/feedback'
 
 	let { email }: { email: string } = $props()

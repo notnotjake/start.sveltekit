@@ -2,16 +2,15 @@
 	import { fade, fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { createClass } from '$utils/create-class'
-	import { wipeVertical } from '$ui/motion/transitions'
+	import { wipeVertical } from '$ui/transition'
 
 	import { Suspense, Progress } from '$ui/feedback'
-	import Arrow from '$ui/icons/arrow-circle-fill.svelte'
-	import Divider from '$ui/divider.svelte'
-	import Chevron from '$ui/icons/chevron.svelte'
-	import PasswordInput from '$ui/auth/password-input.svelte'
-	import PasskeyAuto from '$ui/auth/passkey-auto.svelte'
-	import PasskeyButton from '$ui/auth/passkey-button.svelte'
-	import MagicLinkMessage from '$ui/auth/magic-link-message.svelte'
+	import Arrow from '$ui/icon/arrow-circle-fill.svelte'
+	import Chevron from '$ui/icon/chevron.svelte'
+	import PasswordInput from '$bits/auth/password-input.svelte'
+	import PasskeyAuto from '$bits/auth/passkey-auto.svelte'
+	import PasskeyButton from '$bits/auth/passkey-button.svelte'
+	import MagicLinkMessage from '$bits/auth/magic-link-message.svelte'
 	import ToastSwap from '$ui/feedback/toast-swap.svelte'
 
 	import { IconCopy, IconArrowBackUp } from '@tabler/icons-svelte'
@@ -45,6 +44,14 @@
 		multipleSubmits: 'prevent',
 		onSubmit({ formData, cancel }) {
 			console.log('test')
+		},
+		onResult({ result }) {
+			if (result.type === 'failure') {
+				console.log('result', result)
+			}
+		},
+		onError({ result }) {
+			$emailMessage = result.error.message || 'Server Error'
 		}
 	})
 
@@ -95,16 +102,16 @@
 	></div>
 {/if}
 
-<div class="z-10 flex h-full items-center justify-center">
+<div class="z-10 flex h-full w-full max-w-[26rem] items-center justify-center px-2">
 	<div
 		class={createClass(
-			'relative flex min-h-40 w-[26rem] flex-shrink-0 flex-col items-center rounded-[1.8rem] p-[0.5rem] px-5 transition-all duration-200',
+			'relative flex min-h-40 w-full max-w-[26rem] flex-shrink-0 grow flex-col items-center rounded-[1.8rem] p-[0.5rem] px-2.5 transition-all duration-200 sm:px-5',
 			$emailMessage ? 'rounded-[1.4rem] bg-white pt-4 pb-10' : 'bg-none'
 		)}
 	>
 		<div
 			class={createClass(
-				'absolute top-0 left-0 h-18 w-full rounded-t-[1.5rem] bg-gradient-to-b from-[#E8F9FF] to-[#E8F9FF]/0 transition-colors duration-200',
+				'top-0 left-0 -z-10 hidden h-18 w-full bg-gradient-to-b from-[#E8F9FF] to-[#E8F9FF]/0 transition-colors duration-200 sm:absolute sm:z-auto sm:block sm:rounded-t-[1.5rem]',
 				$emailMessage ? 'opacity-0' : 'opacity-100',
 				data.magicStatus.code && 'opacity-0'
 			)}

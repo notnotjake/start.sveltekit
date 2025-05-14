@@ -1,6 +1,6 @@
 <script lang="ts">
-	import AdaptingContainer from '$ui/containers/adapting.svelte'
-	import HelpMenu from '$ui/auth/help.svelte'
+	import AdaptingContainer from '$ui/container/adapting.svelte'
+	import HelpMenu from '$bits/auth/help.svelte'
 	let { children } = $props()
 
 	let sitename = 'Luxo Co'
@@ -10,7 +10,7 @@
 	class="relative flex h-full w-full flex-shrink-0 flex-col items-center justify-center overflow-scroll bg-white"
 >
 	<a
-		class="tracking-tight-md mx-auto block pt-2 text-center text-base font-medium text-black/55 no-underline transition-all duration-300 hover:text-black/85"
+		class="tracking-tight-md z-50 mx-auto block pt-2 text-center text-base font-medium text-black/55 no-underline transition-all duration-300 hover:text-black/85"
 		href="/">{sitename}</a
 	>
 
@@ -20,7 +20,7 @@
 </div>
 
 {#snippet footer()}
-	<div class="mx-auto mb-6 flex w-fit flex-row gap-6 rounded-full px-6 py-3">
+	<div class="mx-auto mb-6 flex w-fit flex-row gap-4 rounded-full px-6 py-3 sm:gap-6">
 		<HelpMenu />
 
 		<a

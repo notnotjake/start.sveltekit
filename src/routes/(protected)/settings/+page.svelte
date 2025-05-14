@@ -4,13 +4,13 @@
 	import { fade, scale } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { createClass } from '$utils/create-class'
-	import ArrowsExpand from '$ui/icons/arrows-expand.svelte'
-	import ArrowsCollapse from '$ui/icons/arrows-collapse.svelte'
-	import Checkmark from '$ui/icons/checkmark.svelte'
-	import Sidebar from '$ui/containers/sidebar-provider.svelte'
+	import ArrowsExpand from '$ui/icon/arrows-expand.svelte'
+	import ArrowsCollapse from '$ui/icon/arrows-collapse.svelte'
+	import Checkmark from '$ui/icon/checkmark.svelte'
+	import Sidebar from '$ui/container/sidebar-provider.svelte'
 	import { ToastInline } from '$ui/feedback'
 	import Toggle from '$ui/input/toggle.svelte'
-	import LogoutButton from '$ui/auth/logout.svelte'
+	import LogoutButton from '$bits/auth/logout.svelte'
 
 	import Button from '$ui/input/button.svelte'
 

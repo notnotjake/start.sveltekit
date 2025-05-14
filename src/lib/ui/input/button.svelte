@@ -9,6 +9,7 @@
 		icon: Icon,
 		onClick,
 		href,
+		as,
 		type = 'button',
 		suspense = false,
 		class: classProp,
@@ -19,6 +20,7 @@
 		icon?: Component | HTMLElement
 		onClick?: () => void
 		href: string
+		as: string
 		type?: 'button' | 'submit'
 		suspense?: boolean
 		class?: string
@@ -27,7 +29,7 @@
 
 	const variants = createVariants(
 		{
-			base: 'font-medium text-[0.95rem] px-3.5 py-1.5 transition-all duration-100 flex items-center justify-center whitespace-nowrap relative',
+			base: 'font-medium text-[0.95rem] px-3.5 py-1.5 transition-all duration-100 flex items-center justify-center whitespace-nowrap relative active:scale-[0.97]',
 			reset: '',
 			style: {
 				primary: 'bg-neutral-700 font-medium text-white hover:bg-neutral-800 hover:shadow-sm',
@@ -83,7 +85,20 @@
 	)
 </script>
 
-{#if href}
+{#if as}
+	<svelte:element this={as} class={createClass(variants.classes, classProp)} aria-role="button">
+		{#if suspense}
+			<div class="flex h-full items-center pr-1">
+				<Suspense.Spinner size={16} />
+			</div>
+		{:else if Icon}
+			<div class="flex h-full items-center pr-1">
+				<Icon />
+			</div>
+		{/if}
+		{@render children?.()}
+	</svelte:element>
+{:else if href}
 	<a
 		{href}
 		{disabled}
