@@ -6,6 +6,10 @@ export function generateToken(byteLength: number = 32): string {
 	return encodeBase64url(bytes).replace(/=+$/, '')
 }
 
+export function generateTOTPSecretKey(): Uint8Array {
+	return crypto.getRandomValues(new Uint8Array(20))
+}
+
 export function generateShortCode(): string {
 	const bytes = crypto.getRandomValues(new Uint8Array(4))
 	const int = new DataView(bytes.buffer).getUint32(0, true) % 1000000
