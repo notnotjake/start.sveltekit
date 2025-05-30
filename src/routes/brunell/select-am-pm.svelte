@@ -16,7 +16,7 @@
 
 <div
 	onclick={toggle}
-	class="flex h-fit w-fit cursor-pointer rounded-lg bg-neutral-300/0 px-2 text-[0.9rem] text-neutral-800 inset-shadow-sm/0 transition-colors select-none hover:bg-neutral-300/100 hover:inset-shadow-sm/10"
+	class="flex h-full w-fit cursor-pointer rounded-lg px-2 text-[0.9rem] text-neutral-800 inset-shadow-sm/0 transition-colors select-none"
 >
 	<div class="relative h-5 w-2.5 overflow-hidden">
 		<p
