@@ -9,7 +9,7 @@
 	import Button from '$ui/input/button.svelte'
 	import AddBreak from './combo-button.svelte'
 
-	import DatePicker from './date-picker.svelte'
+	import DatePicker from '$bits/time-ticket/date-picker.svelte'
 
 	import TimeRange from '$bits/time-ticket/time-entry.svelte'
 
@@ -104,8 +104,9 @@
 			</p>
 		</div>
 
-		<div class="relative w-full max-w-full" onclick={expand}>
+		<div class="relative w-full max-w-full">
 			<div
+				onclick={expand}
 				class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
 			>
 				<IconCalendarWeekFilled size={22} class="text-rose-600" />
@@ -113,8 +114,8 @@
 			</div>
 
 			{#if expanded}
-				<div class="fixed inset-0 z-20 h-full w-full bg-black/10"></div>
-				<div class="absolute inset-0 z-30 h-fit w-full rounded-3xl bg-white">
+				<div onclick={expand} class="fixed inset-0 z-20 h-full w-full bg-black/10"></div>
+				<div class="absolute inset-0 z-30">
 					<DatePicker />
 				</div>
 			{/if}
