@@ -215,7 +215,7 @@
 			{#each breaks as breakTime, i}
 				<button
 					onclick={() => removeBreak(i)}
-					class="rounded-lg px-3 py-1 text-sm {getBreakColor(i)}"
+					class="rounded-xl px-3 py-1 text-sm {getBreakColor(i)}"
 				>
 					{breakTime}m ×
 				</button>
