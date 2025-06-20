@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Time } from '@internationalized/date'
+	import { Time, CalendarDate, today, getLocalTimeZone, isSameDay } from '@internationalized/date'
 
 	import TimeEditor from './time-editor.svelte'
 	import AMorPM from './select-am-pm.svelte'
@@ -37,6 +37,8 @@
 		expanded = !expanded
 	}
 
+	let selectedDate = $state(today(getLocalTimeZone()))
+
 	let timeRangeValue = $state({
 		start: new Time(8, 30),
 		end: new Time(4, 15)
@@ -66,6 +68,15 @@
 		],
 		work: ['Installed new wall panel']
 	})
+
+	let todayDate = today(getLocalTimeZone())
+	function formatDate(date: CalendarDate) {
+		return date.toDate(getLocalTimeZone()).toLocaleDateString('en-US', {
+			weekday: 'short',
+			month: 'short',
+			day: 'numeric'
+		})
+	}
 </script>
 
 <div class="my-1 min-h-[50svh] w-full rounded-3xl bg-white pt-28">
@@ -110,13 +121,15 @@
 				class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
 			>
 				<IconCalendarWeekFilled size={22} class="text-rose-600" />
-				<p class="text-[1.15rem] font-semibold">Today</p>
+				<p class="text-[1.15rem] font-semibold">
+					{#if isSameDay(selectedDate, todayDate)}Today&nbsp;{/if}{formatDate(selectedDate)}
+				</p>
 			</div>
 
 			{#if expanded}
 				<div onclick={expand} class="fixed inset-0 z-20 h-full w-full bg-black/10"></div>
 				<div class="absolute inset-0 z-30">
-					<DatePicker />
+					<DatePicker bind:selectedDate />
 				</div>
 			{/if}
 		</div>
