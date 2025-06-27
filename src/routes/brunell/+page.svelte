@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { Time, CalendarDate, today, getLocalTimeZone, isSameDay } from '@internationalized/date'
 
-	import TimeEditor from './time-editor.svelte'
-	import AMorPM from './select-am-pm.svelte'
-	import TimeEntry from './time-entry.svelte'
-	import ClockInput from './time-entry-new.svelte'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import Button from '$ui/input/button.svelte'
-	import AddBreak from './combo-button.svelte'
 
 	import DatePicker from '$bits/time-ticket/date-picker.svelte'
-
 	import TimeRange from '$bits/time-ticket/time-entry.svelte'
+	import Sheet from '$bits/time-ticket/sheet.svelte'
+	import AMorPM from './select-am-pm.svelte'
+	import JobEntry from './job-entry.svelte'
 
 	import {
 		IconCircleArrowRight,
@@ -47,7 +44,7 @@
 	let tickets = $state({
 		job: {
 			name: 'Redwood Park',
-			location: 'Lot 12B',
+			location: 'Lot 12A',
 			customer: 'RCI Builders'
 		},
 		date: new Date(),
@@ -105,15 +102,24 @@
 	</div>
 
 	<div class="mx-auto mb-3 flex max-w-2xl flex-col gap-4 px-3">
-		<div
-			class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
+		<Sheet
+			title="Edit Job Name"
+			description="Enter your jobs name and add the location like a lot number and builder"
 		>
-			<IconMapPinFilled size={22} class="text-emerald-500" />
-			<p class="text-[1.15rem] font-medium tracking-tight whitespace-nowrap">
-				Redwook Park <span class="font-medium text-black">Lot 12B</span>
-				<span class="text-[0.9rem] font-light opacity-70">RCI Builders</span>
-			</p>
-		</div>
+			{#snippet trigger()}
+				<div
+					class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
+				>
+					<IconMapPinFilled size={22} class="text-emerald-500" />
+					<p class="text-[1.15rem] font-medium tracking-tight whitespace-nowrap">
+						{tickets.job.name} <span class="font-medium text-black">{tickets.job.location}</span>
+						<span class="text-[0.9rem] font-light opacity-70">{tickets.job.customer}</span>
+					</p>
+				</div>
+			{/snippet}
+
+			<JobEntry bind:job={tickets.job} />
+		</Sheet>
 
 		<div class="relative w-full max-w-full">
 			<div
