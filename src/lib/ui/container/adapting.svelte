@@ -8,7 +8,7 @@
 		children,
 		class: classProp,
 		startingHeight = 150,
-		startingWidth = 100,
+		startingWidth = 800,
 		stiffness = 0.05,
 		damping = 0.33
 	}: {
@@ -22,6 +22,8 @@
 
 	let innerHeight = $state(0)
 	let innerWidth = $state(0)
+
+	$inspect(stiffness)
 
 	let containerHeight = new Spring(startingHeight, {
 		stiffness: stiffness,
@@ -37,6 +39,8 @@
 		containerHeight.target = innerHeight
 		containerWidth.target = innerWidth
 	})
+
+	let debugPanel = false
 </script>
 
 <div
@@ -52,3 +56,23 @@
 		{@render children()}
 	</div>
 </div>
+
+{#if debugPanel}
+	<div class="fixed inset-0 z-200 h-fit w-fit border-red-500 bg-rose-300">
+		<div class="space-y-2">
+			<label class="block">
+				Stiffness:
+				<input type="number" bind:value={stiffness} min="0.01" max="1" />
+				<input type="range" bind:value={stiffness} min="0.01" max="1" step="0.01" class="w-full" />
+			</label>
+		</div>
+
+		<div class="space-y-2">
+			<label class="block">
+				Damping:
+				<input type="number" bind:value={damping} min="0.01" max="1" />
+				<input type="range" bind:value={damping} min="0.01" max="1" step="0.01" class="w-full" />
+			</label>
+		</div>
+	</div>
+{/if}

@@ -147,9 +147,7 @@
 	})
 </script>
 
-<div
-	class="shadow-card w-full overflow-hidden rounded-3xl border-1 border-neutral-200 bg-white px-4 py-4"
->
+<div class="shadow-card w-full overflow-hidden bg-white px-4 py-4">
 	<!-- Header -->
 	<div class="pb-2">
 		<div class="flex items-center justify-between">

@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Time, CalendarDate, today, getLocalTimeZone, isSameDay } from '@internationalized/date'
 
+	import { createClass } from '$utils/styles'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import Button from '$ui/input/button.svelte'
+	import ContainerAdapting from '$ui/container/adapting.svelte'
 
 	import DatePicker from '$bits/time-ticket/date-picker.svelte'
 	import TimeRange from '$bits/time-ticket/time-entry.svelte'
@@ -87,11 +89,11 @@
 				<IconX stroke={2.5} />
 			</div>
 			<div class="flex gap-2">
-				<div
-					class="flex h-full items-center justify-center rounded-full bg-neutral-100 px-6 py-3 text-lg font-semibold text-neutral-600 hover:bg-sky-500/10 hover:text-blue-500"
+				<Button
+					class="flex h-full items-center justify-center rounded-full bg-neutral-100 px-6 py-3 text-lg font-semibold text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900"
 				>
 					Add Another
-				</div>
+				</Button>
 				<div
 					class="flex h-full items-center justify-center rounded-full bg-gradient-to-b from-sky-500 to-sky-400/80 px-6 py-3 text-lg font-semibold text-sky-50"
 				>
@@ -121,23 +123,29 @@
 			<JobEntry bind:job={tickets.job} />
 		</Sheet>
 
-		<div class="relative w-full max-w-full">
+		<div class="w-full max-w-full">
 			<div
 				onclick={expand}
-				class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
+				class={createClass(
+					'w-fit rounded-3xl',
+					expanded ? 'bg-transparent ring-1 ring-neutral-200' : 'bg-neutral-200/80'
+				)}
 			>
-				<IconCalendarWeekFilled size={22} class="text-rose-600" />
-				<p class="text-[1.15rem] font-semibold">
-					{#if isSameDay(selectedDate, todayDate)}Today&nbsp;{/if}{formatDate(selectedDate)}
-				</p>
+				<ContainerAdapting startingHeight={50} startingWidth={80} stiffness={0.09} damping={0.5}>
+					{#if expanded}
+						<div class="w-2xl min-w-md">
+							<DatePicker bind:selectedDate />
+						</div>
+					{:else}
+						<div class="flex w-fit shrink-0 items-center gap-1 px-4 py-2">
+							<IconCalendarWeekFilled size={22} class="shrink-0 grow text-rose-600" />
+							<p class="w-fit shrink-0 grow text-[1.15rem] font-semibold whitespace-nowrap">
+								{#if isSameDay(selectedDate, todayDate)}Today&nbsp;{/if}{formatDate(selectedDate)}
+							</p>
+						</div>
+					{/if}
+				</ContainerAdapting>
 			</div>
-
-			{#if expanded}
-				<div onclick={expand} class="fixed inset-0 z-20 h-full w-full bg-black/10"></div>
-				<div class="absolute inset-0 z-30">
-					<DatePicker bind:selectedDate />
-				</div>
-			{/if}
 		</div>
 	</div>
 
