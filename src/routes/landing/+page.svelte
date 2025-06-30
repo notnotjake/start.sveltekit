@@ -47,6 +47,7 @@
 	onMount(() => {
 		updateTime()
 
+		const now = new Date()
 		const msToNextMinute = 60 * 1000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 100
 
 		timers.alignment = setTimeout(() => {
@@ -101,49 +102,13 @@
 </script>
 
 <div class="min-h-screen bg-black p-4 font-sans text-white">
-	<div class="mx-auto mb-6 max-w-2xl">
-		<div class="rounded-2xl bg-white/10 p-6 backdrop-blur-md">
-			<div class="mb-4">
-				<h2 class="text-[1.4rem] font-bold tracking-tight opacity-85">{formattedDate}</h2>
-				<h2 class="text-[2.8rem] font-extrabold tracking-tight opacity-85">
-					{formattedTime}
-				</h2>
-			</div>
-
-			{#if sun}
-				<div class="mb-4 grid grid-cols-1 gap-4 rounded-2xl bg-white/5 p-4 md:grid-cols-2">
-					<div class="space-y-1 text-sm">
-						<div>
-							<span class="font-medium">Altitude:</span>
-							{sun.altitude.toFixed(1)}°
-						</div>
-						<div>
-							<span class="font-medium">Azimuth:</span>
-							{sun.azimuth.toFixed(1)}°
-						</div>
-					</div>
-					<div class="space-y-1 text-sm">
-						<div><span class="font-medium">Sun Height:</span> {sunHeight.toFixed(3)}</div>
-						<div><span class="font-medium">Sun Angle:</span> {sunAngle.toFixed(3)}</div>
-					</div>
-
-					<button
-						onclick={() => {
-							datetime = new Date()
-						}}
-						class="rounded-2xl bg-gradient-to-b from-green-500 to-emerald-600 px-6 py-2 font-semibold text-green-100 transition-all hover:text-white active:scale-95"
-					>
-						Refresh Sun Position
-					</button>
-				</div>
-			{/if}
-
-			<div class="flex flex-col items-center space-y-4">
-				<div class="w-full rounded-lg bg-white/5 p-4">
-					<input type="text" bind:value={setTime} />
-				</div>
-			</div>
-		</div>
+	<div class="fixed inset-7 z-100">
+		<input
+			type="text"
+			class="rounded-xl bg-white/10 px-3 py-1 text-lg"
+			placeholder="Override Time"
+			bind:value={setTime}
+		/>
 	</div>
 
 	<div class="relative flex justify-center">
