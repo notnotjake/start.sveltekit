@@ -3,20 +3,11 @@
 	import SunShader from './sun-shader.svelte'
 	import SunCalc from 'suncalc'
 
-	// Values passed to shader
-	let sunHeight = $state(0.3) // height (distance to horizon)
-	let sunAngle = $state(0.3) // angle (rotation)
-
-	// Preset location - Grace & Foushee in Richmond, VA
-	const latitude = 37.544674
-	const longitude = -77.442584
-
-	const REFRESH_FREQ = 60 * 1000 // one minute
+	// ===============================================================================
+	// Time
 
 	let datetime = $state(new Date())
-
-	// Manually override the time (for test purposes)
-	let setTime = $state(null)
+	let setTime = $state(null) // Manually override time
 
 	$effect(() => {
 		if (setTime) {
@@ -28,80 +19,83 @@
 		}
 	})
 
-	let formattedDate = $derived.by(() => {
-		return datetime.toLocaleString('en-US', {
+	let formattedDate = $derived(
+		datetime.toLocaleString('en-US', {
 			timezone: 'America/New_York',
 			weekday: 'long',
 			month: 'short',
 			day: 'numeric'
 		})
-	})
+	)
 
-	let formattedTime = $derived.by(() => {
-		return datetime.toLocaleString('en-US', {
+	let formattedTime = $derived(
+		datetime.toLocaleString('en-US', {
 			timezone: 'America/New_York',
 			hour: 'numeric',
 			minute: '2-digit'
 		})
-	})
+	)
 
-	// Uses suncalc package to get the altitude and azimuth based on the current date-time
-	let sun = $derived.by(() => {
-		const calc = SunCalc.getPosition(datetime, latitude, longitude)
+	function updateTime() {
+		if (setTime != null) return
+		datetime = new Date()
+	}
 
-		return {
-			altitude: calc.altitude * (180 / Math.PI),
-			azimuth: calc.azimuth * (180 / Math.PI),
-			altitudeRaw: calc.altitude,
-			azimuthRaw: calc.azimuth
-		}
-	})
-
-	// Calculate the sun progress / sun height based on altitude and azimuth
-	// Mapping sunrise to 0 and sunset to 1
-	$effect(() => {
-		if (sun.altitude != null && sun.azimuthRaw != null) {
-			if (sun.altitude <= 0) {
-				sunHeight = sun.azimuth < 0 ? 1 : 0
-			} else {
-				const t = Math.min(sun.altitude, 90) / 90
-
-				if (sun.azimuth < 0) {
-					sunHeight = 1 - t * 0.5
-				} else {
-					sunHeight = t * 0.5
-				}
-			}
-		}
-	})
-
-	// Map azimuth to the shader sun angle
-	// Azimuth: 0 is south, measured from south to west
-	// Convert to our east-west range where 0.5 is south
-	// $effect(() => {
-	// 	if (sun.azimuth != null) {
-	// 		const azimuthDegrees = sun.azimuthRaw * (180 / Math.PI)
-	// 		// Map azimuth so that: east (-90°) = 0, south (0°) = 0.5, west (90°) = 1
-	// 		sunAngle = 0.5 + azimuthDegrees / 180
-	// 	}
-	// })
-
-	// Variable to hold the interval
-	let updateTimeInterval = $state(null)
+	let timers = $state({ alignment: null, interval: null })
 
 	// Update the time every minute
 	onMount(() => {
-		updateTimeInterval = setInterval(() => {
-			if (!setTime) {
-				datetime = new Date()
-			}
-		}, REFRESH_FREQ)
+		updateTime()
+
+		const msToNextMinute = 60 * 1000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 100
+
+		timers.alignment = setTimeout(() => {
+			updateTime()
+			timers.interval = setInterval(updateTime, 60 * 1000)
+		}, msToNextMinute)
 	})
 
 	// Cleanup interval when unmounted
 	onDestroy(() => {
-		if (updateTimeInterval) {
-			clearInterval(updateTimeInterval)
+		clearInterval(timers.interval)
+		clearTimeout(timers.alignment)
+	})
+
+	// ===============================================================================
+	// Sun calculations
+
+	// Values passed to shader
+	let sunHeight = $state(0.3) // height (distance to horizon)
+	let sunAngle = $state(0.3) // angle (rotation)
+
+	// Location used for sun data
+	const geo = {
+		// Preset location - Grace & Foushee in Richmond, VA
+		lat: 7.544674,
+		long: -77.442584
+	}
+
+	// Uses suncalc package to get the altitude and azimuth based on the current date-time
+	let sun = $derived.by(() => {
+		const calc = SunCalc.getPosition(datetime, geo.lat, geo.long)
+
+		return {
+			altitude: calc.altitude * (180 / Math.PI),
+			azimuth: calc.azimuth * (180 / Math.PI)
+		}
+	})
+
+	// Calculate the sun height value based on altitude and azimuth
+	$effect(() => {
+		if (sun.altitude == null || sun.azimuth == null) return
+
+		const isNegativeAzimuth = sun.azimuth < 0
+		const normalizedAltitude = Math.min(sun.altitude, 90) / 90
+
+		if (sun.altitude < 0) {
+			sunHeight = isNegativeAzimuth ? 1 : 0
+		} else {
+			sunHeight = isNegativeAzimuth ? 1 - normalizedAltitude * 0.5 : normalizedAltitude * 0.5
 		}
 	})
 </script>
@@ -111,7 +105,9 @@
 		<div class="rounded-2xl bg-white/10 p-6 backdrop-blur-md">
 			<div class="mb-4">
 				<h2 class="text-[1.4rem] font-bold tracking-tight opacity-85">{formattedDate}</h2>
-				<h2 class="text-[2.8rem] font-extrabold tracking-tight opacity-85">{formattedTime}</h2>
+				<h2 class="text-[2.8rem] font-extrabold tracking-tight opacity-85">
+					{formattedTime}
+				</h2>
 			</div>
 
 			{#if sun}
@@ -150,8 +146,28 @@
 		</div>
 	</div>
 
-	<!-- Pass calculated values to the shader component -->
-	<div class="flex justify-center">
+	<div class="relative flex justify-center">
 		<SunShader {sunHeight} {sunAngle} showControls={false} />
+
+		<div
+			class="absolute inset-0 flex h-full w-full items-end justify-center pb-[28%] mix-blend-overlay"
+		>
+			<p class="text-[1.8rem] font-semibold">Good Afternoon!</p>
+		</div>
+
+		<div
+			class="absolute inset-0 flex h-full w-full items-end justify-center pb-[20%] mix-blend-overlay"
+		>
+			<h2 class="z-index-20 text-[5rem] font-extrabold tracking-tight opacity-85">
+				{formattedTime}
+			</h2>
+		</div>
+		<div
+			class="absolute inset-0 flex h-full w-full items-end justify-center pb-[20%] mix-blend-soft-light"
+		>
+			<h2 class="z-index-20 text-[5rem] font-extrabold tracking-tight opacity-90">
+				{formattedTime}
+			</h2>
+		</div>
 	</div>
 </div>
