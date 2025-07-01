@@ -14,29 +14,13 @@
 		class="relative flex w-full touch-none items-center rounded-full bg-neutral-200 select-none"
 	>
 		{#snippet children()}
-			<span class="bg-dark-10 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full">
-				<Slider.Range class="absolute h-full bg-neutral-500" />
+			<span
+				class="bg-dark-10 relative h-1.5 w-full grow cursor-pointer overflow-hidden rounded-full"
+			>
+				<Slider.Range class="absolute h-full rounded-full bg-blue-500" />
 			</span>
 			<Slider.Thumb
-				class="focus-visible:ring-foreground block size-[25px] cursor-pointer rounded-full border border-neutral-300 bg-white shadow-md transition-colors hover:border-neutral-400 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2 focus-visible:outline-hidden active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
-				index={0}
-			/>
-		{/snippet}
-	</Slider.Root>
-</div>
-
-<div class="h-30 w-full md:max-w-[280px]">
-	<Slider.Root
-		type="single"
-		bind:value
-		class="relative flex w-full touch-none items-center rounded-full bg-neutral-200 select-none"
-	>
-		{#snippet children()}
-			<span class="bg-dark-10 relative h-1 w-full grow cursor-pointer overflow-hidden rounded-full">
-				<Slider.Range class="absolute h-full bg-blue-500" />
-			</span>
-			<Slider.Thumb
-				class="block size-5 cursor-pointer rounded-full border border-neutral-300/50 bg-white shadow-md transition-colors hover:border-neutral-300 focus:bg-neutral-300 focus-visible:outline-hidden active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+				class="block h-5 w-8.5 cursor-pointer rounded-full border border-neutral-300/50 bg-white shadow-md transition-colors hover:border-neutral-300/80 focus:bg-white/20 focus-visible:outline-hidden active:scale-[0.98] active:bg-white/20 disabled:pointer-events-none disabled:opacity-50"
 				index={0}
 			/>
 		{/snippet}
