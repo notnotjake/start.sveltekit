@@ -41,6 +41,8 @@ import { sendMagiclink } from './magiclink'
 
 import { requireRecentAuth, requireAuthenticatedUser, requireSession } from './protect'
 
+export { authHandler } from './handler'
+
 const Auth = {
 	getAuthAttempt,
 	getUserKeysOfType,
