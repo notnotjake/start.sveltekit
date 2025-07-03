@@ -1,6 +1,6 @@
-import { env } from '$utils/env/server'
+import { NODE_ENV } from '$env/dynamic/private'
 
-const isDev = env.NODE_ENV === 'development'
+const isDev = NODE_ENV === 'development'
 
 // Define types for CSP configuration
 type CspDirectiveValue = string[]
