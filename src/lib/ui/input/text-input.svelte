@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 
 	import Arrow from '$ui/icon/arrow-circle-fill.svelte'
 	import { Suspense } from '$ui/feedback'

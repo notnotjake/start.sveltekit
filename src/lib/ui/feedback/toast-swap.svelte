@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { fade, scale } from 'svelte/transition'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 
 	let {
 		class: classProp,

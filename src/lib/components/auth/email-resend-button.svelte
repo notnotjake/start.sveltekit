@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte'
 	import { scale } from 'svelte/transition'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { ProgressRadial } from '$ui/feedback'
 
 	let {

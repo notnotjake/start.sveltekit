@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { wipeHorizontal } from '$ui/transition'
 	import { fade } from 'svelte/transition'
 	import ToastSwap from '$ui/feedback/toast-swap-adapting.svelte'

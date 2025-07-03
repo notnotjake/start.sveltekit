@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte'
 	import { fade, scale } from 'svelte/transition'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 
 	let { class: classProp, children, durationMs = 2500, trigger = $bindable() } = $props()
 

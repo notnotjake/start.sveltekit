@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
 	import ErrorIcon from '$ui/icon/exclamation-circle-fill.svelte'
 	import { Suspense } from '$ui/feedback'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { fade, scale } from 'svelte/transition'
 	import Checkmark from '$ui/icon/checkmark-nofill.svelte'
 

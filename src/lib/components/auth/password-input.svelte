@@ -2,7 +2,7 @@
 	import { SuspenseSpinner } from '$ui/feedback/'
 	import Arrow from '$ui/icon/arrow-circle-fill.svelte'
 	import { IconCircleArrowRightFilled } from '@tabler/icons-svelte'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { z } from 'zod'

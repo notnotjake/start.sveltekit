@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	let { value, active = false, selected = false } = $props()
 	let expanded = $derived(value !== '')
 </script>

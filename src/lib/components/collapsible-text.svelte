@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	let { children, isCollapsed = false } = $props()
 
 	let elementWidth = $state(false)

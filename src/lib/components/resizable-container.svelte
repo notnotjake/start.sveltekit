@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { Tween } from 'svelte/motion'
 	import { cubicOut, elasticOut } from 'svelte/easing'
 	import { fly, fade, scale } from 'svelte/transition'

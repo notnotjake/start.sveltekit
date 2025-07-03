@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setContext, type Snippet } from 'svelte'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { Tween } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
 

@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms'
 	import { fade, scale } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import ArrowsExpand from '$ui/icon/arrows-expand.svelte'
 	import ArrowsCollapse from '$ui/icon/arrows-collapse.svelte'
 	import Checkmark from '$ui/icon/checkmark.svelte'

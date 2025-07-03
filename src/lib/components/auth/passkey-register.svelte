@@ -2,7 +2,7 @@
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
 
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 
 	import { startRegistration } from '@simplewebauthn/browser'
 

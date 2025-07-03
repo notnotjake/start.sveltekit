@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createClass, preserveClass } from '$utils/create-class'
+	import { createClass, preserveClass } from '$utils/styles'
 
 	type Props = { class?: string }
 	let { class: classProp }: Props = $props()

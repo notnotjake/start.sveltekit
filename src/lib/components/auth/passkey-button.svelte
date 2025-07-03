@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { Suspense } from '$ui/feedback'
 	import PasskeyIcon from '$ui/icon/passkey.svelte'
 

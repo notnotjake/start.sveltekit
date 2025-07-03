@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import { wipeVertical } from '$ui/transition'
 
 	import { Suspense, Progress } from '$ui/feedback'

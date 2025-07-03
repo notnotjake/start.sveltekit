@@ -4,7 +4,7 @@
 	import { scale } from 'svelte/transition'
 	import { wipeVertical, wipeHorizontal } from '$ui/transition'
 
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import ToastSwap from '$ui/feedback/toast-swap.svelte'

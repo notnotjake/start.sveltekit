@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import { createClass, preserveClass } from '$utils/create-class'
+	import { createClass, preserveClass } from '$utils/styles'
 
 	type Props = {
 		children: Snippet

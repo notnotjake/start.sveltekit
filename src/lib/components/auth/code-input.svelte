@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { createClass } from '$utils/create-class'
+	import { createClass } from '$utils/styles'
 	import PinCell from '$bits/auth/code-input-pin.svelte'
 	import { SuspenseText } from '$ui/feedback'
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet, Component } from 'svelte'
-	import { createClass } from '$utils/create-class'
-	import { createVariants } from '$utils/create-variants'
+	import { createClass } from '$utils/styles'
+	import { createVariants } from '$utils/styles'
 	import { Suspense } from '$ui/feedback'
 
 	let {
