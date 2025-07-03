@@ -1,4 +1,3 @@
-// import { env } from './src/lib/utils/env'
 import { defineConfig } from 'drizzle-kit'
 import { config } from 'dotenv'
 
