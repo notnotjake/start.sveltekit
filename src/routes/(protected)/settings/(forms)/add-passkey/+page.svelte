@@ -3,7 +3,9 @@
 	import { zodClient } from 'sveltekit-superforms/adapters'
 	import { passwordSchema } from './schema.ts'
 	import { goto } from '$app/navigation'
-	import { onDestroy } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
+
+	import { inputSelectAll } from '$lib/attachments/input-select-all'
 
 	import PasskeyIcon from '$ui/icon/passkey.svelte'
 	import CheckmarkIcon from '$ui/icon/checkmark.svelte'
@@ -12,6 +14,7 @@
 	import { wipeVertical } from '$ui/transition'
 	import RegisterPasskey from '$bits/auth/passkey-register.svelte'
 	import Button from '$ui/input/button.svelte'
+	import { getBrowserNameForPasskey } from '$lib/utils/browser-detection'
 
 	let { data } = $props()
 
@@ -21,6 +24,11 @@
 
 	let redirectTimeout
 	let triggerToast
+
+	onMount(() => {
+		// Set default passkey name to detected browser
+		passkeyName = getBrowserNameForPasskey()
+	})
 
 	$effect(() => {
 		if (submitSuccess === 'success') {
@@ -68,6 +76,7 @@
 			placeholder="Passkey Name"
 			withButton={false}
 			disabled={submitSuccess !== null}
+			{@attach inputSelectAll}
 		/>
 
 		<Button style="primary" size="md" class="text-md h-12 bg-neutral-800" rounded="lg">
