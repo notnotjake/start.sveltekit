@@ -55,7 +55,7 @@
 	>
 		<div
 			class={createClass(
-				'group relative flex h-11 h-[2.8rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-200 focus-within:ring-2 focus-within:ring-blue-500',
+				'group relative flex h-12 h-[2.8rem] w-full items-center overflow-hidden rounded-[0.9rem] ring-1 ring-neutral-200 focus-within:ring-2 focus-within:ring-blue-500',
 				isInput ? 'bg-neutral-50 ring-1 ring-neutral-200' : 'cursor-pointer bg-neutral-200'
 			)}
 		>
@@ -112,7 +112,7 @@
 			type="button"
 			onclick={(isInput = true)}
 			class={createClass(
-				'pointer-events-none absolute top-0 left-0 m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center rounded-[0.9rem] border-none bg-neutral-200 px-4 font-medium text-neutral-900 outline-none',
+				'pointer-events-none absolute top-0 left-0 m-auto flex h-12 w-full max-w-full cursor-pointer items-center justify-center rounded-[0.9rem] border-none bg-neutral-200 px-4 font-medium text-neutral-600 outline-none',
 				isInput ? 'hidden' : 'absolute cursor-pointer'
 			)}>Continue with Password</button
 		>

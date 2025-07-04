@@ -1,17 +1,26 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { createClass } from '$utils/styles'
+	import { wipeVertical } from '$ui/transition'
 	import { Suspense } from '$ui/feedback'
 	import PasskeyIcon from '$ui/icon/passkey.svelte'
 
 	import { startAuthentication } from '@simplewebauthn/browser'
 
-	let { identifier }: { identifier: string } = $props()
+	let { identifier, supressAuto = false }: { identifier: string; supressAuto: boolean } = $props()
 
 	let isActivating = $state(false)
 
-	async function getOptions({ identifier: string }) {
+	onMount(() => {
+		if (!supressAuto) {
+			getOptions({ auto: true })
+		}
+	})
+
+	async function getOptions({ auto = false }: { auto: boolean }) {
 		isActivating = true
+		console.log(identifier)
 		try {
 			const response = await fetch('/auth/passkey-authenticate/options', {
 				method: 'POST',
@@ -28,7 +37,7 @@
 			console.log(result)
 
 			if (result?.success && result?.data) {
-				startAuth({ optionsJSON: result.data.optionsJSON })
+				startAuth({ optionsJSON: result.data.optionsJSON, useBrowserAutofill: auto })
 			} else {
 				console.error('not verified')
 			}
@@ -70,22 +79,31 @@
 </script>
 
 <div class="relative flex w-full shrink-1 grow basis-1 flex-col items-center">
+	{#if isActivating}
+		<div class="h-5 w-full" transition:wipeVertical></div>
+	{/if}
 	<button
 		type="button"
 		onclick={getOptions}
-		class="relative m-auto flex h-11 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none bg-neutral-800 px-4 font-medium text-white outline-none"
+		class={createClass(
+			'relative m-auto flex h-fit min-h-12 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none px-4 py-3 font-medium text-white outline-none',
+			isActivating ? 'bg-vibrant-blue w-fit rounded-full' : 'bg-vibrant-blue'
+		)}
 	>
 		{#if isActivating}
-			<Suspense.Spinner size={14} thickness={10} />
+			<Suspense.Spinner size={14} thickness={10} speed="fast" tint="var(--color-neutral-100)" />
 			<Suspense.Text
-				class="text-sm"
+				class="text-md"
 				spread={13}
-				colorBase="var(--color-neutral-200)"
-				colorHighlight="var(--color-white)">Waiting for Authenticator...</Suspense.Text
+				colorBase="var(--color-sky-200)"
+				colorHighlight="var(--color-white)">Signing in with Passkey</Suspense.Text
 			>
 		{:else}
 			<PasskeyIcon />
-			Sign in with Passkey
+			Use Passkey
 		{/if}
 	</button>
+	{#if isActivating}
+		<div class="h-5 w-full" transition:wipeVertical></div>
+	{/if}
 </div>

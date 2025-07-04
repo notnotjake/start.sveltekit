@@ -174,7 +174,7 @@
 <div class="w-full">
 	<div class="flex w-full flex-col items-center">
 		<p class="text-center leading-4 font-medium tracking-tight text-neutral-600">
-			Enter Verification Code
+			Verification Code
 		</p>
 		<p
 			class={createClass(
@@ -185,7 +185,7 @@
 			{#if submitSuccess === false}
 				The code couldn't be validated
 			{:else}
-				Enter the code generated from the email link
+				Enter the code you received
 			{/if}
 		</p>
 		<div

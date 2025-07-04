@@ -177,7 +177,7 @@
 
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
 	{#if showCodeInput}
-		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-50 py-5">
+		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100/50 py-5">
 			<CodeInput {email} />
 		</div>
 	{:else if connectionError}
@@ -199,9 +199,9 @@
 	<div class="flex w-full items-center justify-center py-1.5">
 		{#if !sendStatus}
 			<!-- Initial state: no email has been sent -->
-			<div class="flex w-full justify-center">
+			<div class="flex w-full justify-center text-[1.1rem] font-medium text-neutral-400">
 				<button type="submit" onclick={sendEmail}>
-					or <span class="text-neutral-900 underline">login with email</span>
+					or <span class="text-neutral-600">login with email</span>
 				</button>
 			</div>
 		{:else}

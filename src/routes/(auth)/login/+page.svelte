@@ -88,7 +88,7 @@
 		}
 	}
 
-	const SUPPRESS_AUTO_PASSKEY = true
+	const SUPPRESS_AUTO_PASSKEY = false
 </script>
 
 {#if data.automaticPasskeyEnabled && !SUPPRESS_AUTO_PASSKEY}
@@ -270,7 +270,7 @@
 			{#if $emailMessage}
 				<div transition:wipeVertical class="flex w-full flex-col gap-2 pt-5">
 					{#if $emailMessage?.passkeyAvailable}
-						<PasskeyButton identifier={$emailForm.email} />
+						<PasskeyButton identifier={$emailForm.email} supressAuto={SUPPRESS_AUTO_PASSKEY} />
 					{/if}
 
 					{#if $emailMessage?.passwordAvailable}
