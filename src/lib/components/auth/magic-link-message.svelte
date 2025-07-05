@@ -177,7 +177,7 @@
 
 <div class={createClass('w-full transition-all duration-300', sendStatus ? 'py-3' : 'py-1')}>
 	{#if showCodeInput}
-		<div in:wipeVertical class="mb-2 rounded-[0.9rem] bg-neutral-100/50 py-5">
+		<div in:wipeVertical class="mb-2 rounded-[0.9rem] py-5">
 			<CodeInput {email} />
 		</div>
 	{:else if connectionError}

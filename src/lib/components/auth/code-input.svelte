@@ -173,27 +173,20 @@
 
 <div class="w-full">
 	<div class="flex w-full flex-col items-center">
-		<p class="text-center leading-4 font-medium tracking-tight text-neutral-600">
-			Verification Code
+		<p class="text-center text-[1.1rem] leading-4 font-medium tracking-tight text-neutral-600">
+			Enter your one time code
 		</p>
-		<p
-			class={createClass(
-				'text-center text-[0.95rem] font-medium tracking-tight text-rose-500',
-				submitSuccess === false ? 'text-rose-500' : 'text-neutral-400'
-			)}
-		>
-			{#if submitSuccess === false}
+		{#if submitSuccess === false}
+			<p class="text-center text-[0.95rem] font-medium tracking-tight text-rose-500 text-rose-500">
 				The code couldn't be validated
-			{:else}
-				Enter the code you received
-			{/if}
-		</p>
+			</p>
+		{/if}
 		<div
 			class={createClass(
-				'group relative my-2 inline-block h-[2.8rem] rounded-[0.9rem] shadow-xs ring-[1px] ring-neutral-200/30 focus-within:ring-blue-500',
+				'group shadow-card relative my-2 inline-block h-[2.8rem] rounded-[0.9rem] border-[2px] border-neutral-200/90 focus-within:border-blue-500',
 				isComplete && submitSuccess !== false
-					? 'focus-within:ring-none bg-blue-100'
-					: 'bg-white focus-within:ring-2'
+					? 'bg-blue-100 focus-within:border-none'
+					: 'bg-white focus-within:border-2'
 			)}
 		>
 			<input
