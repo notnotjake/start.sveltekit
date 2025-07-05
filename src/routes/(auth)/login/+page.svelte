@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { fade, fly } from 'svelte/transition'
-	import { cubicOut } from 'svelte/easing'
+	import { fade } from 'svelte/transition'
 	import { createClass } from '$utils/styles'
 	import { wipeVertical } from '$ui/transition'
 
@@ -56,7 +55,6 @@
 	})
 
 	let identifier = $state('')
-	let editIdentity = $state(false)
 
 	let buttonWidth = $state(0)
 
@@ -88,7 +86,7 @@
 		}
 	}
 
-	const SUPPRESS_AUTO_PASSKEY = false
+	const SUPPRESS_AUTO_PASSKEY = true
 </script>
 
 {#if data.automaticPasskeyEnabled && !SUPPRESS_AUTO_PASSKEY}
