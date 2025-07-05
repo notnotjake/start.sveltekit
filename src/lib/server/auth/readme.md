@@ -52,3 +52,19 @@ Components: Encapsulate functionality into components that can be brought into y
 
 would need to have user create an auth.ts file in lib/server which would also have all their options but that way we can mount that code into the server directory so that it can be run server side safely.
 the more we use RPC, the less this is a concern.
+
+
+
+
+
+
+
+should move to try/catch and maybe away from structured responses?
+
+should i just remove passwords? or keep passwords and add 2fa totp?
+
+should i just use email 6-digit codes instead of magic links?
+- magic links are more secure (?)
+- short codes can be autofilled
+- short codes can be entered to another device easily by user
+- doesn't spawn a second tab
