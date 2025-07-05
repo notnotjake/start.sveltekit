@@ -18,9 +18,16 @@
 		}
 	})
 
+	async function initiate() {
+		if (isActivating) {
+			isActivating = false
+		} else {
+			await getOptions({ auto: false })
+		}
+	}
+
 	async function getOptions({ auto = false }: { auto: boolean }) {
 		isActivating = true
-		console.log(identifier)
 		try {
 			const response = await fetch('/auth/passkey-authenticate/options', {
 				method: 'POST',
@@ -33,8 +40,6 @@
 			})
 
 			const result = await response.json()
-
-			console.log(result)
 
 			if (result?.success && result?.data) {
 				startAuth({ optionsJSON: result.data.optionsJSON, useBrowserAutofill: auto })
@@ -49,7 +54,6 @@
 
 	async function startAuth({ optionsJSON }) {
 		try {
-			console.log(optionsJSON)
 			const authResponse = await startAuthentication({ optionsJSON })
 			passkeyAuthenticationVerify(authResponse)
 		} catch (e) {
@@ -84,7 +88,7 @@
 	{/if}
 	<button
 		type="button"
-		onclick={getOptions}
+		onclick={initiate}
 		class={createClass(
 			'relative m-auto flex h-fit min-h-12 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none px-4 py-3 font-medium text-white outline-none',
 			isActivating ? 'bg-vibrant-blue w-fit rounded-full' : 'bg-vibrant-blue'
