@@ -86,27 +86,43 @@
 	{#if isActivating}
 		<div class="h-5 w-full" transition:wipeVertical></div>
 	{/if}
-	<button
-		type="button"
-		onclick={initiate}
-		class={createClass(
-			'relative m-auto flex h-fit min-h-12 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none px-4 py-3 font-medium text-white outline-none',
-			isActivating ? 'bg-vibrant-blue w-fit rounded-full' : 'bg-vibrant-blue'
-		)}
-	>
-		{#if isActivating}
-			<Suspense.Spinner size={14} thickness={10} speed="fast" tint="var(--color-neutral-100)" />
-			<Suspense.Text
-				class="text-md"
-				spread={13}
-				colorBase="var(--color-sky-200)"
-				colorHighlight="var(--color-white)">Signing in with Passkey</Suspense.Text
-			>
-		{:else}
-			<PasskeyIcon />
-			Use Passkey
-		{/if}
-	</button>
+
+	<div class="flex w-full">
+		<div
+			class={createClass(
+				'transition-all',
+				isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
+			)}
+		></div>
+		<button
+			type="button"
+			onclick={initiate}
+			class={createClass(
+				'relative m-auto flex h-fit min-h-12 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] border-none px-4 py-3 font-medium text-white outline-none',
+				isActivating ? 'bg-vibrant-blue grow basis-1 rounded-full' : 'bg-vibrant-blue grow basis-1'
+			)}
+		>
+			{#if isActivating}
+				<Suspense.Spinner size={14} thickness={10} speed="fast" tint="var(--color-neutral-100)" />
+				<Suspense.Text
+					class="text-md"
+					spread={13}
+					colorBase="var(--color-sky-200)"
+					colorHighlight="var(--color-white)">Trying Passkey</Suspense.Text
+				>
+			{:else}
+				<PasskeyIcon />
+				<p class="whitespace-nowrap">Use Passkey</p>
+			{/if}
+		</button>
+		<div
+			class={createClass(
+				'transition-all',
+				isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
+			)}
+		></div>
+	</div>
+
 	{#if isActivating}
 		<div class="h-5 w-full" transition:wipeVertical></div>
 	{/if}
