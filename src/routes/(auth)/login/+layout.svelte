@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AdaptingContainer from '$ui/container/adapting.svelte'
 	import HelpMenu from '$bits/auth/help.svelte'
 	let { children } = $props()
 
