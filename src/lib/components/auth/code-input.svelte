@@ -191,6 +191,7 @@
 		>
 			<input
 				type="text"
+				autocomplete="one-time-code"
 				bind:this={inputElement}
 				value={enteredCode}
 				oninput={handleInput}

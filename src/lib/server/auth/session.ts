@@ -140,17 +140,20 @@ export async function validateSessionToken(token: string) {
 
 	// Check if the session has been invalidated
 	if (session.invalidatedAt !== null) {
+		// TODO: return something to notify user that they have been logged out
+		// maybe also autofilling the same identifier?
 		return { session: null, user: null }
 	}
 
 	// Check if session is expired
 	const sessionExpired = Date.now() >= session.expiresAt.getTime()
 	if (sessionExpired) {
+		// TODO: return something to notify user that their login expired and they've been logged out
+		// maybe also autofilling the same identifier?
 		return { session: null, user: null }
 	}
 
 	// Update times
-
 	let needsUpdate = false
 	const updateData: { lastSeenAt?: Date; expiresAt?: Date } = {}
 

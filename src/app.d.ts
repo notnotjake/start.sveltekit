@@ -1,18 +1,14 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-import type { SessionValidationResult } from '$lib/server/auth/session'
+import type { User, Session } from '$lib/server/db/schema/auth'
 
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: SessionValidationResult['user']
-			session: SessionValidationResult['session']
+			user: User | null
+			session: Session | null
 			requestId: string
-			meta: {
-				title: string | null
-				description: string | null
-			}
 		}
 		// interface PageData {}
 		// interface PageState {}

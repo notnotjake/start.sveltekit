@@ -9,12 +9,12 @@
 // other things about how it's setup and working
 
 const authOptions = {
-	redirects: {
-		afterLogin: '/dashboard',
-		afterLogout: '/',
-		afterAccountCreated: '/welcome',
-		afterAccountDeleted: '/'
-	},
+		redirects: {
+			afterLogin: '/dashboard',
+			afterLogout: '/',
+			afterAccountCreated: '/welcome',
+			afterAccountDeleted: '/'
+		},
 	authenticationMethods: {
 		passkeys: 'true',
 		passwords: 'true',

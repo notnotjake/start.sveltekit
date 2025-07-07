@@ -13,6 +13,7 @@ export const authHandler: Handle = async ({ event, resolve }) => {
 
 	// Otherwise, validate the session cookie
 	const { session, user } = await Auth.validateSessionToken(sessionToken)
+
 	if (session) {
 		// And reset the cookie with new expiration
 		Auth.setSessionTokenCookie(event, sessionToken, session.expiresAt)
@@ -21,7 +22,7 @@ export const authHandler: Handle = async ({ event, resolve }) => {
 		Auth.deleteSessionTokenCookie(event)
 	}
 
-	// Return the user and session if they were verified or null
+	// Return the user and session (could be verified or null)
 	event.locals.user = user
 	event.locals.session = session
 
