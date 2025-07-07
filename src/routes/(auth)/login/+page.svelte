@@ -86,7 +86,7 @@
 		}
 	}
 
-	const SUPPRESS_AUTO_PASSKEY = true
+	const SUPPRESS_AUTO_PASSKEY = false
 </script>
 
 {#if data.automaticPasskeyEnabled && !SUPPRESS_AUTO_PASSKEY}
