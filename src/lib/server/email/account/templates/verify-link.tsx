@@ -12,26 +12,25 @@ import {
 
 import { Expires } from '../components/expires'
 import { HeaderGroup } from '../components/header-group'
+import { expirationString } from '../utils/exp-string'
 
 type Options = {
-	newAccount: boolean
+	headingText: string
+	descriptiveText: string
+	actionText: string
+	preview: string
 	url: string
-	maxAgeMins: string | number
-	expiresAtString: string
+	timezone?: string
+	maxAgeMins: number
 }
 
-const MagicLinkEmail = ({ newAccount, url, maxAgeMins = 5, expiresAtString }: Options) => {
-	const previewText = newAccount
-		? 'finish creating your account'
-		: 'securely log in to your account'
-	const headingText = newAccount ? 'Create your account' : 'Log in to your account'
-	const descriptiveText = newAccount ? 'activate account' : 'securely log in'
+const MagicLinkEmail = ({ headingText, descriptiveText, actionText, preview, url, timezone = 'UTC', maxAgeMins = 5 }: Options) => {
+	const expiresAtString = expirationString(maxAgeMins, timezone)
 
 	return (
 		<Html>
 			<Preview>
-				Here is your link to {previewText}. This link is available for {maxAgeMins.toString()}{' '}
-				minutes
+				{preview}
 			</Preview>
 			<Tailwind>
 				<Head>
@@ -47,7 +46,7 @@ const MagicLinkEmail = ({ newAccount, url, maxAgeMins = 5, expiresAtString }: Op
 								className="box-border h-[50px] w-full rounded-[14px] bg-black px-[24px] py-[14px] text-center text-[16px] font-medium text-white dark:bg-neutral-50 dark:text-black"
 								href={url}
 							>
-								Click to Sign In
+								Click to {actionText}
 							</Button>
 						</Section>
 

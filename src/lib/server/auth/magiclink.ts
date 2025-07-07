@@ -1,5 +1,5 @@
 import Auth from '$lib/server/auth'
-import Email from '$lib/server/email'
+import SendEmail from '$lib/server/email'
 import { StructuredResponse as Response } from '$utils/structured-response'
 
 export async function sendMagiclink({
@@ -18,9 +18,9 @@ export async function sendMagiclink({
 
 	try {
 		if (type === 'login') {
-			await Email.login({ newAccount: false, email, token, timezone, maxAgeMins })
+			await SendEmail.account.loginExistingUserWithLink({ email, url: token, timezone, maxAgeMins })
 		} else if (type === 'register') {
-			await Email.login({ newAccount: true, email, token, timezone })
+			await SendEmail.account.loginNewUserWithLink({ email, url: token, timezone, maxAgeMins })
 		} else {
 			return Response.fail('Invalid email type')
 		}
@@ -61,9 +61,9 @@ export async function sendCode({
 
 	try {
 		if (type === 'login') {
-			await Email.loginCode({ newAccount: false, email, code, timezone, maxAgeMins })
+			await SendEmail.account.loginExistingUserWithCode({ email, code, timezone, maxAgeMins })
 		} else if (type === 'register') {
-			await Email.loginCode({ newAccount: true, email, code, timezone, maxAgeMins })
+			await SendEmail.account.loginNewUserWithCode({ email, code, timezone, maxAgeMins })
 		} else {
 			return Response.fail('Invalid email type')
 		}

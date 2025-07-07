@@ -1,12 +1,9 @@
-import { PUBLIC_NODE_ENV } from '$env/static/public'
+import * as account from './account'
+import * as payments from './payments'
 
-import { login } from './login'
-
-const Email = {
-	login
+export const SendEmail = {
+	account: account,
+	payments: payments
 }
 
-export default Email
-
-export const CONSOLE_ONLY = PUBLIC_NODE_ENV === 'development'
-// export const CONSOLE_ONLY = false
+export default SendEmail

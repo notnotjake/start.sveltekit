@@ -12,17 +12,23 @@ import {
 
 import { Expires } from '../components/expires'
 import { HeaderGroup } from '../components/header-group'
+import { expirationString } from '../utils/exp-string'
 
 type Options = {
+	headingText: string
+	descriptiveText: string
+	preview: string
 	code: string
-	maxAgeMins: string | number
-	expiresAtString: string
+	timezone?: string
+	maxAgeMins: number
 }
 
-const ConfirmChangeEmail = ({ code, maxAgeMins = 5, expiresAtString }: Options) => {
+const VerifyCode = ({ headingText, descriptiveText, preview, code, timezone = 'UTC', maxAgeMins = 5 }: Options) => {
+	const expiresAtString = expirationString(maxAgeMins, timezone)
+
 	return (
 		<Html>
-			<Preview>To update your email, confirm with the code {code}</Preview>
+			<Preview>{preview}</Preview>
 			<Tailwind>
 				<Head>
 					<meta name="color-scheme" content="light dark" />
@@ -46,4 +52,4 @@ const ConfirmChangeEmail = ({ code, maxAgeMins = 5, expiresAtString }: Options) 
 	)
 }
 
-export default ConfirmChangeEmail
+export default VerifyCode

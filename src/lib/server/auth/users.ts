@@ -6,8 +6,7 @@ import { randomUUID } from 'crypto'
 import { generateShortCode } from './utils'
 import { verifyShortCodesMatch } from './password'
 import { createAuthAttempt, getAuthAttempt, cleanupAttempts } from './auth-attempt'
-import { confirmChangeEmail } from '$lib/server/email/confirm-change-email'
-import { alertChangeEmail } from '$lib/server/email/alert-change-email'
+import SendEmail from '$lib/server/email'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -180,8 +179,8 @@ export async function requestUpdateUserIdentifier({
 		const code = generateShortCode()
 
 		// email the code
-		await confirmChangeEmail({
-			email: newIdentifier,
+		await SendEmail.account.changeEmailVerify({
+			newEmail: newIdentifier,
 			code,
 			timezone,
 			maxAgeMins: 5
@@ -240,10 +239,7 @@ export async function confirmUpdateUserIdentifier({
 		await cleanupAttempts({ identifier: result.data.identifier, sessionId: sessionId })
 
 		// Notify user that email was updated
-		await alertChangeEmail({
-			email: user.identifier,
-			newEmail: newIdentifier
-		})
+		await SendEmail.account.changeEmailAlert({ email: user.identifier, newEmail: newIdentifier })
 
 		return Response.succeed()
 	} catch (e) {
