@@ -24,14 +24,20 @@ type Options = {
 	maxAgeMins: number
 }
 
-const MagicLinkEmail = ({ headingText, descriptiveText, actionText, preview, url, timezone = 'UTC', maxAgeMins = 5 }: Options) => {
+const MagicLinkEmail = ({
+	headingText,
+	descriptiveText,
+	actionText,
+	preview,
+	url,
+	timezone = 'UTC',
+	maxAgeMins = 5
+}: Options) => {
 	const expiresAtString = expirationString(maxAgeMins, timezone)
 
 	return (
 		<Html>
-			<Preview>
-				{preview}
-			</Preview>
+			<Preview>{preview}</Preview>
 			<Tailwind>
 				<Head>
 					<meta name="color-scheme" content="light dark" />
@@ -41,7 +47,7 @@ const MagicLinkEmail = ({ headingText, descriptiveText, actionText, preview, url
 					<Container className="mx-auto max-w-[430px] px-1">
 						<HeaderGroup headingText={headingText} descriptiveText={descriptiveText} />
 
-						<Section className="mt-10 mb-16">
+						<Section className="mt-5 mb-16">
 							<Button
 								className="box-border h-[50px] w-full rounded-[14px] bg-black px-[24px] py-[14px] text-center text-[16px] font-medium text-white dark:bg-neutral-50 dark:text-black"
 								href={url}
