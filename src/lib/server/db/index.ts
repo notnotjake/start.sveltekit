@@ -19,9 +19,10 @@ const connection = isLocalDevelopment
 
 const turso = createClient(connection)
 
-turso.execute('PRAGMA journal_mode = WAL;') // Better performance
+// turso.execute('PRAGMA journal_mode = WAL;') // Better performance
 turso.execute('PRAGMA foreign_keys = ON;') // Enable foreign key constraints
 turso.execute('PRAGMA synchronous = NORMAL;') // Good balance of safety and speed
+// turso.execute('PRAGMA busy_timeout = 5000;') // Timeout after 5s
 
 export const db = drizzle({
 	client: turso,
