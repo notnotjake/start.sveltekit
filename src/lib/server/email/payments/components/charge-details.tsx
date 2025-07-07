@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Text } from '@react-email/components'
-import { formatCurrency } from './utils'
+import { formatCurrency } from '../utils/currency-format'
 
 export const ChargeDetails = ({
 	amount = 450,

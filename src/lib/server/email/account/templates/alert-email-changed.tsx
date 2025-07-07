@@ -10,10 +10,10 @@ import {
 	Tailwind
 } from '@react-email/components'
 
-const AlertChangeEmail = ({ newEmail }: { newEmail: string }) => {
+const AlertEmailChanged = ({ newEmail = 'missing@email.com' }: { newEmail: string }) => {
 	return (
 		<Html>
-			<Preview>Your account's email has been updated</Preview>
+			<Preview>Your account's email has been changed to {newEmail}</Preview>
 			<Tailwind>
 				<Head>
 					<meta name="color-scheme" content="light dark" />
@@ -22,11 +22,12 @@ const AlertChangeEmail = ({ newEmail }: { newEmail: string }) => {
 				<Body className="bg-white pt-[50px] pb-[40px] font-sans dark:bg-neutral-900">
 					<Container className="mx-auto max-w-[430px] px-1">
 						<Heading className="m-0 pb-2 text-left text-[19px] font-[590] tracking-[-0.01em] text-neutral-800 dark:text-white">
-							Your email has been successfully updated
+							Your account email has been changed
 						</Heading>
 
 						<Text className="m-0 mb-[32px] text-left text-[16px] tracking-[-0.01em] text-neutral-500 dark:text-neutral-400">
-							Your accounts email has been updated to {newEmail}
+							Your accounts email has been updated to{' '}
+							<span className="text-neutral-700 dark:text-neutral-300">{newEmail}</span>
 						</Text>
 					</Container>
 				</Body>
@@ -35,4 +36,4 @@ const AlertChangeEmail = ({ newEmail }: { newEmail: string }) => {
 	)
 }
 
-export default AlertChangeEmail
+export default AlertEmailChanged

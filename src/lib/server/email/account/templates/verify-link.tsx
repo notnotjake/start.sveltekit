@@ -5,12 +5,13 @@ import {
 	Preview,
 	Container,
 	Head,
-	Heading,
 	Html,
 	Section,
-	Text,
 	Tailwind
 } from '@react-email/components'
+
+import { Expires } from '../components/expires'
+import { HeaderGroup } from '../components/header-group'
 
 type Options = {
 	newAccount: boolean
@@ -18,7 +19,8 @@ type Options = {
 	maxAgeMins: string | number
 	expiresAtString: string
 }
-const MagicLinkEmail = ({ newAccount, url, maxAgeMins, expiresAtString }: Options) => {
+
+const MagicLinkEmail = ({ newAccount, url, maxAgeMins = 5, expiresAtString }: Options) => {
 	const previewText = newAccount
 		? 'finish creating your account'
 		: 'securely log in to your account'
@@ -28,7 +30,8 @@ const MagicLinkEmail = ({ newAccount, url, maxAgeMins, expiresAtString }: Option
 	return (
 		<Html>
 			<Preview>
-				Here is your link to {previewText}. This link is available for {maxAgeMins} minutes
+				Here is your link to {previewText}. This link is available for {maxAgeMins.toString()}{' '}
+				minutes
 			</Preview>
 			<Tailwind>
 				<Head>
@@ -37,13 +40,7 @@ const MagicLinkEmail = ({ newAccount, url, maxAgeMins, expiresAtString }: Option
 				</Head>
 				<Body className="bg-white pt-[50px] pb-[40px] font-sans dark:bg-neutral-900">
 					<Container className="mx-auto max-w-[430px] px-1">
-						<Heading className="m-0 pb-2 text-left text-[19px] font-[590] tracking-[-0.01em] text-neutral-800 dark:text-white">
-							{headingText}
-						</Heading>
-
-						<Text className="m-0 mb-[32px] text-left text-[16px] tracking-[-0.01em] text-neutral-500 dark:text-neutral-400">
-							Use the link below to {descriptiveText}
-						</Text>
+						<HeaderGroup headingText={headingText} descriptiveText={descriptiveText} />
 
 						<Section className="mt-10 mb-16">
 							<Button
@@ -54,13 +51,7 @@ const MagicLinkEmail = ({ newAccount, url, maxAgeMins, expiresAtString }: Option
 							</Button>
 						</Section>
 
-						<Text className="m-0 text-left text-[14px] leading-1 text-neutral-700 dark:text-neutral-200">
-							This login will be available for {maxAgeMins} minutes
-						</Text>
-
-						<Text className="m-0 text-left text-[14px] text-neutral-500 dark:text-neutral-400">
-							Expires at {expiresAtString}
-						</Text>
+						<Expires maxAgeMins={maxAgeMins} expiresAtString={expiresAtString} />
 					</Container>
 				</Body>
 			</Tailwind>

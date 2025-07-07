@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Text, Section } from '@react-email/components'
 
-import { formatCurrency } from './utils'
+import { formatCurrency } from '../utils/currency-format'
 
 export const SubscriptionItem = ({ itemName = 'Web Hosting', period = 'month', price = 25 }) => {
 	return (

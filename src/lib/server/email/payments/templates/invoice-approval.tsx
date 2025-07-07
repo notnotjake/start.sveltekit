@@ -11,7 +11,7 @@ import {
 	Hr
 } from '@react-email/components'
 
-import { Title, ChargeDetails, Actions, TransactionId, Summary } from './components'
+import { Title, ChargeDetails, Actions, TransactionId, Summary } from '../components'
 
 const invoiceDetails = {
 	description: 'Landing page for new product',

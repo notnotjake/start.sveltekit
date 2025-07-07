@@ -8,43 +8,10 @@ import {
 	Section,
 	Text,
 	Tailwind,
-	Hr,
 	Link
 } from '@react-email/components'
 
-import {
-	Title,
-	ChargeDetails,
-	Actions,
-	TransactionId,
-	Summary,
-	SubscriptionItem
-} from './components'
-
-const invoiceDetails = {
-	description: 'Landing page for new product',
-	link: '/invoices/fc9ae3',
-	items: [
-		{
-			name: 'Web Design',
-			qty: 1,
-			units: null,
-			price: 250
-		},
-		{
-			name: 'Hosting & Analytics',
-			qty: 1,
-			units: 'month',
-			price: 50
-		},
-		{
-			name: 'Content Design & Publishing',
-			qty: 6,
-			units: 'pages',
-			price: 500
-		}
-	]
-}
+import { Title, SubscriptionItem } from '../components'
 
 const ConfirmChangeEmail = () => {
 	return (

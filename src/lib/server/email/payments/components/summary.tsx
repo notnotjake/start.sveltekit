@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Section, Text, Row, Column, Link } from '@react-email/components'
-import { formatCurrency, formatCurrencyCompact } from './utils'
+import { formatCurrency, formatCurrencyCompact } from '../utils/currency-format'
 
 const invoiceDetails = {
 	description: 'Landing page for new product',
