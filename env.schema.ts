@@ -10,7 +10,8 @@ export const privateSchema = z.object({
 export const publicSchema = z.object({
 	PUBLIC_URL_BASE: z.string().url().optional().default(''),
 	PUBLIC_URL_ASSETS: z.union([z.string().url(), z.literal('')]),
-	PUBLIC_ANALYTICS: z.coerce.boolean()
+	PUBLIC_ANALYTICS: z.coerce.boolean(),
+	PUBLIC_URL_ID: z.string().optional().default('localhost')
 })
 
 export const envSchema = z.object({

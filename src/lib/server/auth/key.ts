@@ -17,26 +17,35 @@ export async function addPasskey({
 	credential: Uint8Array
 	name?: string
 }): Promise<Response<Key | null>> {
-	const credentialEncoded = encodeBase64(credential)
-
-	const newPasskey: NewKey = {
-		id: passkeyId,
-		userId: userId,
-		type: 'passkey',
-		name: name || null,
-		credential: credentialEncoded,
-		createdAt: new Date()
-	}
-
 	try {
-		const [result] = await db.insert(table.key).values(newPasskey).returning()
-		if (result) return Response.succeed()
-	} catch (e) {
-		console.error(e)
-		return Response.fail('Failed to save to databse')
-	}
+		const credentialEncoded = encodeBase64(credential)
 
-	return Response.fail()
+		const newPasskey: NewKey = {
+			id: passkeyId,
+			userId: userId,
+			type: 'passkey',
+			name: name || null,
+			credential: credentialEncoded,
+			createdAt: new Date()
+		}
+
+		console.log('Adding passkey to database:', { userId, passkeyId, name })
+
+		const [result] = await db.insert(table.key).values(newPasskey).returning()
+		if (result) {
+			console.log('Passkey added successfully')
+			return Response.succeed(result)
+		} else {
+			console.error('No result returned from database insert')
+			return Response.fail('Failed to save passkey - no result returned')
+		}
+	} catch (e) {
+		console.error('Database error adding passkey:', e)
+		if (e instanceof Error) {
+			return Response.fail(`Failed to save passkey: ${e.message}`)
+		}
+		return Response.fail('Failed to save passkey to database')
+	}
 }
 
 export async function getPasskeyCredential(keyId: string): Promise<Uint8Array | null> {
@@ -70,14 +79,17 @@ export async function getPasskeyUser(keyId: string): Promise<User | null> {
 	return result || null
 }
 
-export async function getPasskeys(identifier: string): Promise<Response<Key[] | null>> {
+export async function getPasskeys(_identifier: string): Promise<Response<Key[] | null>> {
+	// TODO: Implement getPasskeys
 	return Response.fail()
 }
 
-export async function updatePasskeyName(identifier: string): Promise<Response<Key[] | null>> {
+export async function updatePasskeyName(_identifier: string): Promise<Response<Key[] | null>> {
+	// TODO: Implement updatePasskeyName
 	return Response.fail()
 }
 
-export async function removePasskey(identifier: string, keyId: string): Promise<Response<never>> {
+export async function removePasskey(_identifier: string, _keyId: string): Promise<Response<never>> {
+	// TODO: Implement removePasskey
 	return Response.fail()
 }
