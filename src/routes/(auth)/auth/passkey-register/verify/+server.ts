@@ -43,7 +43,7 @@ export const POST: RequestHandler = async (event) => {
 			return fail(400)
 		}
 
-		Auth.addPasskey({
+		await Auth.addPasskey({
 			userId,
 			passkeyId,
 			credential,
