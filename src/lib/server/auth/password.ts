@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db'
 import { eq, and } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import { type User, type NewKey, lower } from '$lib/server/db/schema'
+import { type User, type NewKey, lower } from '$lib/server/db/schema/auth'
 
 import { hash, verify } from '@node-rs/argon2'
 import { randomUUID } from 'crypto'

@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import * as table from '$lib/server/db/schema/auth'
-import { type Key, type NewKey, type User } from '$lib/server/db/schema'
+import { type Key, type NewKey, type User } from '$lib/server/db/schema/auth'
 import { encodeBase64, decodeBase64 } from '@oslojs/encoding'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
