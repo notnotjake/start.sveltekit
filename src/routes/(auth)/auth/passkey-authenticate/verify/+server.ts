@@ -1,8 +1,12 @@
+import { env } from '$env/dynamic/public'
 import type { RequestHandler } from './$types'
 import { json, error } from '@sveltejs/kit'
 
 import Auth from '$lib/server/auth'
 import { verifyAuthenticationResponse } from '@simplewebauthn/server'
+
+const expectedOrigin = env.PUBLIC_URL_BASE || 'http://localhost:5173'
+const expectedRPID = env.PUBLIC_URL_ID || 'localhost'
 
 export const POST: RequestHandler = async (event) => {
 	if (!event.locals.session) {
@@ -39,8 +43,8 @@ export const POST: RequestHandler = async (event) => {
 		const attempt = await verifyAuthenticationResponse({
 			response: body,
 			expectedChallenge: challenge,
-			expectedOrigin: 'http://localhost:5173',
-			expectedRPID: 'localhost',
+			expectedOrigin,
+			expectedRPID,
 			credential: {
 				id: keyId,
 				publicKey: savedKey,
