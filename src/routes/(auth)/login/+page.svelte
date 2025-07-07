@@ -9,7 +9,7 @@
 	import PasswordInput from '$bits/auth/password-input.svelte'
 	import PasskeyAuto from '$bits/auth/passkey-auto.svelte'
 	import PasskeyButton from '$bits/auth/passkey-button.svelte'
-	import MagicLinkMessage from '$bits/auth/magic-link-message.svelte'
+	import CodeMessage from '$bits/auth/code-message.svelte'
 	import ToastSwap from '$ui/feedback/toast-swap.svelte'
 
 	import { IconCopy, IconArrowBackUp } from '@tabler/icons-svelte'
@@ -18,7 +18,7 @@
 	import { onMount } from 'svelte'
 	import { superForm } from 'sveltekit-superforms'
 	import { zodClient } from 'sveltekit-superforms/adapters'
-	import { emailSchema, passwordLoginSchema } from './schema.ts'
+	import { emailSchema, passwordLoginSchema } from './schema'
 
 	let { data } = $props()
 
@@ -276,7 +276,7 @@
 					{/if}
 
 					{#if $emailMessage?.emailAvailable}
-						<MagicLinkMessage
+						<CodeMessage
 							email={$emailForm.email}
 							triggerAttention={emailAttentionAnimate}
 							emailSent={$emailMessage?.emailSentSuccess}

@@ -136,7 +136,7 @@ export const actions: Actions = {
 		}
 
 		if (sendLoginEmail) {
-			const response = await Auth.sendMagiclink({
+			const response = await Auth.sendCode({
 				email: emailForm.data.email,
 				sessionId: event.locals.session.id,
 				type: existingUser ? 'login' : 'register',

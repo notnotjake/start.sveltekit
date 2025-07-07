@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { goto } from '$app/navigation'
 	import { scale } from 'svelte/transition'
 	import { wipeVertical, wipeHorizontal } from '$ui/transition'
 
 	import { createClass } from '$utils/styles'
-	import ProgressRadial from '$ui/feedback/progress-radial.svelte'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
 	import ToastSwap from '$ui/feedback/toast-swap.svelte'
 	import CodeInput from '$bits/auth/code-input.svelte'
@@ -22,7 +20,7 @@
 	const RESENDS_BEFORE_ALERT = 2
 	let resendCount = $state(initialEmailSent ? 1 : 0)
 
-	// Start with code input shown by default when email is sent
+	// Show code input by default when email is sent
 	let showCodeInput = $state(initialEmailSent)
 
 	let toastConfirmSent = $state(null)
@@ -48,7 +46,6 @@
 	async function sendEmail() {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 		sendStatus = 'sending'
-		connectionError = false
 
 		try {
 			const response = await fetch('/auth/magiclink/send', {
@@ -90,12 +87,6 @@
 		<div in:wipeVertical class="mb-2 rounded-[0.9rem] py-5">
 			<CodeInput {email} />
 		</div>
-	{:else if connectionError}
-		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-amber-600">
-			Connection issue. {reconnectAttempts < MAX_RECONNECT_ATTEMPTS
-				? 'Reconnecting...'
-				: 'Please try again.'}
-		</p>
 	{:else if sendStatus === 'error'}
 		<p class="tracking-tight-md animate-fade-in-scale w-full text-center text-rose-600">
 			Unable to send email. Try again
@@ -135,7 +126,7 @@
 				{/snippet}
 
 				{#if sendStatus !== 'sending'}
-					<ResendButton onclick={resendButtonClickHandler} {sendStatus} />
+					<ResendButton onclick={resendButtonClickHandler} {sendStatus} cooldownMs={30000} />
 				{/if}
 			</ToastSwap>
 		{/if}
@@ -163,4 +154,4 @@
 			color: inherit;
 		}
 	}
-</style>
+</style> 

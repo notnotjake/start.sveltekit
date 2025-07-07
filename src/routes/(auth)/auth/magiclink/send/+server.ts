@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 		const existingUser = userRequest.data.exists
 
-		const response = await Auth.sendMagiclink({
+		const response = await Auth.sendCode({
 			email: data.email,
 			sessionId: sessionId,
 			type: existingUser ? 'login' : 'register',
@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		} else {
 			return json(Response.fail('Failed to send email'), { status: 500 })
 		}
-	} catch (e) {
+	} catch {
 		return json(Response.fail('An unexpected error occurred'), { status: 400 })
 	}
 }
