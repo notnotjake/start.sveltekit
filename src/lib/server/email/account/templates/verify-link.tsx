@@ -47,7 +47,7 @@ const MagicLinkEmail = ({
 					<Container className="mx-auto max-w-[430px] px-1">
 						<HeaderGroup headingText={headingText} descriptiveText={descriptiveText} />
 
-						<Section className="mt-5 mb-16">
+						<Section className="mb-16">
 							<Button
 								className="box-border h-[50px] w-full rounded-[14px] bg-black px-[24px] py-[14px] text-center text-[16px] font-medium text-white dark:bg-neutral-50 dark:text-black"
 								href={url}

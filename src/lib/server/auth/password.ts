@@ -104,7 +104,12 @@ export async function addPassword({
 			credential: table.key.credential
 		})
 		.from(table.key)
-		.where(eq(table.key.userId, userId))
+		.where(
+			and(
+				eq(table.key.userId, userId),
+				eq(table.key.type, 'password')
+			)
+		)
 		.limit(1)
 
 	if (key?.credential) return Response.fail('Password already set')
@@ -156,7 +161,12 @@ export async function updatePassword({
 			credential: table.key.credential
 		})
 		.from(table.key)
-		.where(eq(table.key.userId, userId))
+		.where(
+			and(
+				eq(table.key.userId, userId),
+				eq(table.key.type, 'password')
+			)
+		)
 		.limit(1)
 
 	if (!storedPassword) return Response.fail('No current password found')
@@ -173,7 +183,12 @@ export async function updatePassword({
 			await db
 				.update(table.key)
 				.set({ credential: passwordHash, createdAt: new Date() })
-				.where(eq(table.key.userId, userId))
+				.where(
+					and(
+						eq(table.key.userId, userId),
+						eq(table.key.type, 'password')
+					)
+				)
 				.returning()
 			return Response.succeed()
 		} catch (e) {

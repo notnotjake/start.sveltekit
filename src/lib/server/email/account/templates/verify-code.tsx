@@ -45,7 +45,7 @@ const VerifyCode = ({
 					<Container className="mx-auto max-w-[430px] px-1">
 						<HeaderGroup headingText={headingText} descriptiveText={descriptiveText} />
 
-						<Section className="mt-5 mb-16">
+						<Section className="mb-16">
 							<Text className="box-border h-[50px] w-full rounded-[14px] bg-neutral-100 px-[24px] py-[14px] text-center font-mono text-[16px] font-medium text-black dark:bg-neutral-800 dark:text-white">
 								{code}
 							</Text>
