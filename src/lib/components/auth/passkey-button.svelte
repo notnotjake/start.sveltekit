@@ -89,7 +89,7 @@
 			passkeyAuthenticationVerify(authResponse)
 		} catch (e) {
 			console.log(e)
-			// handleError({ message: 'Browser was unable to start passkey authentication', retry: true })
+			handleError({ message: 'Browser was unable to start passkey authentication', retry: true })
 		}
 	}
 
