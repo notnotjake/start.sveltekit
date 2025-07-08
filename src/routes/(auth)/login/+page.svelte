@@ -100,10 +100,10 @@
 	></div>
 {/if}
 
-<div class="z-10 flex h-full w-full max-w-[26rem] items-center justify-center px-2">
+<div class="z-10 flex h-full w-full max-w-[28rem] items-center justify-center px-2">
 	<div
 		class={createClass(
-			'relative flex min-h-40 w-full max-w-[26rem] flex-shrink-0 grow flex-col items-center rounded-[1.8rem] p-[0.5rem] px-2.5 transition-all duration-200 sm:px-5',
+			'relative flex min-h-40 w-full flex-shrink-0 grow flex-col items-center rounded-[1.8rem] p-[0.5rem] px-2.5 transition-all duration-200 sm:px-5',
 			$emailMessage ? 'rounded-[1.4rem] bg-white pt-4 pb-10' : 'bg-none'
 		)}
 	>
