@@ -17,11 +17,4 @@
 	</p>
 
 	<Button href="/login" style="primary" rounded="md" class="w-fit">Login</Button>
-
-	<Button
-		href="/playground"
-		style="secondary"
-		rounded="full"
-		class="w-fit text-blue-500 hover:text-blue-600">Go to Playground</Button
-	>
 </div>

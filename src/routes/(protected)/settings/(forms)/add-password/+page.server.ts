@@ -38,6 +38,7 @@ export const actions: Actions = {
 			identifier: user.identifier,
 			password: addPasswordForm.data.password
 		})
+		console.log(result)
 
 		if (!result.success) return fail(400, { addPasswordForm })
 
