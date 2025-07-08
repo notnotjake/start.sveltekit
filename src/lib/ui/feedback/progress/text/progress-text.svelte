@@ -15,6 +15,7 @@
 		direction?: 'up' | 'down' | 'left' | 'right'
 		dur?: number
 		blur?: number
+		onComplete?: () => void
 	}
 	let {
 		children,
@@ -26,7 +27,8 @@
 		max = 100,
 		direction = 'up',
 		dur = 500,
-		blur = 0
+		blur = 0,
+		onComplete
 	}: Props = $props()
 
 	// Create a tweened store for smooth transitions
@@ -41,6 +43,12 @@
 			progress.target = 100
 		} else {
 			progress.target = Math.min(max, Math.max(min, value))
+		}
+	})
+
+	$effect(() => {
+		if (progress.current >= 100) {
+			onComplete()
 		}
 	})
 
