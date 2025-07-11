@@ -56,6 +56,8 @@
 
 	let identifier = $state('')
 
+	let identifierInput = $state()
+
 	let buttonWidth = $state(0)
 
 	// Set user's timezone on component mount
@@ -209,8 +211,24 @@
 						placeholder="Continue with email"
 						aria-label="Enter your email"
 						bind:value={$emailForm.email}
+						bind:this={identifierInput}
 						{...$emailConstraints.email}
-						onfocusin={resetForm}
+						tabindex={$emailMessage ? '-1' : '1'}
+						onclick={() => {
+							if ($emailMessage) {
+								resetForm()
+							}
+						}}
+						onchange={() => {
+							if ($emailMessage) {
+								resetForm()
+							}
+						}}
+						onfocus={() => {
+							if ($emailMessage) {
+								identifierInput.blur()
+							}
+						}}
 						class:attention-animation={doAttentionAnimation}
 						class={createClass(
 							'h-full w-full flex-grow-1 translate-y-0 pl-4 font-[450] text-zinc-900 transition-all outline-none selection:bg-sky-200 selection:text-blue-600 placeholder:font-[450] placeholder:text-neutral-400',
@@ -291,6 +309,29 @@
 <style>
 	.attention-animation {
 		animation: bounce 0.7s ease-in-out;
+	}
+	
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	input:-webkit-autofill:active {
+		-webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+		background-color: transparent !important;
+		background-image: none !important;
+		color: inherit !important;
+	}
+	
+	input[data-com-onepassword-filled="light"],
+	select[data-com-onepassword-filled="light"],
+	textarea[data-com-onepassword-filled="light"] {
+	  background-color: transparent !important;
+	  background-image: none !important;
+	}
+	input[data-com-onepassword-filled="dark"],
+	select[data-com-onepassword-filled="dark"],
+	textarea[data-com-onepassword-filled="dark"] {
+		background-color: transparent !important;
+		background-image: none !important;
 	}
 
 	@keyframes bounce {

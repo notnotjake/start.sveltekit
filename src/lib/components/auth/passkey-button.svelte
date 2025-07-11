@@ -6,13 +6,11 @@
 	import { Suspense } from '$ui/feedback'
 	import PasskeyIcon from '$ui/icon/passkey.svelte'
 
-	import { IconChevronDown, IconReload, IconInfoTriangleFilled } from '@tabler/icons-svelte'
+	import { IconReload, IconInfoTriangleFilled } from '@tabler/icons-svelte'
 
-	import { startAuthentication } from '@simplewebauthn/browser'
+	import { startAuthentication, type AuthenticationResponseJSON } from '@simplewebauthn/browser'
 
 	let { identifier, supressAuto = false }: { identifier: string; supressAuto: boolean } = $props()
-
-	let isActivating = $state(false)
 
 	onMount(() => {
 		if (!supressAuto) {
@@ -20,43 +18,109 @@
 		}
 	})
 
-	async function handleClick() {
-		if (isActivating && hasError.error && hasError.retry) {
-			await getOptions({ auto: false })
-			hasError.error = false
-			hasError.message = null
-		} else if (isActivating && hasError.error && !hasError.retry) {
-			isActivating = false
-			hasError.error = false
-			hasError.message = null
-		} else if (isActivating) {
-			isActivating = false
-		} else if (!isActivating) {
-			await getOptions({ auto: false })
+	class PasskeyButtonState {
+		#isActivating = $state(false)
+		#error = $state(false)
+		#cancelled = $state(false)
+		#message = $state<string | null>(null)
+		#retry = $state(false)
+
+		// Computed getters for reactive state
+		get isActivating() {
+			return this.#isActivating
+		}
+		get hasError() {
+			return this.#error
+		}
+		get isCancelled() {
+			return this.#cancelled
+		}
+		get message() {
+			return this.#message
+		}
+		get retry() {
+			return this.#retry
+		}
+
+		// State management methods
+		activate() {
+			this.#isActivating = true
+			this.clearError()
+		}
+
+		deactivate() {
+			this.#isActivating = false
+			this.clearError()
+		}
+
+		setError(message: string | null, retry: boolean = true) {
+			if (this.#isActivating) {
+				this.#error = true
+				this.#message = message
+				this.#retry = retry
+
+				if (message) {
+					console.log('Passkey Error: ' + message)
+				}
+			} else {
+				console.log(
+					message
+						? `Passkey error after user cancelled. ${message}`
+						: 'Passkey error after user cancelled'
+				)
+			}
+		}
+
+		setCancelled(message: string) {
+			if (this.#isActivating) {
+				this.#cancelled = true
+				this.#message = message
+				this.#retry = true
+
+				console.log('Passkey Cancelled: ' + message)
+			} else {
+				console.log(`Passkey cancelled. ${message}`)
+			}
+		}
+
+		clearError() {
+			this.#error = false
+			this.#cancelled = false
+			this.#message = null
+			this.#retry = false
+		}
+
+		// Convenience methods for common state checks
+		get isInErrorState() {
+			return this.#isActivating && this.#error
+		}
+
+		get canRetry() {
+			return this.#isActivating && this.#error && this.#retry
+		}
+
+		get shouldShowErrorDetails() {
+			return this.#error && this.#message !== null
 		}
 	}
 
-	function handleError({ message, retry }: { message: string | null; retry: boolean }) {
-		if (isActivating) {
-			hasError.error = true
+	let buttonState = $state(new PasskeyButtonState())
 
-			if (message) {
-				hasError.message = message
-				console.log('Passkey Error: ' + message)
-			}
-
-			hasError.retry = retry
+	async function handleClick() {
+		if (buttonState.canRetry) {
+			await getOptions({ auto: false })
+			buttonState.clearError()
+		} else if (buttonState.isInErrorState && !buttonState.retry) {
+			buttonState.deactivate()
+		} else if (buttonState.isActivating) {
+			buttonState.deactivate()
 		} else {
-			console.log(
-				message
-					? `Passkey error after user cancelled. ${message}`
-					: 'Passkey error after user cancelled'
-			)
+			await getOptions({ auto: false })
 		}
 	}
 
 	async function getOptions({ auto = false }: { auto: boolean }) {
-		isActivating = true
+		buttonState.activate()
 
 		try {
 			const response = await fetch('/auth/passkey-authenticate/options', {
@@ -72,28 +136,28 @@
 			const result = await response.json()
 
 			if (result?.success && result?.data) {
-				console.log('Got Options')
-				startAuth({ optionsJSON: result.data.optionsJSON, useBrowserAutofill: auto })
+				startAuth({ optionsJSON: result.data.optionsJSON })
 			} else {
-				handleError({ message: 'Failed to connect to server', retry: true })
+				buttonState.setError('Failed to connect to server', true)
 			}
 		} catch (e) {
-			handleError({ message: 'Unexpected issue connecting to server', retry: true })
+			console.error(e)
+			buttonState.setError('Unexpected issue connecting to server', true)
 		}
 	}
 
-	async function startAuth({ optionsJSON }) {
+	async function startAuth({ optionsJSON }: { optionsJSON: any }) {
 		try {
 			const authResponse = await startAuthentication({ optionsJSON })
 			console.log('Started auth')
 			passkeyAuthenticationVerify(authResponse)
 		} catch (e) {
 			console.log(e)
-			handleError({ message: 'Browser was unable to start passkey authentication', retry: true })
+			buttonState.setCancelled('Browser was unable to start passkey authentication')
 		}
 	}
 
-	async function passkeyAuthenticationVerify(authResponse) {
+	async function passkeyAuthenticationVerify(authResponse: AuthenticationResponseJSON) {
 		try {
 			const response = await fetch('/auth/passkey-authenticate/verify', {
 				method: 'POST',
@@ -106,29 +170,23 @@
 			if (result?.success && result?.redirect) {
 				goto(result.redirect)
 			} else {
-				handleError({
-					message: 'Failed to authenticate with passkey. Double check your credentials',
-					retry: true
-				})
+				buttonState.setError(
+					'Failed to authenticate with passkey. Double check your credentials',
+					true
+				)
 			}
 		} catch (e) {
 			console.log(e)
-			handleError({
-				message: 'Unexpected error trying to authenticate with passkey. Try signing in another way',
-				retry: false
-			})
+			buttonState.setError(
+				'Unexpected error trying to authenticate with passkey. Try signing in another way',
+				false
+			)
 		}
 	}
-
-	let hasError = $state({
-		error: false,
-		message: null,
-		retry: false
-	})
 </script>
 
 <div class="relative flex w-full shrink-1 grow basis-1 flex-col items-center">
-	{#if isActivating}
+	{#if buttonState.isActivating}
 		<div class="h-5 w-full" transition:wipeVertical></div>
 	{/if}
 
@@ -136,7 +194,7 @@
 		<div
 			class={createClass(
 				'transition-all',
-				isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
+				buttonState.isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
 			)}
 		></div>
 		<button
@@ -144,11 +202,13 @@
 			onclick={handleClick}
 			class={createClass(
 				'relative m-auto flex h-fit min-h-12 w-full max-w-full cursor-pointer items-center justify-center gap-2 rounded-[0.9rem] px-4 py-3 font-medium text-white outline-none',
-				isActivating ? 'bg-vibrant-blue grow basis-1 rounded-full' : 'bg-vibrant-blue grow basis-1',
-				isActivating && hasError.error && 'border-3 border-rose-500 bg-rose-100 text-rose-500'
+				buttonState.isActivating
+					? 'bg-vibrant-blue grow basis-1 rounded-full'
+					: 'bg-vibrant-blue grow basis-1',
+				buttonState.isInErrorState && 'border-3 border-rose-500 bg-rose-100 text-rose-500'
 			)}
 		>
-			{#if isActivating && !hasError.error}
+			{#if buttonState.isActivating && !buttonState.hasError}
 				<Suspense.Spinner size={14} thickness={10} speed="fast" tint="var(--color-neutral-100)" />
 				<Suspense.Text
 					class="text-md"
@@ -156,12 +216,19 @@
 					colorBase="var(--color-sky-200)"
 					colorHighlight="var(--color-white)">Trying Passkey</Suspense.Text
 				>
-			{:else if isActivating && hasError.error}
+			{:else if buttonState.isInErrorState}
 				<div class="flex">
-					{#if hasError.retry}
+					{#if buttonState.retry}
 						<IconReload />
 					{/if}
 					<p class="px-2 font-medium whitespace-nowrap">Something went wrong</p>
+				</div>
+			{:else if buttonState.isCancelled}
+				<div class="flex">
+					{#if buttonState.retry}
+						<IconReload />
+					{/if}
+					<p class="px-2 font-medium whitespace-nowrap">Cancelled. Try again</p>
 				</div>
 			{:else}
 				<PasskeyIcon />
@@ -171,12 +238,12 @@
 		<div
 			class={createClass(
 				'transition-all',
-				isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
+				buttonState.isActivating ? 'w-full grow basis-1' : 'shrink grow-0 basis-0'
 			)}
 		></div>
 	</div>
 
-	{#if hasError.error && hasError.message !== null}
+	{#if buttonState.shouldShowErrorDetails}
 		<div class="px-6 pt-8">
 			<div class="flex flex-col items-start justify-start gap-1">
 				<div class="flex items-center gap-1">
@@ -184,13 +251,13 @@
 					<p class="font-semibold text-rose-600">Details:</p>
 				</div>
 				<p class="text-neutral-800">
-					{hasError.message}
+					{buttonState.message}
 				</p>
 			</div>
 		</div>
 	{/if}
 
-	{#if isActivating}
+	{#if buttonState.isActivating}
 		<div class="h-5 w-full" transition:wipeVertical></div>
 	{/if}
 </div>

@@ -6,8 +6,6 @@ import * as schema from './schema'
 
 const isLocalDevelopment = publicEnv.PUBLIC_NODE_ENV === 'development'
 
-console.log('isLocalDevelopment', isLocalDevelopment)
-
 const connection = isLocalDevelopment
 	? {
 			url: 'file:./db/dev.db'

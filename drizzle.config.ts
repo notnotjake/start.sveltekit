@@ -3,7 +3,6 @@ import { config } from 'dotenv'
 config()
 
 const isLocalDevelopment = process.env.PUBLIC_NODE_ENV === 'development'
-console.log('isLocalDevelopment', isLocalDevelopment)
 
 export default defineConfig({
 	schema: './src/lib/server/db/schema/index.ts',
