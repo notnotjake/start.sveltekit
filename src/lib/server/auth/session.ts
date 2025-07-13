@@ -9,7 +9,6 @@ import { clearStepUpReauthCookie } from './cookie'
 
 import { generateToken, hashToken } from './utils'
 import { cleanupAttempts } from './auth-attempt'
-import { appEventEmitter } from './event'
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24
 
@@ -75,8 +74,6 @@ export async function authenticateSession({
 
 		await cleanupOldInvalidSessions()
 
-		appEventEmitter.removeAllListeners(event.locals.session.id)
-
 		await cleanupAttempts({
 			identifier: user.identifier,
 			sessionId: event.locals.session.id
@@ -85,6 +82,146 @@ export async function authenticateSession({
 		return Response.succeed()
 	} catch (error) {
 		console.error('Failed to authenticate session', error)
+		return Response.fail()
+	}
+}
+
+/**
+ * Rotates the session ID to prevent session fixation attacks.
+ * Creates a new session with a new ID while preserving session data.
+ *
+ * @param sessionId - The current session ID to rotate
+ * @param event - The request event for IP and user agent
+ * @returns Response with new session and raw token, or failure
+ */
+export async function rotateSession(
+	sessionId: string,
+	event: RequestEvent
+): Promise<Response<{ session: Session; rawSessionToken: string }>> {
+	try {
+		// Get the current session
+		const [currentSession] = await db
+			.select()
+			.from(table.session)
+			.where(eq(table.session.id, sessionId))
+
+		if (!currentSession) {
+			return Response.fail('Session not found')
+		}
+
+		if (currentSession.invalidatedAt !== null) {
+			return Response.fail('Session already invalidated')
+		}
+
+		// Generate new session token and ID
+		const rawSessionToken = generateToken()
+		const newSessionId = hashToken(rawSessionToken)
+
+		const ipAddress = event.getClientAddress() || 'unknown'
+		const userAgent = event.request.headers.get('user-agent') || 'unknown'
+
+		// Create new session with same data but new ID
+		const newSession: Session = {
+			id: newSessionId,
+			userId: currentSession.userId,
+			ipAddress,
+			userAgent,
+			lastSeenAt: new Date(),
+			createdAt: new Date(),
+			lastAuthAt: currentSession.lastAuthAt,
+			expiresAt: currentSession.expiresAt,
+			invalidatedAt: null
+		}
+
+		// Insert new session and invalidate old one in a transaction
+		await db.transaction(async (tx) => {
+			await tx.insert(table.session).values(newSession)
+			await tx
+				.update(table.session)
+				.set({ invalidatedAt: new Date() })
+				.where(eq(table.session.id, sessionId))
+		})
+
+		return Response.succeed({ session: newSession, rawSessionToken })
+	} catch (error) {
+		console.error('Failed to rotate session', error)
+		return Response.fail()
+	}
+}
+
+/**
+ * Rotates session ID and authenticates it with a user in one operation.
+ * This is useful during login to prevent session fixation attacks.
+ *
+ * @param sessionId - The current session ID to rotate and authenticate
+ * @param event - The request event for IP and user agent
+ * @param user - The user to authenticate the session with
+ * @returns Response with new authenticated session and raw token, or failure
+ */
+export async function rotateAndAuthenticateSession({
+	sessionId,
+	event,
+	user
+}: {
+	sessionId: string
+	event: RequestEvent
+	user: User
+}): Promise<Response<{ session: Session; rawSessionToken: string }>> {
+	try {
+		// Get the current session
+		const [currentSession] = await db
+			.select()
+			.from(table.session)
+			.where(eq(table.session.id, sessionId))
+
+		if (!currentSession) {
+			return Response.fail('Session not found')
+		}
+
+		if (currentSession.invalidatedAt !== null) {
+			return Response.fail('Session already invalidated')
+		}
+
+		// Generate new session token and ID
+		const rawSessionToken = generateToken()
+		const newSessionId = hashToken(rawSessionToken)
+
+		const ipAddress = event.getClientAddress() || 'unknown'
+		const userAgent = event.request.headers.get('user-agent') || 'unknown'
+
+		// Create new authenticated session
+		const newSession: Session = {
+			id: newSessionId,
+			userId: user.id,
+			ipAddress,
+			userAgent,
+			lastSeenAt: new Date(),
+			createdAt: new Date(),
+			lastAuthAt: new Date(),
+			expiresAt: new Date(Date.now() + DAY_IN_MS * 30), // Extend expiry for authenticated session
+			invalidatedAt: null
+		}
+
+		// Insert new session and invalidate old one in a transaction
+		await db.transaction(async (tx) => {
+			await tx.insert(table.session).values(newSession)
+			await tx
+				.update(table.session)
+				.set({ invalidatedAt: new Date() })
+				.where(eq(table.session.id, sessionId))
+		})
+
+		// Clean up
+		clearStepUpReauthCookie(event)
+		await cleanupOldInvalidSessions()
+		await cleanupAttempts({
+			identifier: user.identifier,
+			sessionId: newSessionId // Use new session ID
+		})
+
+		return Response.succeed({ session: newSession, rawSessionToken })
+	} catch (error) {
+		console.error('Failed to rotate and authenticate session', error)
 		return Response.fail()
 	}
 }
