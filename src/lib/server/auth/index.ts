@@ -42,6 +42,7 @@ import { sendMagiclink, sendCode } from './magiclink'
 import { requireRecentAuth, requireAuthenticatedUser, requireSession } from './protect'
 
 export { authHandler } from './handler'
+export { protectHandler } from './hooks'
 
 const Auth = {
 	getAuthAttempt,
