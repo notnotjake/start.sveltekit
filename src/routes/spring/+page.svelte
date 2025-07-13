@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Time, CalendarDate, today, getLocalTimeZone, isSameDay } from '@internationalized/date'
+	import { Time, CalendarDate, CalendarDateTime, today, getLocalTimeZone, isSameDay, toCalendarDateTime } from '@internationalized/date'
+	import { fade } from 'svelte/transition'
 
 	import { createClass } from '$utils/styles'
 	import SuspenseText from '$ui/feedback/suspense-text.svelte'
@@ -37,10 +38,44 @@
 	}
 
 	let selectedDate = $state(today(getLocalTimeZone()))
+	
+	$effect(() => {
+		selectedDate;
+		expanded = false
+	})
 
+	// Store times separately to avoid circular dependencies
+	let startTime = $state(new Time(8, 30))
+	let endTime = $state(new Time(16, 15))
+
+	// Main CalendarDateTime objects for start and end times
+	let startDateTime = $derived.by(() => toCalendarDateTime(selectedDate, startTime))
+	let endDateTime = $derived.by(() => {
+		let endDate = selectedDate
+		// If end time is before start time, it's an overnight event
+		if (endTime.compare(startTime) < 0) {
+			endDate = selectedDate.add({ days: 1 })
+		}
+		return toCalendarDateTime(endDate, endTime)
+	})
+
+	// Time objects for the UI component
 	let timeRangeValue = $state({
-		start: new Time(8, 30),
-		end: new Time(4, 15)
+		start: startTime,
+		end: endTime
+	})
+
+	// Update our time state when UI changes
+	$effect(() => {
+		if (timeRangeValue.start && timeRangeValue.end) {
+			startTime = timeRangeValue.start
+			endTime = timeRangeValue.end
+		}
+	})
+
+	// Derived variable to track if this is an overnight event
+	let isOvernight = $derived.by(() => {
+		return !isSameDay(startDateTime, endDateTime)
 	})
 
 	let tickets = $state({
@@ -49,10 +84,6 @@
 			location: 'Lot 12A',
 			customer: 'RCI Builders'
 		},
-		date: new Date(),
-		person: null,
-		startTime: '08:30',
-		endTime: '16:15',
 		breaks: [12],
 		travel: {
 			type: 'miles',
@@ -83,22 +114,23 @@
 		class="fixed top-0 z-10 w-full border-b-1 border-neutral-100 bg-white/80 px-4 py-2 backdrop-blur-xs"
 	>
 		<div class="mx-auto flex w-full max-w-2xl items-center justify-between gap-3">
-			<div
+			<Button
 				class="flex h-full items-center justify-center rounded-full bg-neutral-100 px-3 py-3 text-lg font-medium text-neutral-700"
 			>
 				<IconX stroke={2.5} />
-			</div>
+			</Button>
 			<div class="flex gap-2">
 				<Button
 					class="flex h-full items-center justify-center rounded-full bg-neutral-100 px-6 py-3 text-lg font-semibold text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900"
 				>
 					Add Another
 				</Button>
-				<div
+				
+				<Button
 					class="flex h-full items-center justify-center rounded-full bg-gradient-to-b from-sky-500 to-sky-400/80 px-6 py-3 text-lg font-semibold text-sky-50"
 				>
 					Save
-				</div>
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -110,7 +142,7 @@
 		>
 			{#snippet trigger()}
 				<div
-					class="flex w-fit items-center gap-1 rounded-full bg-gradient-to-b from-neutral-200/50 to-neutral-200/80 px-4 py-2"
+					class="flex w-fit items-center gap-1 rounded-3xl overflow-hidden shadow-card border-1 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100 px-4 py-2 "
 				>
 					<IconMapPinFilled size={22} class="text-emerald-500" />
 					<p class="text-[1.15rem] font-medium tracking-tight whitespace-nowrap">
@@ -123,21 +155,23 @@
 			<JobEntry bind:job={tickets.job} />
 		</Sheet>
 
-		<div class="w-full max-w-full">
+		<div class="w-full max-w-full relative">
+			{#if expanded}
+				<div in:fade={{duration: 200}} class="fixed inset-0 w-full h-full bg-black/10" onclick={expand}></div>
+			{/if}
 			<div
-				onclick={expand}
 				class={createClass(
-					'w-fit rounded-3xl',
-					expanded ? 'bg-transparent ring-1 ring-neutral-200' : 'bg-neutral-200/80'
+					'w-fit rounded-3xl cursor-pointer',
+					expanded ? 'border-1 border-white shadow-card' : 'shadow-card border-1 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100'
 				)}
 			>
-				<ContainerAdapting startingHeight={50} startingWidth={80} stiffness={0.09} damping={0.5}>
+				<ContainerAdapting startingHeight={50} startingWidth={80} stiffness={0.14} damping={0.6}>
 					{#if expanded}
-						<div class="w-2xl min-w-md">
+						<div class="w-2xl min-w-md rounded-3xl overflow-hidden">
 							<DatePicker bind:selectedDate />
 						</div>
 					{:else}
-						<div class="flex w-fit shrink-0 items-center gap-1 px-4 py-2">
+						<div class="flex w-fit shrink-0 items-center gap-1 px-4 py-2" onclick={expand}>
 							<IconCalendarWeekFilled size={22} class="shrink-0 grow text-rose-600" />
 							<p class="w-fit shrink-0 grow text-[1.15rem] font-semibold whitespace-nowrap">
 								{#if isSameDay(selectedDate, todayDate)}Today&nbsp;{/if}{formatDate(selectedDate)}
@@ -178,6 +212,19 @@
 
 				<div class="w-full">
 					<TimeRange timesValue={timeRangeValue} />
+					{#if isOvernight}
+						<div class="mt-2 flex items-center justify-center gap-1 rounded-lg bg-amber-100 px-3 py-1.5">
+							<IconHourglassFilled size={16} class="text-amber-600" />
+							<p class="text-sm font-medium text-amber-700">Overnight event</p>
+						</div>
+					{/if}
+				</div>
+
+				<!-- Debug info - remove in production -->
+				<div class="mt-2 text-xs text-neutral-500">
+					<p>Start: {startDateTime.toDate(getLocalTimeZone()).toLocaleString()}</p>
+					<p>End: {endDateTime.toDate(getLocalTimeZone()).toLocaleString()}</p>
+					<p>Overnight: {isOvernight ? 'Yes' : 'No'}</p>
 				</div>
 
 				<div class="my-4 h-[1.5px] w-full bg-neutral-300/80"></div>
