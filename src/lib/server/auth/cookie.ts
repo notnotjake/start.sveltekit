@@ -1,5 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit'
 
+export const COOKIE_PREFIX = 'auth'
+
 export const sessionCookieName = 'session'
 export const redirectCookieName = 'redirect'
 export const stepUpReauthCookieName = 'stepUpReauth'

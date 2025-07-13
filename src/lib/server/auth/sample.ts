@@ -9,12 +9,17 @@
 // other things about how it's setup and working
 
 const authOptions = {
-		redirects: {
-			afterLogin: '/dashboard',
-			afterLogout: '/',
-			afterAccountCreated: '/welcome',
-			afterAccountDeleted: '/'
-		},
+	emailOTP: {
+		async sendVerification(email, token, type) {
+			/* you implement email */
+		}
+	},
+	redirects: {
+		afterLogin: '/dashboard',
+		afterLogout: '/',
+		afterAccountCreated: '/welcome',
+		afterAccountDeleted: '/'
+	},
 	authenticationMethods: {
 		passkeys: 'true',
 		passwords: 'true',

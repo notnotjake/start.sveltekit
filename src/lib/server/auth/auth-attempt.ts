@@ -6,7 +6,6 @@ import type { AuthAttempt } from '$lib/server/db/schema/auth'
 import { hashShortCode } from './password'
 import { randomUUID } from 'crypto'
 import { hashToken } from './utils'
-import { appEventEmitter } from './event'
 
 import { StructuredResponse as Response } from '$utils/structured-response'
 
@@ -138,11 +137,10 @@ export async function cleanupAttempts({
 					)
 				)
 		} catch (error) {
+			console.error(error)
 			return Response.fail('Failed deleting email auth attempts')
 		}
 	}
-
-	appEventEmitter.removeAllListeners(sessionId)
 
 	return Response.fail()
 }
