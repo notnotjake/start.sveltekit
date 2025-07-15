@@ -1,5 +1,5 @@
-import { pageMetaLoad } from 'sveltekit-meta'
+import { metaLoad } from 'sveltekit-meta'
 
-export const load = pageMetaLoad({
+export const load = metaLoad.page({
 	title: 'Delete Account'
 })

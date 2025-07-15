@@ -1,6 +1,6 @@
-import { layoutMetaLoad } from 'sveltekit-meta'
+import { metaLoad } from 'sveltekit-meta'
 
-export const load = layoutMetaLoad({
+export const load = metaLoad.layout({
 	title: 'Settings',
-	titleTemplate: 'Settings - {page}'
+	titleTemplate: { route: '/(protected)/settings', template: 'Settings - {page}' }
 })
