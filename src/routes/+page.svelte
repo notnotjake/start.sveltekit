@@ -7,7 +7,7 @@
 	<h1 class="text-lg font-medium">SvelteKit Auth Example</h1>
 	<p class="tracking-[-0.01em]">
 		Project setup using SvelteKit, Typescript, Tailwind 4, Prettier, Drizzle ORM with Turso SQLite,
-		Zod, Superforms, and SvelteKit-Meta. The project also includes some of an upcoming components
+		Zod, Superforms, and @opensky/seo. The project also includes some of an upcoming components
 		library and useful utilities
 	</p>
 

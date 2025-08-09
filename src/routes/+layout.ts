@@ -1,4 +1,4 @@
-import { metaLoad } from 'sveltekit-meta'
+import { metaLoad } from '@opensky/seo'
 import { assetUrl } from '$utils/asset-url'
 
 export const load = metaLoad.layout({

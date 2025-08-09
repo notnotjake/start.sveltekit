@@ -4,20 +4,24 @@ import { drizzle } from 'drizzle-orm/libsql'
 import { createClient } from '@libsql/client'
 import * as schema from './schema'
 
-const isLocalDevelopment = publicEnv.PUBLIC_NODE_ENV === 'development'
+const connection = () => {
+	switch (publicEnv.PUBLIC_NODE_ENV) {
+		case 'development':
+			return { url: 'file:./db/dev.deb' }
+		case 'production':
+			return {
+				url: env.DB_TURSO_URL || '',
+				authToken: env.DB_TURSO_AUTH || ''
+			}
+		default:
+			console.log('Could not determine environment. Using development database connection.')
+			return { url: 'file:./db/dev.deb' }
+	}
+}
 
-const connection = isLocalDevelopment
-	? {
-			url: 'file:./db/dev.db'
-		}
-	: {
-			url: env.DB_TURSO_URL || 'file:./db/dev.db',
-			authToken: env.DB_TURSO_AUTH || ''
-		}
+const turso = createClient(connection())
 
-const turso = createClient(connection)
-
-if (isLocalDevelopment) {
+if (publicEnv.PUBLIC_NODE_ENV === 'development') {
 	turso.execute('PRAGMA journal_mode = WAL;') // Better performance
 	turso.execute('PRAGMA foreign_keys = ON;') // Enable foreign key constraints
 	turso.execute('PRAGMA synchronous = NORMAL;') // Good balance of safety and speed
